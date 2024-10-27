@@ -30,3 +30,15 @@ export async function isAdmin(req, res, next) { //? Function that checks if the 
         handleErrorServer(res, 500, "Internal server Middleware error. -> isAdmin()", error.message);
     }
 }
+
+export function verifyRole(requiredRole) {
+    return (req, res, next) => {
+        const user = req.user; //* Se asume que el usuario ya está autenticado y disponible en req.user
+        
+        if (!user || user.role !== requiredRole) {
+            return res.status(403).json({ message: "No tienes permisos para acceder a esta ruta." });
+        }
+        
+        next();
+    };
+}
