@@ -18,7 +18,7 @@ router
     .get('/', getSubject)
     .get('/all', getSubjects)
     .post('/', verifyRole('admin'), createSubject)
-    .put('/', verifyRole('admin'), updateSubject)
+    .patch('/', verifyRole('admin'), updateSubject)
     .delete('/', verifyRole('admin'), deleteSubject);
 
 export default router;
