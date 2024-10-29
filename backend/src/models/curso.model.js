@@ -16,7 +16,7 @@ const CursoSchema = new EntitySchema({
             length: 255,
             nullable: false,
         },
-        code: { //? This is the code of the course. It is unique.
+        code: { //? This is the code of the course. It is unique. // For example: 1A-24
             type: 'varchar',
             length: 10,
             nullable: false,
@@ -33,10 +33,6 @@ const CursoSchema = new EntitySchema({
         section: { //? This is the section of the course
             type: 'varchar',
             length: 1,
-            nullable: false,
-        },
-        teacherId: {
-            type: 'int',
             nullable: false,
         }
     },
