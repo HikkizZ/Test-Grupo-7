@@ -80,7 +80,7 @@ export async function updateSubjectService(query, body) { //* This function upda
 export async function deleteSubjectService(query) { //* This function deletes a subject by id and name.
     try {
         const { idSubject, nameSubject } = query;
-        console.log(idSubject, nameSubject);
+
         const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 
         const subjectFound = await subjectRepository.findOne({ //? Finding the subject by id and name.
