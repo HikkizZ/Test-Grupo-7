@@ -53,7 +53,7 @@ export const subjectBodyValidation = Joi.object({ //* This is the subject body v
 })
 .or("name", "description", "cursoId")
 .unknown(false)
-messages({
+.messages({
     "object.unknown": "The request contains invalid properties.",
     "object.missing": "The request must contain at least one property.",
 });
