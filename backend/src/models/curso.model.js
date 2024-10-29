@@ -43,20 +43,12 @@ const CursoSchema = new EntitySchema({
     relations: {
         subjects: { //? This is the subject relation of the course.
             target: "Subject",
-            type: "many-to-many",
-            joinTable: true,
-            inverseSide: "cursos",
-            onDelete: "CASCADE",
+            type: "one-to-many",
+            mappedBy: "cursos", //? This is the inverse side of the relation. mappedBy is used to specify the inverse side of the relation.
             nullable: false,
+            cascade: true,
         },
-    },
-    indices: [
-        {
-            name: "IDX_CURSO",
-            columns: ["id"],
-            unique: true,
-        },
-    ],
+    }
 });
 
 export default CursoSchema;
