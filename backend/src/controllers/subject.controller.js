@@ -70,17 +70,17 @@ export async function getSubjects(req, res) { //* This function gets all the sub
 export async function updateSubject(req, res) { //* This function updates a subject by id and name.
     try {
         const { id, name } = req.query;
+
         const { body } = req;
 
         const { error: queryError } = subjectQueryValidation.validate({ id, name }); //? Validating the query parameters.
 
         if (queryError) return handleErrorClient(res, 400, queryError.message); //? If the query parameters are invalid, return a 400 error.
-
+        
         const { error: bodyError } = subjectBodyValidation.validate(body); //? Validating the body parameters.
 
         if (bodyError) return handleErrorClient(res, 400, bodyError.message); //? If the body parameters are invalid, return a 400 error.
-
-        const [subjectUpdated, errorSubject] = await updateSubjectService({ id, name }, body); //? Updating the subject.
+        const [subjectUpdated, errorSubject] = await updateSubjectService({ idSubject: id, nameSubject: name }, body); //? Updating the subject.
 
         if (errorSubject) return handleErrorClient(res, 400, errorSubject); //? If an error occurred while updating the subject, return a 400 error.
 
@@ -93,12 +93,13 @@ export async function updateSubject(req, res) { //* This function updates a subj
 export async function deleteSubject(req, res) { //* This function deletes a subject by id and name.
     try {
         const { id, name } = req.query;
+        console.log(id, name);
 
         const { error } = subjectQueryValidation.validate({ id, name }); //? Validating the query parameters.
 
         if (error) return handleErrorClient(res, 400, error.message); //? If the query parameters are invalid, return a 400 error.
 
-        const [subjectDeleted, errorSubject] = await deleteSubjectService({ id, name }); //? Deleting the subject.
+        const [subjectDeleted, errorSubject] = await deleteSubjectService({ idSubject: id, nameSubject: name }); //? Deleting the subject.
 
         if (errorSubject) return handleErrorClient(res, 400, errorSubject); //? If an error occurred while deleting the subject, return a 400 error.
 
