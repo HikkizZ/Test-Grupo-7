@@ -1,6 +1,6 @@
 "use strict";
 
-import { EntitySchema, JoinTable } from "typeorm";
+import { EntitySchema } from "typeorm";
 
 const SubjectSchema = new EntitySchema({
     name: "Subject",
