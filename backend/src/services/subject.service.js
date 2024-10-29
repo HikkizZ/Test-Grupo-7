@@ -59,7 +59,7 @@ export async function createSubjectService(body) { //* This function creates a s
 export async function updateSubjectService(query, body) { //* This function updates a subject by id and name.
     try {
         const { idSubject, nameSubject } = query;
-
+        
         const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 
         const subjectFound = await subjectRepository.findOne({ //? Finding the subject by id and name.
@@ -68,7 +68,7 @@ export async function updateSubjectService(query, body) { //* This function upda
 
         if (!subjectFound) return [null, "Subject not found."]; //? If the subject is not found, return null and a message.
 
-        const subjectUpdated = await subjectRepository.update(subjectFound.id, body); //? Updating the subject.
+        const subjectUpdated = await subjectRepository.update(idSubject, body); //? Updating the subject.
 
         return [subjectUpdated, null];
     } catch (error) {
@@ -80,7 +80,7 @@ export async function updateSubjectService(query, body) { //* This function upda
 export async function deleteSubjectService(query) { //* This function deletes a subject by id and name.
     try {
         const { idSubject, nameSubject } = query;
-
+        console.log(idSubject, nameSubject);
         const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 
         const subjectFound = await subjectRepository.findOne({ //? Finding the subject by id and name.
@@ -89,9 +89,9 @@ export async function deleteSubjectService(query) { //* This function deletes a 
 
         if (!subjectFound) return [null, "Subject not found."]; //? If the subject is not found, return null and a message.
 
-        const subjectDeleted = await subjectRepository.remove(subjectFound); //? Removing the subject.
+        const subjectDeleted = await subjectRepository.delete(idSubject); //? Deleting the subject.
 
-        return [subjectDeleted, null]; //? Returning the subject deleted and null.
+        return [subjectDeleted, null];
     } catch (error) {
         console.error("An error occurred while deleting the subject:", error);
         return [null, "Internal server error."];
