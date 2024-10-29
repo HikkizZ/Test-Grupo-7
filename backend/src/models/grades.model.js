@@ -11,19 +11,6 @@ const GradeSchema = new EntitySchema({
             primary: true,
             generated: true,
         },
-        studentId: { //? This is the studentId of the grade.
-            type: 'int',
-            nullable: false,
-        },
-        teacherId: { //? This is the teacherId of the grade.
-            type: 'int',
-            nullable: false,
-        },
-        subject: { //? This is the subject of the grade.
-            type: 'varchar',
-            length: 255,
-            nullable: false,
-        },
         grade: { //? This is the grade of the grade.
             type: 'decimal',
             precision: 4,
@@ -47,19 +34,28 @@ const GradeSchema = new EntitySchema({
         },
     },
     relations: { //? Las relaciones son una forma de conectar dos tablas de base de datos.
-        student: { //? This is the student relation of the grade.
+        Alumno: { //? This is the student relation of the grade.
             target: "User",
             type: "many-to-one",
-            joinColumn: { name: "studentId" },
+            joinColumn: true,
             onDelete: "CASCADE",
+            nullable: false,
         },
-        teacher: { //? This is the teacher relation of the grade.
+        Profesor: { //? This is the teacher relation of the grade.
             target: "User",
             type: "many-to-one",
-            joinColumn: { name: "teacherId" },
+            joinColumn: true,
             onDelete: "SET NULL",
+            nullable: false,
         },
-    },
+        Subject: { //? This is the subject relation of the grade.
+            target: "Subject",
+            type: "many-to-one",
+            joinColumn: true,
+            onDelete: "CASCADE",
+            nullable: false,
+        }
+    }
 });
 
 export default GradeSchema;
