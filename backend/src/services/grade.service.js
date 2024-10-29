@@ -7,7 +7,13 @@ export async function createGradeService(data){
     try {
         const gradeRepository = AppDataSource.getRepository(Grade);
 
-        const newGrade = gradeRepository.create(data);
+        const newGrade = gradeRepository.create({
+            grade: data.grade,
+            Alumno: { id: data.AlumnoId },
+            Subject: { id: data.SubjectId },
+            Profesor: { id: data.ProfesorId },
+            period: data.period,
+        });
 
         const gradeCreated = await gradeRepository.save(newGrade);
         
