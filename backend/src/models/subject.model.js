@@ -1,6 +1,6 @@
 "use strict";
 
-import { EntitySchema, JoinColumn } from "typeorm";
+import { EntitySchema } from "typeorm";
 
 const SubjectSchema = new EntitySchema({
     name: "Subject",
@@ -23,7 +23,7 @@ const SubjectSchema = new EntitySchema({
         },
     },
     relations: {
-        cursos: { //? This is the course relation of the subject.
+        curso: { //? This is the course relation of the subject.
             target: "Curso",
             type: "many-to-one",
             JoinColumn: true,
