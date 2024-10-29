@@ -21,13 +21,13 @@ import {
 
 export async function createGrade(req, res) { //* This function creates a grade.
     try {
-        const { grade, AlumnoId, SubjectId } = req.body;
+        const { grade, AlumnoId, SubjectId, ProfesorId, period } = req.body;
 
-        const { error } = gradeBodyValidation.validate({ grade, AlumnoId, SubjectId }); //? Validating the body parameters.
+        const { error } = gradeBodyValidation.validate({ grade, AlumnoId, SubjectId, ProfesorId }); //? Validating the body parameters.
 
         if (error) return handleErrorClient(res, 400, error.message); //? If the body parameters are invalid, return a 400 error.
 
-        const [gradeCreated, errorGrade] = await createGradeService({ grade, AlumnoId, SubjectId }); //? Creating the grade.
+        const [gradeCreated, errorGrade] = await createGradeService({ grade, AlumnoId, SubjectId, ProfesorId, period }); //? Creating the grade.
 
         if (errorGrade) return handleErrorClient(res, 400, errorGrade); //? If an error occurred while creating the grade, return a 400 error.
 
