@@ -3,11 +3,10 @@ import { authenticateJWT } from '../middlewares/authentication.middleware.js';
 import { verifyRole } from '../middlewares/authorization.middleware.js';
 import {
     createSubject,
-    getAllSubjects,
-    getSubjectById,
-    getSubjectByStudent,
-    enrollStudentInSubject,
-    assignTeacherToSubject
+    getSubject,
+    getSubjects,
+    updateSubject,
+    deleteSubject
 } from '../controllers/subject.controller.js';
 
 const router = Router();
@@ -16,12 +15,10 @@ router
     .use(authenticateJWT);
 
 router
-    .post('/add', verifyRole('admin'), createSubject)
-    .get('/', getAllSubjects)
-    .get('/:id', getSubjectById)
-    .get('/student/:studentId', getSubjectByStudent)
-    .post("/enroll", verifyRole("admin"), enrollStudentInSubject)
-    .post("/assignment", verifyRole("admin"), assignTeacherToSubject);
-
+    .get('/', getSubject)
+    .get('/all', getSubjects)
+    .post('/', verifyRole('admin'), createSubject)
+    .put('/', verifyRole('admin'), updateSubject)
+    .delete('/', verifyRole('admin'), deleteSubject);
 
 export default router;
