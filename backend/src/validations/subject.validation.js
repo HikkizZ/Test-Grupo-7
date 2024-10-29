@@ -40,15 +40,13 @@ export const subjectBodyValidation = Joi.object({ //* This is the subject body v
             "string.base": "The description must be a string.",
             "string.max": "The description must be at most 255 characters long.",
         }),
-    cusoId: Joi.number()
+    cursoId: Joi.number()
         .integer()
         .positive()
-        .required()
         .messages({
             "number.base": "The course id must be a number.",
             "number.positive": "The course id must be a positive number.",
             "number.integer": "The course id must be an integer.",
-            "any.required": "The course id is required.",
         }),
 })
 .or("name", "description", "cursoId")
