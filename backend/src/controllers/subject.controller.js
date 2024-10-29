@@ -1,10 +1,11 @@
 "use strict";
 
 import {
+    getSubjectService,
+    getSubjectsService,
     createSubjectService,
-    getSubject,
-    getAllSubject,
-    enrollStudentInSubjectService
+    updateSubjectService,
+    deleteSubjectService
 } from "../services/subject.service.js";
 
 import {
@@ -13,88 +14,96 @@ import {
     handleErrorServer
 } from "../handlers/responseHandlers.js";
 
-export async function createSubject(req, res) {
-    const { name, year, level, section, teacherRut } = req.body;
+import {
+    subjectQueryValidation,
+    subjectBodyValidation
+} from "../validations/subject.validation.js";
+
+export async function createSubject(req, res) { //* This function creates a subject.
     try {
-        const [newSubject, errorMessage] = await createSubjectService(name, year, level, section, teacherRut);
-        if (errorMessage) {
-            res.status(400).json({ message: errorMessage });
-        } else {
-            res.status(201).json(newSubject);
-        }
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
+        const { name, description, cursoId } = req.body;
 
-export async function getAllSubjects(req, res) {
-    try{
-        const subjects = await getAllSubject();
-        res.status(200).json(subjects);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
+        const { error } = subjectBodyValidation.validate({ name, description, cursoId }); //? Validating the body parameters.
 
-export async function getSubjectById(req, res) {
-    const { id } = req.params;
+        if (error) return handleErrorClient(res, 400, error.message); //? If the body parameters are invalid, return a 400 error.
+
+        const [subjectCreated, errorSubject] = await createSubjectService({ name, description, cursoId }); //? Creating the subject.
+
+        if (errorSubject) return handleErrorClient(res, 400, errorSubject); //? If an error occurred while creating the subject, return a 400 error.
+
+        handleSuccess(res, 201, "Subject created", subjectCreated); //? If the subject is created, return the subject.
+    } catch (error) {
+        handleErrorServer(res, 500, error.message); //? If an error occurred, return a 500 error.
+    }
+};
+
+export async function getSubject(req, res) { //* This function gets a subject by id and name.
     try {
-        const subject = await getSubject(id);
-        res.status(200).json(subject);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
+        const { id, name } = req.query;
 
-export async function getSubjectByStudent(req, res) {
+        const { error } = subjectQueryValidation.validate({ id, name }); //? Validating the query parameters.
+
+        if (error) return handleErrorClient(res, 400, error.message); //? If the query parameters are invalid, return a 400 error.
+
+        const [subjectFound, errorSubject] = await getSubjectService({ idSubject: id, nameSubject: name }); //? Getting the subject.
+
+        if (errorSubject) return handleErrorClient(res, 400, errorSubject); //? If an error occurred while getting the subject, return a 400 error.
+
+        handleSuccess(res, 200, "Subject found", subjectFound); //? If the subject is found, return the subject.
+    } catch (error) {
+        handleErrorServer(res, 500, error.message); //? If an error occurred, return a 500 error.
+    }
+};
+
+export async function getSubjects(req, res) { //* This function gets all the subjects.
     try {
-        const { studentId } = req.params;
+        const [subjects, errorSubjects] = await getSubjectsService(); //? Getting the subjects.
 
-        const subjects = await getSubjectByStudentService(studentId);
-        handleSuccess(res, 200, "Subjects found successfully", subjects);
+        if (errorSubjects) return handleErrorClient(res, 400, errorSubjects); //? If an error occurred while getting the subjects, return a 400 error.
+
+        handleSuccess(res, 200, "Subjects found", subjects); //? If the subjects are found, return the subjects.
     } catch (error) {
-        handleErrorServer(res, 500, "Internal server error.", error.message);
+        handleErrorServer(res, 500, "Internal server error.", error.message); //? If an error occurred, return a 500 error.
     }
-}
+};
 
-export async function enrollStudentInSubject(req, res) {
+export async function updateSubject(req, res) { //* This function updates a subject by id and name.
     try {
-        const { studentId, subjectId } = req.body;
+        const { id, name } = req.query;
+        const { body } = req;
 
-        const [enrollment, errorMessage ] = await enrollStudentInSubjectService(studentId, subjectId);
+        const { error: queryError } = subjectQueryValidation.validate({ id, name }); //? Validating the query parameters.
 
-        if (errorMessage) {
-            handleErrorClient(res, 400, errorMessage);
-        } else {
-            handleSuccess(res, 201, "Student enrolled in subject successfully", enrollment);
-        }
+        if (queryError) return handleErrorClient(res, 400, queryError.message); //? If the query parameters are invalid, return a 400 error.
+
+        const { error: bodyError } = subjectBodyValidation.validate(body); //? Validating the body parameters.
+
+        if (bodyError) return handleErrorClient(res, 400, bodyError.message); //? If the body parameters are invalid, return a 400 error.
+
+        const [subjectUpdated, errorSubject] = await updateSubjectService({ id, name }, body); //? Updating the subject.
+
+        if (errorSubject) return handleErrorClient(res, 400, errorSubject); //? If an error occurred while updating the subject, return a 400 error.
+
+        handleSuccess(res, 200, "Subject updated", subjectUpdated); //? If the subject is updated, return the subject.
     } catch (error) {
-        handleErrorServer(res, 500, "Internal server error.", error.message);
+        handleErrorServer(res, 500, "Internal server error.", error.message); //? If an error occurred, return a 500 error.
     }
-}
+};
 
-export async function assignTeacherToSubject(req, res) {
+export async function deleteSubject(req, res) { //* This function deletes a subject by id and name.
     try {
-        const { teacherRut, subjectId } = req.body;
+        const { id, name } = req.query;
 
-        const userRepository = AppDataSource.getRepository(User);
+        const { error } = subjectQueryValidation.validate({ id, name }); //? Validating the query parameters.
 
-        const subjectRepository = AppDataSource.getRepository(Subject);
+        if (error) return handleErrorClient(res, 400, error.message); //? If the query parameters are invalid, return a 400 error.
 
-        const teacher = await userRepository.findOne({ where: { rut: teacherRut, role: "Profesor" } });
+        const [subjectDeleted, errorSubject] = await deleteSubjectService({ id, name }); //? Deleting the subject.
 
-        if (!teacher) { handleErrorClient(res, 404, "The teacher is not found."); }
+        if (errorSubject) return handleErrorClient(res, 400, errorSubject); //? If an error occurred while deleting the subject, return a 400 error.
 
-        const subject = await subjectRepository.findOne({ where: { id: subjectId } });
-
-        if (!subject) { handleErrorClient(res, 404, "The subject is not found."); }
-
-        subject.teacherId = teacher.id;
-
-        assignment = await subjectRepository.save(subject);
-
-        handleSuccess(res, 200, "Teacher assigned to subject successfully", assignment);
+        handleSuccess(res, 200, "Subject deleted", subjectDeleted); //? If the subject is deleted, return the subject.
     } catch (error) {
-        handleErrorServer(res, 500, "Internal server error.", error.message);
+        handleErrorServer(res, 500, "Internal server error.", error.message); //? If an error occurred, return a 500 error.
     }
-}
+};
