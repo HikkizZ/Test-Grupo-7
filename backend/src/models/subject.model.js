@@ -1,52 +1,35 @@
 "use strict";
 
-import e from "express";
-import { EntitySchema } from "typeorm";
+import { EntitySchema, JoinTable } from "typeorm";
 
 const SubjectSchema = new EntitySchema({
     name: "Subject",
     tableName: "subjects",
     columns: {
-        id: {
+        id: { //? This is the primary key of the table.
             type: 'int',
             primary: true,
             generated: true,
         },
-        name: {
+        name: { //? This is the name of the subject.
             type: 'varchar',
             length: 255,
             nullable: false,
         },
-        codigo: {
+        description: { //? This is the description of the subject. It is optional.
             type: 'varchar',
-            length: 10,
-            nullable: false,
-            unique: true,
+            length: 255,
+            nullable: true,
         },
-        level: {
-            type: 'int',
-            nullable: false,
-        },
-        year: {
-            type: 'int',
-            nullable: false,
-        },
-        section: {
-            type: 'varchar',
-            length: 1,
-            nullable: false,
-        },
-        teacherId: {
-            type: 'int',
-            nullable: false,
-        }
     },
     relations: {
-        teacher: {
-            target: "User",
-            type: "many-to-one",
-            joinColumn: { name: "teacherId" },
-            onDelete: "SET NULL"
+        cursos: { //? This is the course relation of the subject.
+            target: "Curso",
+            type: "many-to-many",
+            JoinTable: true,
+            inverseSide: "subjects",
+            onDelete: "CASCADE",
+            nullable: false,
         },
     },
     indices: [
