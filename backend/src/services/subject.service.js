@@ -1,87 +1,95 @@
 "use strict";
 
-import { AppDataSource } from "../config/configDB.js";
 import Subject from "../models/subject.model.js";
-import User from "../models/user.model.js";
-import StudentSubjects from "../models/studentSubjects.model.js";
+import { AppDataSource } from "../config/configDB.js";
 
-export async function createSubjectService(name, year, level, section, teacherRut) {
+export async function getSubjectService(query) { //* This function gets a subject by id and name.
     try {
-        const subjectRepository = AppDataSource.getRepository(Subject);
-        const userRepository = AppDataSource.getRepository(User);
+        const { idSubject, nameSubject } = query;
 
-        const teacher = await userRepository.findOne({ where: { rut: teacherRut, role: "Profesor" } });
+        const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 
-        if (!teacher) return [null, createErrorMessage({ teacherRut }, "The teacher is not found.")];
-
-        const codigo = generatedSubjectCode(name, year, level, section);
-
-        const newSubject = subjectRepository.create({
-            name,
-            codigo,
-            level,
-            year,
-            section,
-            teacherId: teacher.id
+        const subjectFound = await subjectRepository.findOne({ //? Finding the subject by id and name.
+            where: [{ id: idSubject }, { name: nameSubject }],
         });
 
-        await subjectRepository.save(newSubject);
+        if (!subjectFound) return [null, "Subject not found."]; //? If the subject is not found, return null and a message.
 
-        return [newSubject, null];
+        return [subjectFound, null];
     } catch (error) {
-        console.error("Error al crear una asignatura: ", error);
+        console.error("An error occurred while getting the subject:", error);
         return [null, "Internal server error."];
     }
-}
+};
 
-export async function getSubject(id) {
-    const subjectRepository = AppDataSource.getRepository(Subject);
-    const subjectFound = await asignaturaRepository.findOne({ where: { id } });
-    if (!subjectFound) return [null, "Asignatura no encontrada"];
-    return subjectFound;
-}
+export async function getSubjectsService() { //* This function gets all the subjects.
+    try {
+        const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 
-export async function getAllSubject() {
-    const subjectRepository = AppDataSource.getRepository(Subject);
-    return await subjectRepository.find();
-}
+        const subjects = await subjectRepository.find(); //? Finding all the subjects.
 
-export async function enrollStudentInSubjectService(studentId, subjectId) {
-    const studentSubjectsRepository = AppDataSource.getRepository(StudentSubjects);
+        if (!subjects || subjects.length === 0) return [null, "Subjects not found."]; //? If the subjects are not found, return null and a message.
 
-    const subjectRepository = AppDataSource.getRepository(Subject);
+        return [subjects, null];
+    } catch (error) {
+        console.error("An error occurred while getting the subjects:", error);
+        return [null, "Internal server error."];
+    }
+};
 
-    const userRepository = AppDataSource.getRepository(User);
+export async function createSubjectService(body) { //* This function creates a subject.
+    try {
+        const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 
-    const student = await userRepository.findOne({ where: { id: studentId, role: "Alumno" } });
+        const newSubject = subjectRepository.create(body); //? Creating a new subject.
 
-    if (!student) throw new Error("The student is not found.");
+        const subjectCreated = await subjectRepository.save(newSubject); //? Saving the new subject.
 
-    const subject = await subjectRepository.findOne({ where: { id: subjectId } });
+        return [subjectCreated, null];
+    } catch (error) {
+        console.error("An error occurred while creating the subject:", error);
+        return [null, "Internal server error."];
+    }
+};
 
-    if (!subject) throw new Error("The subject is not found.");
+export async function updateSubjectService(query, body) { //* This function updates a subject by id and name.
+    try {
+        const { idSubject, nameSubject } = query;
 
-    const enrollment = studentSubjectsRepository.create({ studentId, subjectId });
+        const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 
-    const enrollSaved = await studentSubjectsRepository.save(enrollment);
+        const subjectFound = await subjectRepository.findOne({ //? Finding the subject by id and name.
+            where: [{ id: idSubject }, { name: nameSubject }],
+        });
 
-    return enrollSaved;
-}
+        if (!subjectFound) return [null, "Subject not found."]; //? If the subject is not found, return null and a message.
 
-export async function getSubjectByStudentService(studentId) {
-    const studentSubjectsRepository = AppDataSource.getRepository(StudentSubjects);
+        const subjectUpdated = await subjectRepository.update(subjectFound.id, body); //? Updating the subject.
 
-    const subjects = await studentSubjectsRepository.find({
-        relations: ["subject", "subject.teacher"],
-        where: { studentId }
-    });
+        return [subjectUpdated, null];
+    } catch (error) {
+        console.error("An error occurred while updating the subject:", error);
+        return [null, "Internal server error."];
+    }
+};
 
-    return subjects.map(record => record.subject);
-}
+export async function deleteSubjectService(query) { //* This function deletes a subject by id and name.
+    try {
+        const { idSubject, nameSubject } = query;
 
+        const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 
-function generatedSubjectCode(name, year, level, section){
-    const subjectCode = name.slice(0, 3).toUpperCase();
-    const yearcode = String(year).slice(-2);
-    return `${subjectCode}${yearcode}${level}${section.toUpperCase()}`;
+        const subjectFound = await subjectRepository.findOne({ //? Finding the subject by id and name.
+            where: [{ id: idSubject }, { name: nameSubject }],
+        });
+
+        if (!subjectFound) return [null, "Subject not found."]; //? If the subject is not found, return null and a message.
+
+        const subjectDeleted = await subjectRepository.remove(subjectFound); //? Removing the subject.
+
+        return [subjectDeleted, null]; //? Returning the subject deleted and null.
+    } catch (error) {
+        console.error("An error occurred while deleting the subject:", error);
+        return [null, "Internal server error."];
+    }
 };
