@@ -1,6 +1,6 @@
 "use strict";
 
-import { EntitySchema } from "typeorm";
+import { EntitySchema, JoinColumn } from "typeorm";
 
 const SubjectSchema = new EntitySchema({
     name: "Subject",
@@ -25,20 +25,13 @@ const SubjectSchema = new EntitySchema({
     relations: {
         cursos: { //? This is the course relation of the subject.
             target: "Curso",
-            type: "many-to-many",
-            JoinTable: true,
+            type: "many-to-one",
+            JoinColumn: true,
             inverseSide: "subjects",
             onDelete: "CASCADE",
             nullable: false,
         },
-    },
-    indices: [
-        {
-            name: "IDX_SUBJECT",
-            columns: ["id"],
-            unique: true,
-        },
-    ],
+    }
 });
 
 export default SubjectSchema;
