@@ -41,7 +41,11 @@ export async function createSubjectService(body) { //* This function creates a s
     try {
         const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 
-        const newSubject = subjectRepository.create(body); //? Creating a new subject.
+        const newSubject = subjectRepository.create({
+            name: body.name,
+            description: body.description,
+            curso: {id: body.cursoId}
+        }); //? Creating a new subject.
 
         const subjectCreated = await subjectRepository.save(newSubject); //? Saving the new subject.
 
