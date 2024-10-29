@@ -60,8 +60,16 @@ export const gradeBodyValidation = Joi.object({ //* This is the grade body valid
             "number.positive": "The subject id must be a positive number.",
             "number.integer": "The subject id must be an integer.",
         }),
+    ProfesorId: Joi.number()
+        .integer()
+        .positive()
+        .messages({
+            "number.base": "The teacher id must be a number.",
+            "number.positive": "The teacher id must be a positive number.",
+            "number.integer": "The teacher id must be an integer.",
+    })
 })
-.or("grade", "AlumnoId", "SubjectId")
+.or("grade", "AlumnoId", "SubjectId", "ProfesorId")
 .unknown(false)
 .messages({
     "object.unknown": "The request contains invalid properties.",
