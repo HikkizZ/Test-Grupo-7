@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authenticateJWT } from '../middlewares/authentication.middleware.js';
-import { isAdmin } from '../middlewares/authorization.middleware.js';
+import { isAdmin, verifyRole } from '../middlewares/authorization.middleware.js';
+
 import {
     getAllSchedules,
     getScheduleById,

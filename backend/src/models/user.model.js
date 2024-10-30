@@ -49,15 +49,6 @@ const UserSchema = new EntitySchema({
             nullable: false,
         },
     },
-    relations: {
-        schedules: {
-            target: "Schedule",
-            type: "one-to-many",
-            inverseSide: "teacher", 
-            cascade: true,
-            
-        }
-    },
     indices: [ //? Los índices son una estructura de datos que mejora la velocidad de las operaciones de búsqueda en una tabla de base de datos.
         {
             name: "IDX_USER", 

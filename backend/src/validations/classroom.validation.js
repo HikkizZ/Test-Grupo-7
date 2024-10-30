@@ -1,7 +1,7 @@
 "use strict";
 import Joi from "joi";
 
-// Validación de datos para la creación y actualización de salones de clase
+
 export const classroomValidation = Joi.object({
     name: Joi.string()
         .min(3)
