@@ -68,7 +68,7 @@ export async function updateSubjectService(query, body) { //* This function upda
 
         if (!subjectFound) return [null, "Subject not found."]; //? If the subject is not found, return null and a message.
 
-        const subjectUpdated = await subjectRepository.update(idSubject, body); //? Updating the subject.
+        const subjectUpdated = await subjectRepository.update(subjectFound.id, body); //? Updating the subject.
 
         return [subjectUpdated, null];
     } catch (error) {
@@ -89,7 +89,7 @@ export async function deleteSubjectService(query) { //* This function deletes a 
 
         if (!subjectFound) return [null, "Subject not found."]; //? If the subject is not found, return null and a message.
 
-        const subjectDeleted = await subjectRepository.delete(idSubject); //? Deleting the subject.
+        const subjectDeleted = await subjectRepository.delete(subjectFound.id); //? Deleting the subject.
 
         return [subjectDeleted, null];
     } catch (error) {
