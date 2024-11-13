@@ -16,14 +16,12 @@ const PeriodSchema = new EntitySchema({
             //unique: true,
         },
         startTime: {
-            type: "varchar",
-            length: 5, // Para el formato HH:MM
-            nullable: false,
+            type: "time",
+            nullable: true,
         },
         endTime: {
-            type: "varchar",
-            length: 5, // Para el formato HH:MM
-            nullable: false,
+            type: "time",
+            nullable: true,
         },
     },
 });

@@ -1,7 +1,6 @@
 "use strict";
 import Joi from "joi";
 
-// Validación de datos para la creación y actualización de periodos
 export const periodValidation = Joi.object({
     name: Joi.string()
         .min(3)
@@ -31,14 +30,18 @@ export const periodValidation = Joi.object({
             "string.pattern.base": "The end time must be in HH:MM format.",
         })
     
+}).custom((values, helpers) => {
+    const [startHour, startMinute] = values.startTime.split(":").map(Number);
+    const [endHour, endMinute] = values.endTime.split(":").map(Number);
+    
+    if (
+        endHour < startHour || 
+        (endHour === startHour && endMinute <= startMinute)
+    ) {
+        return helpers.message("The end time must be later than the start time.");
+    }
+    
+    return values;
 }).messages({
     "object.unknown": "The request contains unknown fields."
 });
-
-export async function createPeriod(req, res) {
-    const { error } = periodValidation.validate(req.body);
-    if (error) {
-        return res.status(400).json({ message: error.details[0].message });
-    }
-    // Lógica para crear el periodo después de pasar la validación
-}
