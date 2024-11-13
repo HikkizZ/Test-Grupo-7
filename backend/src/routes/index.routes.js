@@ -1,6 +1,5 @@
 import { Router } from "express";
 
-// Importing routes
 import authRoutes from './auth.routes.js';
 import userRoutes from './user.routes.js';
 
@@ -15,12 +14,9 @@ import Room from './room.routes.js';
 import Resource from './resource.routes.js';
 // import Reservation from './reservation.routes.js';
 
-import actividadRoutes from './actividad.routes.js';
-
 const router = Router(); //? It creates a new instance of the express router.
 
 router
-    .use('/actividad', actividadRoutes)
     .use('/user', userRoutes) //! http://localhost:3000/api/user
     .use('/auth', authRoutes) //! http://localhost:3000/api/auth
     .use('/schedule', scheduleRoutes) //! http://localhost:3000/api/schedule
