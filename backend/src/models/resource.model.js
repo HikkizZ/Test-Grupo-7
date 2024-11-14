@@ -1,4 +1,5 @@
-// models/resource.model.js
+"use strict";
+
 import { EntitySchema } from "typeorm";
 
 const ResourceSchema = new EntitySchema({
