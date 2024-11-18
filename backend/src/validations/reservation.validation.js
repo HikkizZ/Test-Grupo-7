@@ -21,8 +21,14 @@ export const reservationQueryValidation = Joi.object({ //* This is the reservati
             "string.base": "The reservation type must be a string.",
             "string.valid": "The reservation type must be either 'recurso' or 'sala'.",
         }),
+    estado: Joi.string()
+        .valid("pendiente", "aprobada", "rechazada")
+        .messages({
+            "string.base": "The reservation status must be a string.",
+            "string.valid": "The reservation status must be either 'pendiente', 'aprobada' or 'rechazada'.",
+        })
 })
-.or("id", "devuelto", "tipoReserva")
+.or("id", "devuelto", "tipoReserva", "estado")
 .messages({
     "object.unknown": "The query must have at least one field: id, devuelto or tipoReserva.",
     "object.missing": "The query must have at least one field: id, devuelto or tipoReserva.",
@@ -69,6 +75,10 @@ tipoReserva: Joi.string()
     .valid("recurso", "sala")
     .required(),
 
+estado: Joi.string()
+    .valid("pendiente", "aprobada", "rechazada")
+    .default("pendiente"),
+
 recurso_id: Joi.number()
     .integer()
     .when('tipoReserva', {
@@ -90,10 +100,9 @@ devuelto: Joi.boolean()
 
 encargado_id: Joi.number()
 .integer()
-.required(),
-profesor_id: Joi.number()
-.integer()
-.required()
+.when('estado', {
+    is: 'pendiente',
+    then: Joi.allow(null),
+    otherwise: Joi.required()
+})
 });
-
-export default reservationValidationSchema;

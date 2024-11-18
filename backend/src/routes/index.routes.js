@@ -12,7 +12,7 @@ import periodRoutes from './period.routes.js';
 
 import Room from './room.routes.js';
 import Resource from './resource.routes.js';
-// import Reservation from './reservation.routes.js';
+import Reservation from './reservation.routes.js';
 
 const router = Router(); //? It creates a new instance of the express router.
 
@@ -25,7 +25,8 @@ router
     .use('/subject', subjectRoutes) //! http://localhost:3000/api/subject
     .use('/curso', cursoRoutes) //! http://localhost:3000/api/curso
     .use('/room', Room) //! http://localhost:3000/api/room
-    .use('/resource', Resource); //! http://localhost:3000/api/resource
+    .use('/resource', Resource) //! http://localhost:3000/api/resource
+    .use('/reservation', Reservation); //! http://localhost:3000/api/reservation
 
 // Exporting the routers
 export default router;

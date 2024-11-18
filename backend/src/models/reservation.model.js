@@ -28,6 +28,12 @@ const ReservationSchema = new EntitySchema({
             enum: ["recurso", "sala"],
             nullable: false,
         },
+        estado: { //? This is the status of the reservation.
+            type: 'enum', // "enum" is a data type in PostgreSQL - Example: ["pendiente", "aprobada", "rechazada"]
+            enum: ["pendiente", "aprobada", "rechazada"],
+            nullable: false,
+            default: "pendiente",
+        }
     },
     relations: {
         Encargado: { //? This is the resource relation of the reservation.
@@ -38,13 +44,13 @@ const ReservationSchema = new EntitySchema({
                 referencedColumnName: "id", //? This is the primary key of the relation
             },
             onDelete: "CASCADE",
-            nullable: false,
+            nullable: true,
         },
-        Profesor: { //? This is the user relation of the reservation.
+        Reservante: { //? This is the user relation of the reservation.
             target: "User",
             type: "many-to-one",
             joinColumn: {
-                name: "profesor_id", //? This is the foreign key of the relation.
+                name: "reservante_id", //? This is the foreign key of the relation.
                 referencedColumnName: "id", //? This is the primary key of the relation
             },
             onDelete: "CASCADE",
