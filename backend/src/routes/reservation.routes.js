@@ -1,6 +1,6 @@
 // routes/reservation.routes.js
 import { Router } from "express";
-import { createReservationController, getReservationsController, getReservationController, deleteReservationController } from "../controllers/reservation.controller.js";
+import { createReservationController, getReservationsController, getReservationController, updateReservationController, deleteReservationController } from "../controllers/reservation.controller.js";
 import { authenticateJWT } from "../middlewares/authentication.middleware.js";
 import { verifyRole } from "../middlewares/authorization.middleware.js";
 
@@ -15,7 +15,8 @@ router
     // .patch("/deny/:reservationId", verifyRole("Encargado"), denyReservation); // Denegar reserva
     .post("/solicitar", verifyRole(["Profesor", "Alumno"]), createReservationController) // Solicitar reserva
     .get("/all", getReservationsController) // Listar reservas
-    .get("/detail", getReservationController) // Mostrar información de una reserva en particular
-    .delete("/detail", verifyRole("admin"), deleteReservationController); // Eliminar una reserva
+    .get("/get", getReservationController) // Mostrar información de una reserva en particular
+    .patch("/update", verifyRole("Encargado"), updateReservationController) // Actualizar una reserva
+    .delete("/delete", verifyRole("admin"), deleteReservationController); // Eliminar una reserva
     
 export default router;

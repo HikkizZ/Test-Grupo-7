@@ -4,6 +4,7 @@ import {
     createReservationService,
     getReservationsService,
     getReservationService,
+    updateReservationService,
     deleteReservationService
 } from '../services/reservation.service.js';
 
@@ -61,6 +62,26 @@ export async function getReservationController(req, res) {
         if (reservationError) return handleErrorServer(res, 400, reservationError);
 
         handleSuccess(res, 200, "Reservation found", reservation);
+
+    } catch (error) {
+        handleErrorServer(res, 500, "Internal Server Error", error);
+    }
+}
+
+export async function updateReservationController(req, res) {
+    try {
+        const { id } = req.query;
+        const { devuelto, estado } = req.body;
+
+        const { error } = reservationQueryValidation.validate({ id });
+
+        if (error) return handleErrorClient(res, 400, "Validation Error", error.message);
+
+        const [reservation, reservationError] = await updateReservationService({ idReservation: id }, { devuelto, estado });
+
+        if (reservationError) return handleErrorServer(res, 400, reservationError);
+
+        handleSuccess(res, 200, "Reservation updated", reservation);
 
     } catch (error) {
         handleErrorServer(res, 500, "Internal Server Error", error);

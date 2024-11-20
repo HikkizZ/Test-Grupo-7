@@ -134,6 +134,34 @@ export async function getReservationService(query) {
     }
 }
 
+export async function updateReservationService(query, body) {
+    try {
+        const { idReservation } = query;
+
+        const reservationRepository = AppDataSource.getRepository(Reservation);
+
+        const reservationFound = await reservationRepository.findOne({ where: { id: idReservation } });
+
+        if (!reservationFound) return [null, "Reservation not found."];
+
+        const { devuelto, estado } = body;
+
+        if (devuelto !== undefined) {
+            reservationFound.devuelto = devuelto;
+        }
+
+        if (estado !== undefined) {
+            reservationFound.estado = estado;
+        }
+
+        await reservationRepository.save(reservationFound);
+
+        return [reservationFound, null];
+    } catch (error) {
+        return [null, "Internal Server Error", error.message];
+    }
+}
+
 export async function deleteReservationService(query) {
     try {
         const { idReservation } = query;
