@@ -37,19 +37,6 @@ const ScheduleSchema = new EntitySchema({
         },
     },
     relations: {
-        teacher: {
-            target: "User",  
-            type: "many-to-one",  
-            joinColumn: { name: "teacherId" },  
-            inverseSide: "schedules",
-            onDelete: "CASCADE", 
-        },
-        students: {
-            target: "User",
-            type: "many-to-many",  
-            joinTable: { name: "schedule_students" },  
-            inverseSide: "schedules"
-        },
         period: {
             target: "Period",
             type: "many-to-one",
