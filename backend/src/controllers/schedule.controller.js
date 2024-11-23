@@ -34,6 +34,13 @@ export async function getScheduleById(req, res) {
 
 export async function createSchedule(req, res) {
     try {
+        const { teacherId } = req.body;
+
+        // Validar que el teacherId sea de un usuario con rol de profesor
+        const teacher = await AppDataSource.getRepository(User).findOne({ where: { id: teacherId, role: 'profesor' } });
+        if (!teacher) {
+            return handleErrorClient(res, 400, 'La ID proporcionada no corresponde a un usuario con el rol de profesor.');
+        }
         const newSchedule = await createScheduleService(req.body);
         handleSuccess(res, 201, "Horario creado exitosamente", newSchedule);
     } catch (error) {
