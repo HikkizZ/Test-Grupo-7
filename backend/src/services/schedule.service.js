@@ -6,7 +6,12 @@ import { AppDataSource } from '../config/configDB.js';
 export async function createSchedule(scheduleData) {
     const { cursoId, teacherId, classroomId, subjectId, period, dayOfWeek } = scheduleData;
 
-    
+    // Valida que la id sea de un usuario con rol de profesor
+    const teacher = await AppDataSource.getRepository(User).findOne({ where: { id: teacherId, role: 'profesor' } });
+    if (!teacher) {
+        throw new Error('La ID no es de un usuario con rol de profesor.');
+    }
+    //Verifica que el profesor no tenga tope con otros horarios
     const teacherConflict = await Schedule.findOne({
         where: { teacherId, period, dayOfWeek }
     });
@@ -48,6 +53,12 @@ export async function updateSchedule(id, data) {
     if (!schedule) return null;
 
     const { cursoId, teacherId, classroomId, subjectId, period, dayOfWeek } = data;
+
+    // Validar que la id sea de un usuario con rol profesor
+    const teacher = await AppDataSource.getRepository(User).findOne({ where: { id: teacherId, role: 'profesor' } });
+    if (!teacher) {
+        throw new Error('El ID dado no es de un usuario con rol profesor.');
+    }
 
     const teacherConflict = await Schedule.findOne({
         where: { teacherId, period, dayOfWeek, id: Not(id) }
