@@ -2,11 +2,14 @@
 import Period from '../models/period.model.js';
 import { AppDataSource } from '../config/configDB.js';
 
+
+//solicita ver todos los periodos creados
 export async function getAllPeriods() {
     const periodRepository = AppDataSource.getRepository(Period); 
     return await periodRepository.find();
 }
 
+//solicita ver un periodo con la id
 export async function getPeriodById(id) {
     const periodRepository = AppDataSource.getRepository(Period);
     return await periodRepository.findOne({ where: { id } });
@@ -50,11 +53,6 @@ export async function updatePeriod(id, data) {
     const periodRepository = AppDataSource.getRepository(Period);
     const period = await periodRepository.findOne({ where: { id } });
     if (!period) return null;
-
-    // Nueva validación: asegurar que `endTime` sea posterior a `startTime`
-    if (startTime && endTime && startTime >= endTime) {
-        throw new Error("El tiempo de finalización debe ser posterior al tiempo de inicio.");
-    }
 
     // Nueva verificación: evitar duplicación de `startTime` y `endTime` en diferentes periodos
     const existingPeriodWithSameTimes = await periodRepository.findOne({
