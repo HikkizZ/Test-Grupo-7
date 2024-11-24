@@ -32,16 +32,44 @@ const ScheduleSchema = new EntitySchema({
         },
         dayOfWeek: {
             type: "enum",
-            enum: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            enum: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"],
             nullable: false,
         },
     },
     relations: {
-        period: {
+        period: {//Relación con period
             target: "Period",
             type: "many-to-one",
-            joinColumn: true,
+            joinColumn: { name: "periodId" },
             nullable: false
+        },
+        curso: { // Relación con Curso
+            target: "Curso",  
+            type: "many-to-one",
+            joinColumn: { name: "cursoId" },
+            nullable: false,
+            onDelete: "CASCADE", 
+        },
+        room: { // Relación con Sala
+            target: "Room",
+            type: "many-to-one",
+            joinColumn: { name: "classroomId" },
+            nullable: false,
+            onDelete: "CASCADE",
+        },
+        subject: { // Relación con Asignatura
+            target: "Subject",
+            type: "many-to-one",
+            joinColumn: { name: "subjectId" },
+            nullable: false,
+            onDelete: "CASCADE",
+        },
+        teacher: { // Relación con Profesor
+            target: "User",  
+            type: "many-to-one",  
+            joinColumn: { name: "teacherId" },
+            inverseSide: "schedules",
+            onDelete: "CASCADE", 
         }
     }
 });
