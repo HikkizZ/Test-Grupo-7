@@ -31,6 +31,13 @@ const SubjectSchema = new EntitySchema({
             onDelete: "CASCADE",
             nullable: false,
         },
+        schedules: { // Relación con Schedule
+            target: "Schedule", 
+            type: "one-to-many", 
+            inverseSide: "subject", 
+            onDelete: "CASCADE", 
+        },
+        
     }
 });
 
