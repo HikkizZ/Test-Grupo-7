@@ -20,6 +20,14 @@ const RoomSchema = new EntitySchema({
             type: "boolean",
             default: true,
         }
+    },
+    relations:{
+        schedules: { // Relación con Schedule
+            target: "Schedule", 
+            type: "one-to-many", 
+            inverseSide: "subject", 
+            onDelete: "CASCADE", 
+        },
     }
 });
 
