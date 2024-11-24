@@ -44,6 +44,12 @@ const CursoSchema = new EntitySchema({
             nullable: false,
             cascade: true,
         },
+        schedules: { // Relación con Schedule
+            target: "Schedule", 
+            type: "one-to-many", 
+            inverseSide: "curso", 
+            onDelete: "CASCADE", 
+        },
     }
 });
 
