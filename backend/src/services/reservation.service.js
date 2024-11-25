@@ -3,6 +3,7 @@
 import Reservation from '../models/reservation.model.js';
 import { AppDataSource } from '../config/configDB.js';
 import { parse } from 'date-fns';
+import { formatToLocalTime } from '../utils/formatDate.js'
 
 export async function createReservationService(req, res) {
     try {
@@ -19,7 +20,7 @@ export async function createReservationService(req, res) {
 
         // console.log("REQ.BODY EN SERVICE", req.body);
 
-        const { fechaDesde, fechaHasta, tipoReserva, reservante_id, recurso_id, sala_id } = req.body;
+        const { fechaDesde, fechaHasta, tipoReserva, recurso_id, sala_id } = req.body;
 
         const fecha_Desde = parse(fechaDesde, "dd/MM/yyyy HH:mm", new Date());
         const fecha_Hasta = parse(fechaHasta, "dd/MM/yyyy HH:mm", new Date());
@@ -32,21 +33,52 @@ export async function createReservationService(req, res) {
                 {
                     tipoReserva: "recurso",
                     Recurso: { id: recurso_id },
-                    fechaDesde: fecha_Desde,
-                    fechaHasta: fecha_Hasta,
+                    // fechaDesde: fecha_Desde,
+                    // fechaHasta: fecha_Hasta,
                 },
                 {
                     tipoReserva: "sala",
                     Sala: { id: sala_id },
-                    fechaDesde: fecha_Desde,
-                    fechaHasta: fecha_Hasta,
+                    // fechaDesde: fecha_Desde,
+                    // fechaHasta: fecha_Hasta,
                 }
             ],
+            relations: ["Recurso", "Sala", "Reservante"],
         });
 
         // console.log("EXISTING RESERVATION", existingReservation);
+        // console.log("RESERVANTE", existingReservation);
+        // const reservante_id = existingReservation?.Reservante?.id;
+        // console.log("LOGGED USER ID", loggedUserId);
+        // if (existingReservation && existingReservation.estado === "pendiente" && reservante_id === loggedUserId) { 
+        //     console.log("Ya hiciste la reserva, espera a que sea aprobada o rechazada.");
+        //     return res.status(400).json({ message: "La Reserva ya existe." });
 
-        if (existingReservation) { return res.status(400).json({ message: "La Reserva ya existe." }); }
+        // }else if (existingReservation && existingReservation.estado === "aprobada" && reservante_id === loggedUserId) { 
+        //     console.log("Ya hiciste la reserva, y está aprobada.");
+        //     return res.status(400).json({ message: "La Reserva ya existe." });
+
+        // } else if(existingReservation && existingReservation.estado === "pendiente" && existingReservation.fechaDesde !== fecha_Desde && existingReservation.fechaHasta !== fecha_Hasta) {
+        //     console.log("[ES PERMITIDO] Ya hay una reserva pendiente para este recurso pero con diferente fecha.");
+        
+        // }else if (existingReservation && existingReservation.estado === "pendiente" && reservante_id !== loggedUserId) {
+        //     console.log("[ES PERMITIDO] Ya hay una reserva pendiente para este recurso");
+
+        // } else if (existingReservation && existingReservation.estado === "aprobada" && existingReservation.devuelto === false) {
+        //     console.log("Ya hay una reserva aprobada para este recurso o sala y no se ha devuelto.");
+        //     return res.status(400).json({ message: "La Reserva ya existe." });
+
+        // } else if (existingReservation && existingReservation.estado === "aprobada" && existingReservation.devuelto === true) {
+        //     console.log("[ES PERMITIDO] Habia una reserva pero se devolvió el recurso o sala.");
+
+        // } else if (existingReservation && existingReservation.estado === "rechazada") {
+        //     console.log("[ES PERMITIDO] Se puede reservar pq la reserva anterior fue rechazada.");
+
+        // } else {
+        //     console.log("[ES PERMITIDO] Se puede reservar");
+        // }
+        //------------------------------------------------------------------------------------------------
+        // if (existingReservation) { return res.status(400).json({ message: "La Reserva ya existe." }); }
 
         const newReservation = reservationRepository.create({
             fechaDesde: fecha_Desde,
@@ -60,6 +92,10 @@ export async function createReservationService(req, res) {
         });
 
         await reservationRepository.save(newReservation);
+
+        // Aplica el formato directamente a las propiedades
+        newReservation.fechaDesde = formatToLocalTime(newReservation.fechaDesde);
+        newReservation.fechaHasta = formatToLocalTime(newReservation.fechaHasta);
 
         return [newReservation, null];
     } catch (error) {
@@ -77,6 +113,12 @@ export async function getReservationsService(req, res) {
         });
 
         if (!reservations || reservations.length === 0) return [null, "No reservations found."];
+
+        // Aplica el formato directamente a las propiedades de cada reserva
+        reservations.forEach((reservation) => {
+            reservation.fechaDesde = formatToLocalTime(reservation.fechaDesde);
+            reservation.fechaHasta = formatToLocalTime(reservation.fechaHasta);
+        });
 
         // Mapea para mostrar sólo los nombres de las relaciones
         const formattedReservations = reservations.map(reservation => ({
@@ -113,6 +155,12 @@ export async function getReservationService(query) {
         if (!reservationsFound || reservationsFound.length === 0) {
             return [null, "Reservation not found."];
         }
+
+        // Aplica el formato directamente a las propiedades de cada reserva encontrada
+        reservationsFound.forEach((reservation) => {
+            reservation.fechaDesde = formatToLocalTime(reservation.fechaDesde);
+            reservation.fechaHasta = formatToLocalTime(reservation.fechaHasta);
+        });
 
         // Mapea para formatear cada reserva
         const formattedReservations = reservationsFound.map((reservation) => ({
