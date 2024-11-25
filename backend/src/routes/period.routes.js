@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { authenticateJWT } from '../middlewares/authentication.middleware.js';
-import { isAdmin, verifyRole } from '../middlewares/authorization.middleware.js';
-
-import { getAllPeriods, 
+import {  verifyRole } from '../middlewares/authorization.middleware.js';
+import { 
+        getAllPeriods, 
         getPeriodById, 
         createPeriod, 
         updatePeriod, 
@@ -10,7 +10,8 @@ import { getAllPeriods,
 from '../controllers/period.controller.js';
 
 const router = Router();
-
+router
+        .use(authenticateJWT);
 router
         .get('/', getAllPeriods)
         .get('/:id', getPeriodById)           
