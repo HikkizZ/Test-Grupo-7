@@ -17,7 +17,7 @@ export async function getCursoService(query) { //* This function gets a course b
 
         return [cursoFound, null];
     } catch (error) {
-        console.error("AOcurró un error al encontrar el curso:", error);
+        console.error("Ocurró un error al encontrar el curso:", error);
         return [null, "Error interno del servidor."];
     }
 };
@@ -26,7 +26,9 @@ export async function getCursosService() { //* This function gets all the course
     try {
         const cursoRepository = AppDataSource.getRepository(Curso); //? Getting the course repository.
 
-        const cursos = await cursoRepository.find(); //? Finding all the courses.
+        const cursos = await cursoRepository.find({
+            relations: ["subjects"],
+        }); //? Finding all the courses.
 
         if (!cursos || cursos.length === 0) return [null, "Cursos no encontrados."]; //? If the courses are not found, return null and a message.
 
