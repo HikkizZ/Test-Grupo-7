@@ -75,7 +75,7 @@ export async function createReservationService(req) {
     }
 }
 
-export async function getReservationsService(req, res) {
+export async function getReservationsService() {
     try {
         const reservationRepository = AppDataSource.getRepository(Reservation);
 
