@@ -26,7 +26,9 @@ export async function getSubjectsService() { //* This function gets all the subj
     try {
         const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 
-        const subjects = await subjectRepository.find(); //? Finding all the subjects.
+        const subjects = await subjectRepository.find({
+            relations: ["curso", "teacher"],
+        }); //? Finding all the subjects.
 
         if (!subjects || subjects.length === 0) return [null, "Subjects not found."]; //? If the subjects are not found, return null and a message.
 
