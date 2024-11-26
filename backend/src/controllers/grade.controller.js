@@ -21,7 +21,7 @@ import {
 
 export async function createGrade(req, res) { //* This function creates a grade.
     try {
-        const { grade, AlumnoId, SubjectId, ProfesorId, period } = req.body;
+        const { grade, AlumnoId, SubjectId, ProfesorId, period } = req.body; //? Getting the body parameters: grade, AlumnoId, SubjectId, ProfesorId.
 
         const { error } = gradeBodyValidation.validate({ grade, AlumnoId, SubjectId, ProfesorId }); //? Validating the body parameters.
 
@@ -39,7 +39,7 @@ export async function createGrade(req, res) { //* This function creates a grade.
 
 export async function getGrade(req, res) { //* This function gets a grade by id.
     try {
-        const { id } = req.query;
+        const { id } = req.query; //? Getting the query parameters: id.
 
         const { error } = gradeQueryValidation.validate({ id }); //? Validating the query parameters.
 
@@ -57,7 +57,7 @@ export async function getGrade(req, res) { //* This function gets a grade by id.
 
 export async function getGrades(req, res) { //* This function gets all the grades.
     try {
-        const filters = req.query || {};
+        const filters = req.query || {}; //? Getting the query parameters. The filters are optional.
 
         const [grades, errorGrades] = await getGradesService(filters); //? Getting the grades.
 
@@ -71,8 +71,8 @@ export async function getGrades(req, res) { //* This function gets all the grade
 
 export async function updateGrade(req, res) { //* This function updates a grade by id.
     try {
-        const { id } = req.query;
-        const data = req.body;
+        const { id } = req.query; //? Getting the query parameters: id.
+        const data = req.body; //? Getting the body parameters.
 
         const { error } = gradeQueryValidation.validate({ id }); //? Validating the query parameters.
 
@@ -90,7 +90,7 @@ export async function updateGrade(req, res) { //* This function updates a grade 
 
 export async function deleteGrade(req, res) { //* This function deletes a grade by id.
     try {
-        const { id } = req.query;
+        const { id } = req.query; //? Getting the query parameters: id.
 
         const { error } = gradeQueryValidation.validate({ id }); //? Validating the query parameters.
 

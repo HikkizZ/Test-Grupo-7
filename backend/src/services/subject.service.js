@@ -5,7 +5,7 @@ import { AppDataSource } from "../config/configDB.js";
 
 export async function getSubjectService(query) { //* This function gets a subject by id and name.
     try {
-        const { idSubject, nameSubject } = query;
+        const { idSubject, nameSubject } = query; //? Getting the id and name of the subject.
 
         const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 
@@ -26,9 +26,9 @@ export async function getSubjectsService() { //* This function gets all the subj
     try {
         const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 
-        const subjects = await subjectRepository.find({
-            relations: ["curso", "teacher"],
-        }); //? Finding all the subjects.
+        const subjects = await subjectRepository.find({ //? Finding all the subjects.
+            relations: ["curso", "teacher"], //? Getting the course and teacher of the subjects.
+        });
 
         if (!subjects || subjects.length === 0) return [null, "Subjects not found."]; //? If the subjects are not found, return null and a message.
 
@@ -43,11 +43,11 @@ export async function createSubjectService(body) { //* This function creates a s
     try {
         const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 
-        const newSubject = subjectRepository.create({
+        const newSubject = subjectRepository.create({ //? Creating a new subject.
             name: body.name,
             description: body.description,
             curso: {id: body.cursoId}
-        }); //? Creating a new subject.
+        });
 
         const subjectCreated = await subjectRepository.save(newSubject); //? Saving the new subject.
 
@@ -60,7 +60,7 @@ export async function createSubjectService(body) { //* This function creates a s
 
 export async function updateSubjectService(query, body) { //* This function updates a subject by id and name.
     try {
-        const { idSubject, nameSubject } = query;
+        const { idSubject, nameSubject } = query; //? Getting the id and name of the subject.
         
         const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 
@@ -81,7 +81,7 @@ export async function updateSubjectService(query, body) { //* This function upda
 
 export async function deleteSubjectService(query) { //* This function deletes a subject by id and name.
     try {
-        const { idSubject, nameSubject } = query;
+        const { idSubject, nameSubject } = query; //? Getting the id and name of the subject.
 
         const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 

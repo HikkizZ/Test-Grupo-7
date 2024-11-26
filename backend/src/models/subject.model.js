@@ -6,12 +6,12 @@ const SubjectSchema = new EntitySchema({
     name: "Subject",
     tableName: "subjects",
     columns: {
-        id: { //? This is the primary key of the table.
+        id: { //? TPrimary key of the table.
             type: 'int',
             primary: true,
             generated: true,
         },
-        name: { //? This is the name of the subject.
+        name: { //? Name of the subject. For example: 'Mathematics', 'History', 'Physics'
             type: 'varchar',
             length: 255,
             nullable: false,
@@ -23,7 +23,7 @@ const SubjectSchema = new EntitySchema({
         },
     },
     relations: {
-        curso: { //? This is the course relation of the subject.
+        curso: { //? Relation with the Curso entity. A subject belongs to a course.
             target: "Curso",
             type: "many-to-one",
             joinColumn: true,
@@ -31,12 +31,12 @@ const SubjectSchema = new EntitySchema({
             onDelete: "CASCADE",
             nullable: false,
         },
-        teacher: {
+        teacher: { //? Relation with the User entity. A subject is taught by a teacher.
             target: "User",
             type: "many-to-one",
             joinColumn: true,
         },
-        grades: { //? This is the grade relation of the subject.
+        grades: { //? Relation with the Grade entity. A subject has many grades.
             target: "Grade",
             type: "one-to-many",
             inverseSide: "subject",
