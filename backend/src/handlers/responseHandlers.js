@@ -32,10 +32,3 @@ export function handleErrorServer(res, statusCode, message) {
     message,
   });
 }
-export function handleErrorService(res, statusCode, message, error) {
-  return res.status(statusCode).json({
-    status: "Server error",
-    message,
-    error // Puedes incluir el error original si lo deseas
-  });
-}
