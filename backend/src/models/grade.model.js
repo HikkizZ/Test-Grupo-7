@@ -15,6 +15,7 @@ const GradeSchema = new EntitySchema({
             type: 'decimal',
             precision: 4,
             nullable: false,
+            scale: 1,
         },
         // weight: { //? This is the weight of the grade.
         //     type: 'decimal',
@@ -38,22 +39,22 @@ const GradeSchema = new EntitySchema({
         },
     },
     relations: { //? Las relaciones son una forma de conectar dos tablas de base de datos.
-        Alumno: { //? This is the student relation of the grade.
+        alumno: { //? This is the student relation of the grade.
             target: "User",
             type: "many-to-one",
             joinColumn: true,
             onDelete: "CASCADE",
             nullable: false,
         },
-        Profesor: { //? This is the teacher relation of the grade.
-            target: "User",
+        subject: { //? This is the subject relation of the grade.
+            target: "Subject",
             type: "many-to-one",
             joinColumn: true,
-            onDelete: "SET NULL",
+            onDelete: "CASCADE",
             nullable: false,
         },
-        Subject: { //? This is the subject relation of the grade.
-            target: "Subject",
+        profesor: { //? This is the teacher relation of the grade.
+            target: "User",
             type: "many-to-one",
             joinColumn: true,
             onDelete: "CASCADE",
