@@ -40,11 +40,21 @@ const CursoSchema = new EntitySchema({
         subjects: { //? This is the subject relation of the course.
             target: "Subject",
             type: "one-to-many",
-            mappedBy: "cursos", //? This is the inverse side of the relation. mappedBy is used to specify the inverse side of the relation.
-            nullable: false,
-            cascade: true,
+            inverseSide: "curso", //? This is the inverse side of the relation. mappedBy is used to specify the inverse side of the relation.
         },
-    }
+    },
+    indices: [ //? Los índices son una forma de optimizar las consultas en una base de datos.
+        {
+            name: "IDX_ID_CURSO",
+            unique: true,
+            columns: ["id"]
+        },
+        {
+            name: "IDX_CURSO_CODE",
+            unique: true,
+            columns: ["code"]
+        }
+    ]
 });
 
 export default CursoSchema;

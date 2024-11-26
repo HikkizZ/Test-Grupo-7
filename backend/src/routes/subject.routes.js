@@ -15,10 +15,10 @@ router
     .use(authenticateJWT);
 
 router
-    .get('/', getSubject)
-    .get('/all', getSubjects)
-    .post('/', verifyRole('admin'), createSubject)
-    .patch('/', verifyRole('admin'), updateSubject)
-    .delete('/', verifyRole('admin'), deleteSubject);
+    .get('/', verifyRole(['admin', 'profesor', 'alumno']),getSubject)
+    .get('/all', verifyRole(['admin', 'profesor', 'alumno']), getSubjects)
+    .post('/', verifyRole(['admin', 'profesor']), createSubject)
+    .patch('/', verifyRole(['admin', 'profesor']), updateSubject)
+    .delete('/', verifyRole(['admin', 'profesor']), deleteSubject);
 
 export default router;

@@ -57,7 +57,9 @@ export async function getGrade(req, res) { //* This function gets a grade by id.
 
 export async function getGrades(req, res) { //* This function gets all the grades.
     try {
-        const [grades, errorGrades] = await getGradesService(); //? Getting the grades.
+        const filters = req.query || {};
+
+        const [grades, errorGrades] = await getGradesService(filters); //? Getting the grades.
 
         if (errorGrades) return handleErrorClient(res, 400, errorGrades); //? If an error occurred while getting the grades, return a 400 error.
 
@@ -94,11 +96,12 @@ export async function deleteGrade(req, res) { //* This function deletes a grade 
 
         if (error) return handleErrorClient(res, 400, error.message); //? If the query parameters are invalid, return a 400 error.
 
-        const [gradeDeleted, errorGrade] = await deleteGradeService({ idGrade: id }); //? Deleting the grade.
+        const [gradeDeleted, errorGrade] = await deleteGradeService({idGrade: id}); //? Deleting the grade.
 
         if (errorGrade) return handleErrorClient(res, 400, errorGrade); //? If an error occurred while deleting the grade, return a 400 error.
 
         handleSuccess(res, 200, "Grade deleted", gradeDeleted); //? If the grade is deleted, return the grade.
+
     } catch (error) {
         handleErrorServer(res, 500, "Internal server error", error.message); //? If an error occurred, return a 500 error.
     }
