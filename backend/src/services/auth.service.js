@@ -4,6 +4,7 @@ import User from "../models/user.model.js";
 import { AppDataSource } from "../config/configDB.js";
 import { comparePassword, encryptPassword } from "../helpers/bcrypt.helper.js";
 import { ACCESS_TOKEN_SECRET } from "../config/configEnv.js";
+import { formatToLocalTime } from '../utils/formatDate.js'
 
 export async function loginService(user){
     try {
@@ -62,6 +63,9 @@ export async function registerService(user){
         await userRepository.save(newUser); //? Saving the new user.
 
         const { password, ...userData } = newUser; //? Destructuring the user object.
+
+        userData.createAt = formatToLocalTime(userData.createAt); //? Formatting the createdAt date.
+        userData.updateAt = formatToLocalTime(userData.updateAt); //? Formatting the updatedAt date.
 
         return [userData, null]; //? Returning the user data and null.
     } catch (error) {
