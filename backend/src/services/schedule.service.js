@@ -1,94 +1,115 @@
 "use strict";
-import Schedule from '../models/schedule.model.js';
-import { AppDataSource } from '../config/configDB.js';
 
+import Schedule from "../models/schedule.model.js"; // Importa el modelo de Schedule.
+import { AppDataSource } from "../config/configDB.js"; // Importa la configuración de la base de datos.
 
-export async function createSchedule(scheduleData) {
-    const { cursoId, teacherId, classroomId, subjectId, period, dayOfWeek } = scheduleData;
+//* Servicio para obtener un horario por id o nombre.
+export async function getScheduleService(query) {
+    try {
+        const { idSchedule, nameSchedule } = query;
 
-    // Valida que la id sea de un usuario con rol de profesor
-    const teacher = await AppDataSource.getRepository(User).findOne({ where: { id: teacherId, role: 'profesor' } });
-    if (!teacher) {
-        throw new Error('La ID no es de un usuario con rol de profesor.');
+        const scheduleRepository = AppDataSource.getRepository(Schedule); //* Obtiene el repositorio de la entidad Schedule.
+
+        const scheduleFound = await scheduleRepository.findOne({
+            where: [{ id: idSchedule }, { name: nameSchedule }], //* Busca el horario por id o nombre.
+        });
+
+        if (!scheduleFound) return [null, "Horario no encontrado."]; //* Si no se encuentra, devuelve un mensaje de error.
+
+        return [scheduleFound, null]; //* Devuelve el horario encontrado.
+    } catch (error) {
+        console.error("Ocurrió un error al obtener el horario:", error);
+        return [null, "Error interno del servidor."]; //* Devuelve un mensaje de error.
     }
-    //Verifica que el profesor no tenga tope con otros horarios
-    const teacherConflict = await Schedule.findOne({
-        where: { teacherId, period, dayOfWeek }
-    });
-    if (teacherConflict) {
-        throw new Error('El docente ya tiene una clase asignada en este periodo.');
-    }
-
-    const classroomConflict = await Schedule.findOne({
-        where: { classroomId, period, dayOfWeek }
-    });
-    if (classroomConflict) {
-        throw new Error('El aula ya está asignada a otro curso en este periodo.');
-    }
-
-
-    const newSchedule = Schedule.create({
-        cursoId,
-        teacherId,
-        classroomId,
-        subjectId,
-        period,
-        dayOfWeek,
-    });
-
-    await newSchedule.save();
-    return newSchedule;
 }
 
-export async function getAllSchedules() {
-    return await Schedule.find();
+//* Servicio para obtener todos los horarios.
+export async function getSchedulesService() {
+    try {
+        const scheduleRepository = AppDataSource.getRepository(Schedule); //* Obtiene el repositorio de la entidad Schedule.
+
+        const schedules = await scheduleRepository.find(); //* Recupera todos los horarios de la base de datos.
+
+        if (!schedules || schedules.length === 0) return [null, "No se encontraron horarios."]; //* Si no hay horarios, devuelve un mensaje.
+
+        return [schedules, null]; //* Devuelve la lista de horarios.
+    } catch (error) {
+        console.error("Ocurrió un error al obtener los horarios:", error);
+        return [null, "Error interno del servidor."]; //* Devuelve un mensaje de error.
+    }
 }
 
-export async function getScheduleById(id) {
-    return await Schedule.findOne({ where: { id } });
+//* Servicio para crear un nuevo horario.
+export async function createScheduleService(body) {
+    try {
+        const scheduleRepository = AppDataSource.getRepository(Schedule); //* Obtiene el repositorio de la entidad Schedule.
+
+        const existingSchedule = await scheduleRepository.findOne({
+            where: { name: body.name }, //* Verifica si ya existe un horario con el mismo nombre.
+        });
+
+        if (existingSchedule) return [null, "El horario ya existe."]; //* Si ya existe, devuelve un mensaje de error.
+
+        const newSchedule = scheduleRepository.create({
+            name: body.name, //* Nombre del horario.
+            startTime: body.startTime, //* Hora de inicio.
+            endTime: body.endTime, //* Hora de fin.
+            days: body.days, //* Días del horario.
+            room: { id: body.roomId }, //* Relación con el aula.
+        });
+
+        const scheduleCreated = await scheduleRepository.save(newSchedule); //* Guarda el nuevo horario en la base de datos.
+
+        return [scheduleCreated, null]; //* Devuelve el horario creado.
+    } catch (error) {
+        console.error("Ocurrió un error al crear el horario:", error);
+        return [null, "Error interno del servidor."]; //* Devuelve un mensaje de error.
+    }
 }
 
-export async function updateSchedule(id, data) {
-    const schedule = await Schedule.findOne({ where: { id } });
-    if (!schedule) return null;
+//* Servicio para actualizar un horario existente.
+export async function updateScheduleService(query, body) {
+    try {
+        const { idSchedule, nameSchedule } = query;
 
-    const { cursoId, teacherId, classroomId, subjectId, period, dayOfWeek } = data;
+        const scheduleRepository = AppDataSource.getRepository(Schedule); //* Obtiene el repositorio de la entidad Schedule.
 
-    // Validar que la id sea de un usuario con rol profesor
-    const teacher = await AppDataSource.getRepository(User).findOne({ where: { id: teacherId, role: 'profesor' } });
-    if (!teacher) {
-        throw new Error('El ID dado no es de un usuario con rol profesor.');
+        const scheduleFound = await scheduleRepository.findOne({
+            where: [{ id: idSchedule }, { name: nameSchedule }], //* Busca el horario por id o nombre.
+        });
+
+        if (!scheduleFound) return [null, "Horario no encontrado."]; //* Si no se encuentra, devuelve un mensaje de error.
+
+        const updatedSchedule = await scheduleRepository.save({
+            ...scheduleFound, //* Mezcla los datos existentes del horario encontrado.
+            ...body, //* Actualiza con los nuevos datos enviados en el cuerpo.
+        });
+
+        return [updatedSchedule, null]; //* Devuelve el horario actualizado.
+    } catch (error) {
+        console.error("Ocurrió un error al actualizar el horario:", error);
+        return [null, "Error interno del servidor."]; //* Devuelve un mensaje de error.
     }
-
-    const teacherConflict = await Schedule.findOne({
-        where: { teacherId, period, dayOfWeek, id: Not(id) }
-    });
-    if (teacherConflict) {
-        throw new Error('El docente ya tiene una clase asignada en este periodo.');
-    }
-
-    const classroomConflict = await Schedule.findOne({
-        where: { classroomId, period, dayOfWeek, id: Not(id) }
-    });
-    if (classroomConflict) {
-        throw new Error('El aula ya está asignada a otro curso en este periodo.');
-    }
-
-    schedule.cursoId = cursoId || schedule.cursoId;
-    schedule.teacherId = teacherId || schedule.teacherId;
-    schedule.classroomId = classroomId || schedule.classroomId;
-    schedule.subjectId = subjectId || schedule.subjectId;
-    schedule.period = period || schedule.period;
-    schedule.dayOfWeek = dayOfWeek || schedule.dayOfWeek;
-
-    await schedule.save();
-    return schedule;
 }
 
-export async function deleteSchedule(id) {
-    const schedule = await Schedule.findOne({ where: { id } });
-    if (!schedule) return null;
+//* Servicio para eliminar un horario existente.
+export async function deleteScheduleService(query) {
+    try {
+        const { idSchedule, nameSchedule } = query;
 
-    await schedule.remove();
-    return schedule;
+        const scheduleRepository = AppDataSource.getRepository(Schedule); //* Obtiene el repositorio de la entidad Schedule.
+
+        const scheduleFound = await scheduleRepository.findOne({
+            where: [{ id: idSchedule }, { name: nameSchedule }], //* Busca el horario por id o nombre.
+        });
+
+        if (!scheduleFound) return [null, "Horario no encontrado."]; //* Si no se encuentra, devuelve un mensaje de error.
+
+        const scheduleDeleted = await scheduleRepository.remove(scheduleFound); //* Elimina el horario encontrado.
+
+        return [scheduleDeleted, null]; //* Devuelve el horario eliminado.
+    } catch (error) {
+        console.error("Ocurrió un error al eliminar el horario:", error);
+        return [null, "Error interno del servidor."]; //* Devuelve un mensaje de error.
+    }
 }
