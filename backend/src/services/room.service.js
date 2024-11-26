@@ -3,14 +3,18 @@
 import Room from "../models/room.model.js";
 import { AppDataSource } from "../config/configDB.js";
 
-export async function createRoomService(req, res) {
+export async function createRoomService(req) {
     try {
         const roomRepository = AppDataSource.getRepository(Room);
 
+        // Verificar si ya existe una sala con el mismo nombre
         const existingRoom = await roomRepository.findOne({ where: { name: req.body.name } });
 
-        if (existingRoom) { return res.status(400).json({ message: "Room already exists." }); }
+        if (existingRoom) {
+            return [null, "La sala ya existe."];
+        }
 
+        // Crear una nueva sala
         const newRoom = roomRepository.create({
             name: req.body.name,
             available: true,
@@ -20,41 +24,47 @@ export async function createRoomService(req, res) {
 
         return [newRoom, null];
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return [null, "Internal Server Error", error.message];
     }
-};
+}
 
-export async function getRoomsService(req, res) {
+export async function getRoomsService() {
     try {
         const roomRepository = AppDataSource.getRepository(Room);
 
+        // Obtener todas las salas
         const rooms = await roomRepository.find();
 
-        if (!rooms || rooms.length === 0) return [null, "No rooms found."];
+        if (!rooms || rooms.length === 0) {
+            return [null, "No se encontraron salas."];
+        }
 
         return [rooms, null];
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return [null, "Internal Server Error", error.message];
     }
-};
+}
 
 export async function getRoomService(query) {
     try {
-        const {idRoom, nameRoom} = query;
+        const { idRoom, nameRoom } = query;
 
         const roomRepository = AppDataSource.getRepository(Room);
 
+        // Buscar una sala por ID o nombre
         const roomFound = await roomRepository.findOne({ 
-            where: [{ id: idRoom }, { name: nameRoom }]
-         });
+            where: [{ id: idRoom }, { name: nameRoom }],
+        });
 
-        if (!roomFound) return [null, "Room not found."];
+        if (!roomFound) {
+            return [null, "Sala no encontrada."];
+        }
 
         return [roomFound, null];
     } catch (error) {
         return [null, "Internal Server Error", error.message];
     }
-};
+}
 
 export async function updateRoomService(query, body) {
     try {
@@ -64,7 +74,7 @@ export async function updateRoomService(query, body) {
 
         const roomFound = await roomRepository.findOne({ where: [{ id: idRoom }, { name: nameRoom }] });
 
-        if (!roomFound) return [null, "Room not found."];
+        if (!roomFound) return [null, "Sala no encontrada."];
 
         const updatedRoom = await roomRepository.update(roomFound.id, body);
 
@@ -82,7 +92,7 @@ export async function deleteRoomService(query) {
 
         const roomFound = await roomRepository.findOne({ where: [{ id: idRoom }, { name: nameRoom }] });
 
-        if (!roomFound) return [null, "Room not found."];
+        if (!roomFound) return [null, "Sala no encontrada."];
 
         await roomRepository.remove(roomFound);
 
