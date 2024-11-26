@@ -1,6 +1,6 @@
-export function formatToLocalTime(date) {
-    return new Date(date).toLocaleString('es-CL', {
-        timeZone: 'America/Santiago',
+export function formatToLocalTime(date) {                 //? This function formats the date to local time. (Chile)
+    return new Date(date).toLocaleString('es-CL', {   
+        timeZone: 'America/Santiago',         
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
