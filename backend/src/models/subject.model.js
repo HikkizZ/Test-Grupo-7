@@ -26,10 +26,20 @@ const SubjectSchema = new EntitySchema({
         curso: { //? This is the course relation of the subject.
             target: "Curso",
             type: "many-to-one",
-            JoinColumn: true,
+            joinColumn: true,
             inverseSide: "subjects",
             onDelete: "CASCADE",
             nullable: false,
+        },
+        teacher: {
+            target: "User",
+            type: "many-to-one",
+            joinColumn: true,
+        },
+        grades: { //? This is the grade relation of the subject.
+            target: "Grade",
+            type: "one-to-many",
+            inverseSide: "subject",
         },
     }
 });
