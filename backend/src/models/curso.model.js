@@ -6,44 +6,44 @@ const CursoSchema = new EntitySchema({
     name : "Curso",
     tableName: "cursos",
     columns: {
-        id: { //? This is the primary key of the table.
+        id: { //? Primary key of the table.
             type: 'int',
             primary: true,
             generated: true,
         },
-        name: { //? This is the name of the course.
+        name: { //? Name of the course. For example: 'Primero Medio A' or 'Cuarto Medio Gabriel Mistral'
             type: 'varchar',
             length: 255,
             nullable: false,
         },
-        code: { //? This is the code of the course. It is unique. // For example: 1A-24
+        code: { //? Code of the course. It is unique and auto-generated. For example: 1A-24
             type: 'varchar',
             length: 10,
             nullable: false,
             unique: true,
         },
-        level: { //? This is the level of the course. 
+        level: { //? Level of the course. For example: 1, 2, 3, 4. (Primero Medio, Segundo Medio, Tercero Medio, Cuarto Medio)
             type: 'int',
             nullable: false,
         },
-        year: { //? This is the year of the course.
+        year: { //? Year of the course. For example: 2024, 2025
             type: 'int',
             nullable: false,
         },
-        section: { //? This is the section of the course
+        section: { //? Section of the course. For example: A, B, C, D
             type: 'varchar',
             length: 1,
             nullable: false,
         }
     },
     relations: {
-        subjects: { //? This is the subject relation of the course.
+        subjects: { //? Relation with the Subject entity. A course has many subjects.
             target: "Subject",
             type: "one-to-many",
-            inverseSide: "curso", //? This is the inverse side of the relation. mappedBy is used to specify the inverse side of the relation.
+            inverseSide: "curso", //? This is the name of the property that the Subject entity has to relate to the Course entity.
         },
     },
-    indices: [ //? Los índices son una forma de optimizar las consultas en una base de datos.
+    indices: [ //? Indexes of the table to optimize the search.
         {
             name: "IDX_ID_CURSO",
             unique: true,

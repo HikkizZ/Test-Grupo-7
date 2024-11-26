@@ -21,7 +21,7 @@ import {
 
 export async function createCurso(req, res) { //* This function creates a course.
     try {
-        const { name, level, year, section } = req.body;
+        const { name, level, year, section } = req.body; //? Getting the body parameters: name, level, year, section.
 
         const { error } = cursoBodyValidation.validate({ name, level, year, section }); //? Validating the body parameters.
 
@@ -39,7 +39,7 @@ export async function createCurso(req, res) { //* This function creates a course
 
 export async function getCurso(req, res) { //* This function gets a course by id, code, and name.
     try {
-        const { id, code, name } = req.query;
+        const { id, code, name } = req.query; //? Getting the query parameters: id, code, name.
 
         const { error } = cursoQueryValidation.validate({ id, code, name }); //? Validating the query parameters.
 
@@ -69,8 +69,8 @@ export async function getCursos(req, res) { //* This function gets all the cours
 
 export async function updateCurso(req, res) { //* This function updates a course by id, code, and name.
     try {
-        const { id, code, name } = req.query;
-        const { name: newName, level, year, section } = req.body;
+        const { id, code, name } = req.query; //? Getting the query parameters: id, code, name.
+        const { name: newName, level, year, section } = req.body; //? Getting the body parameters: name, level, year, section.
 
         const { error } = cursoQueryValidation.validate({ id, code, name }); //? Validating the query parameters.
 
@@ -92,7 +92,7 @@ export async function updateCurso(req, res) { //* This function updates a course
 
 export async function deleteCurso(req, res) { //* This function deletes a course by id, code, and name.
     try {
-        const { id, code, name } = req.query;
+        const { id, code, name } = req.query; //? Getting the query parameters: id, code, name.
 
         const { error } = cursoQueryValidation.validate({ id, code, name }); //? Validating the query parameters.
 
