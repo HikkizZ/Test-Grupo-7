@@ -5,104 +5,75 @@ import { AppDataSource } from '../config/configDB.js';
 import { parse } from 'date-fns';
 import { formatToLocalTime } from '../utils/formatDate.js'
 
-export async function createReservationService(req, res) {
+export async function createReservationService(req) {
     try {
         const reservationRepository = AppDataSource.getRepository(Reservation);
 
-        // console.log("REQ.USER EN SERVICE", req.user);
-
-        // Extrae la información del usuario autenticado desde req.user
-        const loggedUserId = req.user?.id; // Extrae el ID del usuario autenticado
-
+        const loggedUserId = req.user?.id;
         if (!loggedUserId) {
-            return res.status(401).json({ message: "Usuario no autenticado." });
+            return [null, "Usuario no autenticado."];
         }
-
-        // console.log("REQ.BODY EN SERVICE", req.body);
 
         const { fechaDesde, fechaHasta, tipoReserva, recurso_id, sala_id } = req.body;
 
         const fecha_Desde = parse(fechaDesde, "dd/MM/yyyy HH:mm", new Date());
         const fecha_Hasta = parse(fechaHasta, "dd/MM/yyyy HH:mm", new Date());
 
-        // console.log("FECHA DESDE", fecha_Desde);
-        // console.log("FECHA HASTA", fecha_Hasta);
-
+        // Buscar reservas existentes con condiciones similares
         const existingReservation = await reservationRepository.findOne({
-            where: [
-                {
-                    tipoReserva: "recurso",
-                    Recurso: { id: recurso_id },
-                    // fechaDesde: fecha_Desde,
-                    // fechaHasta: fecha_Hasta,
-                },
-                {
-                    tipoReserva: "sala",
-                    Sala: { id: sala_id },
-                    // fechaDesde: fecha_Desde,
-                    // fechaHasta: fecha_Hasta,
-                }
-            ],
-            relations: ["Recurso", "Sala", "Reservante"],
+            where: {
+                tipoReserva: tipoReserva,
+                ...(tipoReserva === "recurso" && { Recurso: { id: recurso_id } }),
+                ...(tipoReserva === "sala" && { Sala: { id: sala_id } }),
+                fechaDesde: fecha_Desde,
+                fechaHasta: fecha_Hasta,
+            },
+            relations: ["Reservante", "Recurso", "Sala"],
         });
 
-        // console.log("EXISTING RESERVATION", existingReservation);
-        // console.log("RESERVANTE", existingReservation);
-        // const reservante_id = existingReservation?.Reservante?.id;
-        // console.log("LOGGED USER ID", loggedUserId);
-        // if (existingReservation && existingReservation.estado === "pendiente" && reservante_id === loggedUserId) { 
-        //     console.log("Ya hiciste la reserva, espera a que sea aprobada o rechazada.");
-        //     return res.status(400).json({ message: "La Reserva ya existe." });
+        if (existingReservation) {
+            const reservanteId = existingReservation.Reservante?.id;
 
-        // }else if (existingReservation && existingReservation.estado === "aprobada" && reservante_id === loggedUserId) { 
-        //     console.log("Ya hiciste la reserva, y está aprobada.");
-        //     return res.status(400).json({ message: "La Reserva ya existe." });
+            // Bloquear si el mismo usuario tiene una reserva pendiente
+            if (existingReservation.estado === "pendiente" && reservanteId === loggedUserId) {
+                return [null, "Ya tienes una reserva pendiente para este recurso o sala en las mismas fechas."];
+            }
 
-        // } else if(existingReservation && existingReservation.estado === "pendiente" && existingReservation.fechaDesde !== fecha_Desde && existingReservation.fechaHasta !== fecha_Hasta) {
-        //     console.log("[ES PERMITIDO] Ya hay una reserva pendiente para este recurso pero con diferente fecha.");
-        
-        // }else if (existingReservation && existingReservation.estado === "pendiente" && reservante_id !== loggedUserId) {
-        //     console.log("[ES PERMITIDO] Ya hay una reserva pendiente para este recurso");
+            // Bloquear si el mismo usuario tiene una reserva aprobada
+            if (existingReservation.estado === "aprobada" && reservanteId === loggedUserId) {
+                return [null, "Ya tienes una reserva aprobada para este recurso o sala en las mismas fechas."];
+            }
 
-        // } else if (existingReservation && existingReservation.estado === "aprobada" && existingReservation.devuelto === false) {
-        //     console.log("Ya hay una reserva aprobada para este recurso o sala y no se ha devuelto.");
-        //     return res.status(400).json({ message: "La Reserva ya existe." });
+            // Bloquear si otro usuario intenta reservar un recurso o sala ya aprobado
+            if (existingReservation.estado === "aprobada" && reservanteId !== loggedUserId) {
+                return [null, "No puedes reservar este recurso o sala porque ya está aprobado para otro usuario en las mismas fechas."];
+            }
+        }
 
-        // } else if (existingReservation && existingReservation.estado === "aprobada" && existingReservation.devuelto === true) {
-        //     console.log("[ES PERMITIDO] Habia una reserva pero se devolvió el recurso o sala.");
-
-        // } else if (existingReservation && existingReservation.estado === "rechazada") {
-        //     console.log("[ES PERMITIDO] Se puede reservar pq la reserva anterior fue rechazada.");
-
-        // } else {
-        //     console.log("[ES PERMITIDO] Se puede reservar");
-        // }
-        //------------------------------------------------------------------------------------------------
-        // if (existingReservation) { return res.status(400).json({ message: "La Reserva ya existe." }); }
-
+        // Crear la nueva reserva
         const newReservation = reservationRepository.create({
             fechaDesde: fecha_Desde,
             fechaHasta: fecha_Hasta,
             devuelto: false,
             estado: "pendiente",
-            tipoReserva: tipoReserva,
-            Reservante: { id: loggedUserId }, // Usa el ID del usuario logeado
+            tipoReserva,
+            Reservante: { id: loggedUserId },
             ...(tipoReserva === "recurso" && { Recurso: { id: recurso_id } }),
             ...(tipoReserva === "sala" && { Sala: { id: sala_id } }),
         });
 
         await reservationRepository.save(newReservation);
 
-        // Aplica el formato directamente a las propiedades
+        // Formatear fechas antes de devolverlas al cliente
         newReservation.fechaDesde = formatToLocalTime(newReservation.fechaDesde);
         newReservation.fechaHasta = formatToLocalTime(newReservation.fechaHasta);
 
         return [newReservation, null];
     } catch (error) {
-        // console.log("ERROR", error);
-        res.status(500).json({ message: error.message });
+        console.error("Error al crear reserva:", error);
+        return [null, "Error interno del servidor."];
     }
-};
+}
 
 export async function getReservationsService(req, res) {
     try {
@@ -188,9 +159,15 @@ export async function updateReservationService(query, body) {
 
         const reservationRepository = AppDataSource.getRepository(Reservation);
 
-        const reservationFound = await reservationRepository.findOne({ where: { id: idReservation } });
+        // Buscar la reserva específica por ID
+        const reservationFound = await reservationRepository.findOne({
+            where: { id: idReservation },
+            relations: ["Recurso", "Sala", "Reservante"], // Relaciones necesarias
+        });
 
-        if (!reservationFound) return [null, "Reservation not found."];
+        if (!reservationFound) {
+            return [null, "Reserva no encontrada."];
+        }
 
         const { devuelto, estado } = body;
 
@@ -200,13 +177,47 @@ export async function updateReservationService(query, body) {
 
         if (estado !== undefined) {
             reservationFound.estado = estado;
+
+            // Si el estado se establece como "rechazada", automáticamente establecer devuelto = true
+            if (estado === "rechazada") {
+                reservationFound.devuelto = true;
+            }
+
+            // Si se aprueba, rechazar automáticamente otras reservas conflictivas
+            if (estado === "aprobada") {
+                await reservationRepository
+                    .createQueryBuilder()
+                    .update(Reservation)
+                    .set({ estado: "rechazada", devuelto: true })
+                    .where("id != :id", { id: reservationFound.id }) // Excluir la reserva actual
+                    .andWhere("tipoReserva = :tipoReserva", { tipoReserva: reservationFound.tipoReserva })
+                    .andWhere("fechaDesde = :fechaDesde", { fechaDesde: reservationFound.fechaDesde })
+                    .andWhere("fechaHasta = :fechaHasta", { fechaHasta: reservationFound.fechaHasta })
+                    .andWhere("estado = :estado", { estado: "pendiente" }) // Solo reservas pendientes
+                    .execute();
+            }
         }
 
+        // Guardar la reserva actualizada
         await reservationRepository.save(reservationFound);
 
-        return [reservationFound, null];
+        // Formatear la respuesta
+        const formattedResponse = {
+            id: reservationFound.id,
+            fechaDesde: reservationFound.fechaDesde,
+            fechaHasta: reservationFound.fechaHasta,
+            devuelto: reservationFound.devuelto,
+            tipoReserva: reservationFound.tipoReserva,
+            estado: reservationFound.estado,
+            Reservante: reservationFound.Reservante ? { nombre: reservationFound.Reservante.name } : null,
+            Recurso: reservationFound.Recurso ? { nombre: reservationFound.Recurso.name } : null,
+            Sala: reservationFound.Sala ? { nombre: reservationFound.Sala.name } : null,
+        };
+
+        return [formattedResponse, null];
     } catch (error) {
-        return [null, "Internal Server Error", error.message];
+        console.error("Error al actualizar la reserva:", error);
+        return [null, "Error interno del servidor."];
     }
 }
 
