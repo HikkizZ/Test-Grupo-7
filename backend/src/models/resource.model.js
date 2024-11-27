@@ -17,10 +17,6 @@ const ResourceSchema = new EntitySchema({
             nullable: false,
             unique: true,
         },
-        available: {
-            type: "boolean",
-            default: true,
-        }
     }
 });
 

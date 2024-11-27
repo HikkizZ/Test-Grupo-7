@@ -12,7 +12,6 @@ export async function createResourceService(req) {
 
         const newResource = resourceRepository.create({
             name: req.body.name,
-            available: true,
         });
 
         await resourceRepository.save(newResource);
