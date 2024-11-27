@@ -44,11 +44,39 @@ export async function createScheduleService(body) {
     try {
         const scheduleRepository = AppDataSource.getRepository(Schedule); //* Obtiene el repositorio de la entidad Schedule.
 
+        const teacher = await userRepository.findOne({
+            where: { id: body.teacherId, role: "profesor" }, //* Buscar por ID y rol
+        });
 
+        if (!teacher) {
+            return [null, "El usuario especificado no tiene el rol de profesor."]; //* Error si no es un profesor
+        }
         const existingSchedule = await scheduleRepository.findOne({
             where: { id :body.id }, //* Verifica si ya existe un horario 
         });
         if (existingSchedule) return [null, "El horario ya existe."]; //* Si ya existe, devuelve un mensaje de error.
+
+        const existingCurso = await scheduleRepository.findOne({
+            where: { id :body.cursoId }, //* Verifica si existe un curso
+        });
+        if (!existingCurso) return [null, "El curso no existe."]; //* Si no existe, devuelve un mensaje de error.
+
+        const existingRoom = await scheduleRepository.findOne({
+            where: { id :body.classroomId }, //* Verifica si existe una sala
+        });
+        if (!existingRoom) return [null, "La sala no existe."]; //* Si no existe, devuelve un mensaje de error.
+
+        const existingSubject = await scheduleRepository.findOne({
+            where: { id :body.subjectId }, //* Verifica si existe la asignatura
+        });
+        if (!existingSubject) return [null, "La asignatura no existe."]; //* Si no existe, devuelve un mensaje de error.
+
+        const existingPeriod = await scheduleRepository.findOne({
+            where: { id :body.period }, //* Verifica si existe el periodo
+        });
+        if (!existingPeriod) return [null, "El periodo no existe."]; //* Si no existe, devuelve un mensaje de error.
+
+        
 
         const newSchedule = scheduleRepository.create({
             curso: { id: body.cursoId }, //* Relación con el curso
