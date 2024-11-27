@@ -13,8 +13,11 @@ import periodRoutes from './period.routes.js';
 import Room from './room.routes.js';
 import Resource from './resource.routes.js';
 import Reservation from './reservation.routes.js';
+// Importando rutas
+import actividadRoutes from './actividad.routes.js';
+import foroRoutes from './foro.routes.js'; // Importando las rutas de foro (anuncios)
 
-const router = Router(); //? It creates a new instance of the express router.
+const router = Router(); //? Crea una nueva instancia del enrutador de express.
 
 router
     .use('/user', userRoutes) //! http://localhost:3000/api/user
@@ -26,7 +29,9 @@ router
     .use('/curso', cursoRoutes) //! http://localhost:3000/api/curso
     .use('/room', Room) //! http://localhost:3000/api/room
     .use('/resource', Resource) //! http://localhost:3000/api/resource
-    .use('/reservation', Reservation); //! http://localhost:3000/api/reservation
+    .use('/reservation', Reservation) //! http://localhost:3000/api/reservation
+    .use('/actividades', actividadRoutes) // Usamos /actividades directamente
+    .use('/posts', foroRoutes); // Añadimos la ruta para los anuncios (foro)
 
-// Exporting the routers
+// Exportando los enrutadores
 export default router;
