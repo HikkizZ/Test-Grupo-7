@@ -6,17 +6,18 @@ const GradeSchema = new EntitySchema({
     name: "Grade",
     tableName: "grades",
     columns: {
-        id: { //? This is the primary key of the table.
+        id: { //? Primary key of the table.
             type: 'int',
             primary: true,
             generated: true,
         },
-        grade: { //? This is the grade of the grade.
+        grade: { //? Grade of the student. For example: 6.5, 7.0, 5.5
             type: 'decimal',
             precision: 4,
             nullable: false,
+            scale: 1,
         },
-        // weight: { //? This is the weight of the grade.
+        // weight: { //? Weight of the grade. For example: 60% -> 0.6, 40% -> 0.4
         //     type: 'decimal',
         //     precision: 3,
         //     nullable: false,
@@ -37,23 +38,23 @@ const GradeSchema = new EntitySchema({
             nullable: false,
         },
     },
-    relations: { //? Las relaciones son una forma de conectar dos tablas de base de datos.
-        Alumno: { //? This is the student relation of the grade.
+    relations: {
+        alumno: { //? Relation with the User entity. A grade belongs to a student.
             target: "User",
             type: "many-to-one",
             joinColumn: true,
             onDelete: "CASCADE",
             nullable: false,
         },
-        Profesor: { //? This is the teacher relation of the grade.
-            target: "User",
+        subject: { //? Relation with the Subject entity. A grade belongs to a subject.
+            target: "Subject",
             type: "many-to-one",
             joinColumn: true,
-            onDelete: "SET NULL",
+            onDelete: "CASCADE",
             nullable: false,
         },
-        Subject: { //? This is the subject relation of the grade.
-            target: "Subject",
+        profesor: { //? Relation with the User entity. A grade is created by a teacher.
+            target: "User",
             type: "many-to-one",
             joinColumn: true,
             onDelete: "CASCADE",

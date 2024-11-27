@@ -21,7 +21,7 @@ import {
 
 export async function createSubject(req, res) { //* This function creates a subject.
     try {
-        const { name, description, cursoId } = req.body;
+        const { name, description, cursoId } = req.body; //? Getting the body parameters: name, description, cursoId.
 
         const { error } = subjectBodyValidation.validate({ name, description, cursoId }); //? Validating the body parameters.
 
@@ -39,7 +39,7 @@ export async function createSubject(req, res) { //* This function creates a subj
 
 export async function getSubject(req, res) { //* This function gets a subject by id and name.
     try {
-        const { id, name } = req.query;
+        const { id, name } = req.query; //? Getting the query parameters: id, name.
 
         const { error } = subjectQueryValidation.validate({ id, name }); //? Validating the query parameters.
 
@@ -69,9 +69,9 @@ export async function getSubjects(req, res) { //* This function gets all the sub
 
 export async function updateSubject(req, res) { //* This function updates a subject by id and name.
     try {
-        const { id, name } = req.query;
+        const { id, name } = req.query; //? Getting the query parameters: id, name.
 
-        const { body } = req;
+        const { body } = req; //? Getting the body parameters.
 
         const { error: queryError } = subjectQueryValidation.validate({ id, name }); //? Validating the query parameters.
 
@@ -92,8 +92,7 @@ export async function updateSubject(req, res) { //* This function updates a subj
 
 export async function deleteSubject(req, res) { //* This function deletes a subject by id and name.
     try {
-        const { id, name } = req.query;
-        console.log(id, name);
+        const { id, name } = req.query; //? Getting the query parameters: id, name.
 
         const { error } = subjectQueryValidation.validate({ id, name }); //? Validating the query parameters.
 

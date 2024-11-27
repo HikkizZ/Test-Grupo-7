@@ -5,7 +5,7 @@ const UserSchema = new EntitySchema({
     name: "User",
     tableName: "usersauth",
     columns: {
-        id: { //? This is the primary key of the table.
+        id: { //? Primary key of the table.
             type: 'int',
             primary: true,
             generated: true,
@@ -26,7 +26,7 @@ const UserSchema = new EntitySchema({
             length: 255,
             nullable: false,
         },
-        role: { //? This is the role of the user.
+        role: { //? This is the role of the user. It can be 'admin', 'profesor', 'alumno', 'encargado', 'administrativo', etc.
             type: 'varchar',
             length: 50,
             nullable: false,
@@ -49,7 +49,7 @@ const UserSchema = new EntitySchema({
             nullable: false,
         },
     },
-    indices: [ //? Los índices son una estructura de datos que mejora la velocidad de las operaciones de búsqueda en una tabla de base de datos.
+    indices: [ //? Indexes of the table to optimize the search.
         {
             name: "IDX_USER", 
             columns: ["id"], // Utilizamos el índice IDX_USER para buscar por el id del usuario.

@@ -16,10 +16,10 @@ router
     .use(authenticateJWT);
 
 router
-    .get('/', getGrade)
-    .get('/all', getGrades)
-    .post('/', verifyRole('admin'), createGrade)
-    .put('/', verifyRole('admin'), updateGrade)
-    .delete('/', verifyRole('admin'), deleteGrade);
+    .get('/', verifyRole(['admin', 'profesor', 'estudiante']),getGrade)
+    .get('/all', verifyRole(['admin', 'profesor', 'estudiante']),getGrades)
+    .post('/', verifyRole(['admin', 'profesor']), createGrade)
+    .put('/', verifyRole(['admin', 'profesor']), updateGrade)
+    .delete('/', verifyRole(['admin', 'profesor']), deleteGrade);
     
 export default router;

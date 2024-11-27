@@ -17,7 +17,7 @@ export async function getCursoService(query) { //* This function gets a course b
 
         return [cursoFound, null];
     } catch (error) {
-        console.error("AOcurró un error al encontrar el curso:", error);
+        console.error("Ocurró un error al encontrar el curso:", error);
         return [null, "Error interno del servidor."];
     }
 };
@@ -26,7 +26,9 @@ export async function getCursosService() { //* This function gets all the course
     try {
         const cursoRepository = AppDataSource.getRepository(Curso); //? Getting the course repository.
 
-        const cursos = await cursoRepository.find(); //? Finding all the courses.
+        const cursos = await cursoRepository.find({ 
+            relations: ["subjects"], //? Getting the subjects of the courses.
+        }); //? Finding all the courses.
 
         if (!cursos || cursos.length === 0) return [null, "Cursos no encontrados."]; //? If the courses are not found, return null and a message.
 
@@ -43,7 +45,7 @@ export async function createCursoService(body) { //* This function creates a cou
 
         const cursoExist = await cursoRepository.findOne({
             where: { name: body.name },
-        });
+        }); //? Finding the course by name.
 
         if (cursoExist) return [null, "El curso ya existe."];
 
@@ -52,8 +54,8 @@ export async function createCursoService(body) { //* This function creates a cou
             level: body.level,
             year: body.year,
             section: body.section,
-            code: generatedSubjectCode(body.year, body.level, body.section),
-        })
+            code: generatedSubjectCode(body.year, body.level, body.section), //? Generating the course code.
+        }); 
 
         const cursoCreated = await cursoRepository.save(newCurso); //? Saving the new course.
 
@@ -115,7 +117,7 @@ export async function deleteCursoService(query) { //* This function deletes a co
     }
 };
 
-function generatedSubjectCode(year, level, section){
-    const yearcode = String(year).slice(-2);
-    return `${level}${section.toUpperCase()}${'-'}${yearcode}`;
+function generatedSubjectCode(year, level, section){ //* This function generates the course code.
+    const yearcode = String(year).slice(-2); //? Getting the last two digits of the year.
+    return `${level}${section.toUpperCase()}${'-'}${yearcode}`; //? Returning the course code. For example: 1A-24
 };

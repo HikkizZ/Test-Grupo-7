@@ -21,7 +21,7 @@ import {
 
 export async function createGrade(req, res) { //* This function creates a grade.
     try {
-        const { grade, AlumnoId, SubjectId, ProfesorId, period } = req.body;
+        const { grade, AlumnoId, SubjectId, ProfesorId, period } = req.body; //? Getting the body parameters: grade, AlumnoId, SubjectId, ProfesorId.
 
         const { error } = gradeBodyValidation.validate({ grade, AlumnoId, SubjectId, ProfesorId }); //? Validating the body parameters.
 
@@ -39,7 +39,7 @@ export async function createGrade(req, res) { //* This function creates a grade.
 
 export async function getGrade(req, res) { //* This function gets a grade by id.
     try {
-        const { id } = req.query;
+        const { id } = req.query; //? Getting the query parameters: id.
 
         const { error } = gradeQueryValidation.validate({ id }); //? Validating the query parameters.
 
@@ -57,7 +57,9 @@ export async function getGrade(req, res) { //* This function gets a grade by id.
 
 export async function getGrades(req, res) { //* This function gets all the grades.
     try {
-        const [grades, errorGrades] = await getGradesService(); //? Getting the grades.
+        const filters = req.query || {}; //? Getting the query parameters. The filters are optional.
+
+        const [grades, errorGrades] = await getGradesService(filters); //? Getting the grades.
 
         if (errorGrades) return handleErrorClient(res, 400, errorGrades); //? If an error occurred while getting the grades, return a 400 error.
 
@@ -69,8 +71,8 @@ export async function getGrades(req, res) { //* This function gets all the grade
 
 export async function updateGrade(req, res) { //* This function updates a grade by id.
     try {
-        const { id } = req.query;
-        const data = req.body;
+        const { id } = req.query; //? Getting the query parameters: id.
+        const data = req.body; //? Getting the body parameters.
 
         const { error } = gradeQueryValidation.validate({ id }); //? Validating the query parameters.
 
@@ -88,17 +90,18 @@ export async function updateGrade(req, res) { //* This function updates a grade 
 
 export async function deleteGrade(req, res) { //* This function deletes a grade by id.
     try {
-        const { id } = req.query;
+        const { id } = req.query; //? Getting the query parameters: id.
 
         const { error } = gradeQueryValidation.validate({ id }); //? Validating the query parameters.
 
         if (error) return handleErrorClient(res, 400, error.message); //? If the query parameters are invalid, return a 400 error.
 
-        const [gradeDeleted, errorGrade] = await deleteGradeService({ idGrade: id }); //? Deleting the grade.
+        const [gradeDeleted, errorGrade] = await deleteGradeService({idGrade: id}); //? Deleting the grade.
 
         if (errorGrade) return handleErrorClient(res, 400, errorGrade); //? If an error occurred while deleting the grade, return a 400 error.
 
         handleSuccess(res, 200, "Grade deleted", gradeDeleted); //? If the grade is deleted, return the grade.
+
     } catch (error) {
         handleErrorServer(res, 500, "Internal server error", error.message); //? If an error occurred, return a 500 error.
     }
