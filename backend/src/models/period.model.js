@@ -23,7 +23,14 @@ const PeriodSchema = new EntitySchema({
             type: "time",
             nullable: true,
         },
-    },
+    },relations:{
+        schedules: { // Relación con Schedule
+            target: "Schedule", 
+            type: "one-to-many", 
+            inverseSide: "period", 
+            onDelete: "CASCADE", 
+        },
+    }
 });
 
 export default PeriodSchema;

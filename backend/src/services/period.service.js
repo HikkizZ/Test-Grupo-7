@@ -1,80 +1,113 @@
 "use strict";
-import Period from '../models/period.model.js';
-import { AppDataSource } from '../config/configDB.js';
 
-export async function getAllPeriods() {
-    const periodRepository = AppDataSource.getRepository(Period); 
-    return await periodRepository.find();
+import Period from "../models/period.model.js";
+import { AppDataSource } from "../config/configDB.js";
+
+//* Servicio para obtener un período por id o nombre.
+export async function getPeriodService(query) {
+    try {
+        const { idPeriod, namePeriod } = query;
+
+        const periodRepository = AppDataSource.getRepository(Period); //* Obtiene el repositorio de la entidad Period.
+
+        const periodFound = await periodRepository.findOne({
+            where: [{ id: idPeriod }, { name: namePeriod }], //* Busca el período por id o nombre.
+        });
+
+        if (!periodFound) return [null, "Período no encontrado."]; //* Si no se encuentra, devuelve un mensaje de error.
+
+        return [periodFound, null]; //* Devuelve el período encontrado y ningún error.
+    } catch (error) {
+        console.error("Ocurrió un error al obtener el período:", error);
+        return [null, "Error interno del servidor."]; //* Devuelve un mensaje de error en caso de fallo.
+    }
 }
 
-export async function getPeriodById(id) {
-    const periodRepository = AppDataSource.getRepository(Period);
-    return await periodRepository.findOne({ where: { id } });
+//* Servicio para obtener todos los períodos.
+export async function getPeriodsService() {
+    try {
+        const periodRepository = AppDataSource.getRepository(Period); //* Obtiene el repositorio de la entidad Period.
+
+        const periods = await periodRepository.find(); //* Recupera todos los períodos de la base de datos.
+
+        if (!periods || periods.length === 0) return [null, "No se encontraron períodos."]; //* Si no hay períodos, devuelve un mensaje.
+
+        return [periods, null]; //* Devuelve la lista de períodos y ningún error.
+    } catch (error) {
+        console.error("Ocurrió un error al obtener los períodos:", error);
+        return [null, "Error interno del servidor."]; //* Devuelve un mensaje de error en caso de fallo.
+    }
 }
 
-export async function createPeriod(data) {
-    const { name, startTime, endTime } = data;
+//* Servicio para crear un nuevo período.
+export async function createPeriodService(body) {
+    try {
+        const periodRepository = AppDataSource.getRepository(Period); //* Obtiene el repositorio de la entidad Period.
 
-    const periodRepository = AppDataSource.getRepository(Period);
+        const existingPeriod = await periodRepository.findOne({
+            where: { name: body.name }, //* Busca si ya existe un período con el mismo nombre.
+        });
 
-    // Nueva validación: asegurar que `endTime` sea posterior a `startTime`
-    if (startTime >= endTime) {
-        throw new Error("El tiempo de finalización debe ser posterior al tiempo de inicio.");
+        if (existingPeriod) return [null, "El período ya existe."]; //* Si ya existe, devuelve un mensaje de error.
+
+        const newPeriod = periodRepository.create({
+            name: body.name, //* Nombre del período.
+            startTime: body.startTime, //* Hora de inicio.
+            endTime: body.endTime, //* Hora de fin.
+        });
+
+        const periodCreated = await periodRepository.save(newPeriod); //* Guarda el nuevo período en la base de datos.
+
+        return [periodCreated, null]; //* Devuelve el período creado y ningún error.
+    } catch (error) {
+        console.error("Ocurrió un error al crear el período:", error);
+        return [null, "Error interno del servidor."]; //* Devuelve un mensaje de error en caso de fallo.
     }
-
-    // Nueva verificación: evitar duplicación de `startTime` y `endTime` en diferentes periodos
-    const existingPeriodWithSameTimes = await periodRepository.findOne({
-        where: { startTime, endTime }
-    });
-    if (existingPeriodWithSameTimes) {
-        throw new Error("Ya existe un periodo con el mismo tiempo de inicio y finalización.");
-    }
-
-    // Verificación existente: evitar duplicación de nombres de periodos
-    const existingPeriod = await periodRepository.findOne({ where: { name } });
-    if (existingPeriod) {
-        throw new Error("El nombre del periodo ya existe.");
-    }
-
-    const newPeriod = periodRepository.create({
-        name,
-        startTime,
-        endTime
-    });
-
-    return await periodRepository.save(newPeriod);
 }
 
-export async function updatePeriod(id, data) {
-    const { name, startTime, endTime } = data;
-    const periodRepository = AppDataSource.getRepository(Period);
-    const period = await periodRepository.findOne({ where: { id } });
-    if (!period) return null;
+//* Servicio para actualizar un período existente.
+export async function updatePeriodService(query, body) {
+    try {
+        const { idPeriod, namePeriod } = query;
 
-    // Nueva validación: asegurar que `endTime` sea posterior a `startTime`
-    if (startTime && endTime && startTime >= endTime) {
-        throw new Error("El tiempo de finalización debe ser posterior al tiempo de inicio.");
+        const periodRepository = AppDataSource.getRepository(Period); //* Obtiene el repositorio de la entidad Period.
+
+        const periodFound = await periodRepository.findOne({
+            where: [{ id: idPeriod }, { name: namePeriod }], //* Busca el período por id o nombre.
+        });
+
+        if (!periodFound) return [null, "Período no encontrado."]; //* Si no se encuentra, devuelve un mensaje de error.
+
+        const updatedPeriod = await periodRepository.save({
+            ...periodFound, //* Mezcla los datos existentes del período encontrado.
+            ...body, //* Actualiza con los nuevos datos enviados en el cuerpo.
+        });
+
+        return [updatedPeriod, null]; //* Devuelve el período actualizado y ningún error.
+    } catch (error) {
+        console.error("Ocurrió un error al actualizar el período:", error);
+        return [null, "Error interno del servidor."]; //* Devuelve un mensaje de error en caso de fallo.
     }
-
-    // Nueva verificación: evitar duplicación de `startTime` y `endTime` en diferentes periodos
-    const existingPeriodWithSameTimes = await periodRepository.findOne({
-        where: { startTime, endTime }
-    });
-    if (existingPeriodWithSameTimes && existingPeriodWithSameTimes.id !== id) {
-        throw new Error("Ya existe un periodo con el mismo tiempo de inicio y finalización.");
-    }
-
-    period.name = name || period.name;
-    period.startTime = startTime || period.startTime;
-    period.endTime = endTime || period.endTime;
-
-    return await periodRepository.save(period);
 }
 
-export async function deletePeriod(id) {
-    const periodRepository = AppDataSource.getRepository(Period);
-    const period = await periodRepository.findOne({ where: { id } });
-    if (!period) return null;
+//* Servicio para eliminar un período existente.
+export async function deletePeriodService(query) {
+    try {
+        const { idPeriod, namePeriod } = query;
 
-    return await periodRepository.remove(period);
+        const periodRepository = AppDataSource.getRepository(Period); //* Obtiene el repositorio de la entidad Period.
+
+        const periodFound = await periodRepository.findOne({
+            where: [{ id: idPeriod }, { name: namePeriod }], //* Busca el período por id o nombre.
+        });
+
+        if (!periodFound) return [null, "Período no encontrado."]; //* Si no se encuentra, devuelve un mensaje de error.
+
+        const periodDeleted = await periodRepository.remove(periodFound); //* Elimina el período encontrado.
+
+        return [periodDeleted, null]; //* Devuelve el período eliminado y ningún error.
+    } catch (error) {
+        console.error("Ocurrió un error al eliminar el período:", error);
+        return [null, "Error interno del servidor."]; //* Devuelve un mensaje de error en caso de fallo.
+    }
 }
