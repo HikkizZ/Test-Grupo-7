@@ -6,12 +6,12 @@ import { AppDataSource } from "../config/configDB.js"; // Importa la configuraci
 //* Servicio para obtener un horario por id o nombre.
 export async function getScheduleService(query) {
     try {
-        const { idSchedule, nameSchedule } = query;
+        const { idSchedule} = query;
 
         const scheduleRepository = AppDataSource.getRepository(Schedule); //* Obtiene el repositorio de la entidad Schedule.
 
         const scheduleFound = await scheduleRepository.findOne({
-            where: [{ id: idSchedule }, { name: nameSchedule }], //* Busca el horario por id o nombre.
+            where: [{ id: idSchedule}], //* Busca el horario por id o nombre.
         });
 
         if (!scheduleFound) return [null, "Horario no encontrado."]; //* Si no se encuentra, devuelve un mensaje de error.
@@ -44,18 +44,19 @@ export async function createScheduleService(body) {
     try {
         const scheduleRepository = AppDataSource.getRepository(Schedule); //* Obtiene el repositorio de la entidad Schedule.
 
-        const existingSchedule = await scheduleRepository.findOne({
-            where: { name: body.name }, //* Verifica si ya existe un horario con el mismo nombre.
-        });
 
+        const existingSchedule = await scheduleRepository.findOne({
+            where: { id :body.id }, //* Verifica si ya existe un horario 
+        });
         if (existingSchedule) return [null, "El horario ya existe."]; //* Si ya existe, devuelve un mensaje de error.
 
         const newSchedule = scheduleRepository.create({
-            name: body.name, //* Nombre del horario.
-            startTime: body.startTime, //* Hora de inicio.
-            endTime: body.endTime, //* Hora de fin.
-            days: body.days, //* Días del horario.
-            room: { id: body.roomId }, //* Relación con el aula.
+            curso: { id: body.cursoId }, //* Relación con el curso
+            teacher: { id: body.teacherId }, //* Relación con el profesor
+            room: { id: body.classroomId }, //* Relación con el aula
+            subject: { id: body.subjectId }, //* Relación con la asignatura
+            period: body.period, //* Periodo
+            dayOfWeek: body.dayOfWeek, //* Día de la semana
         });
 
         const scheduleCreated = await scheduleRepository.save(newSchedule); //* Guarda el nuevo horario en la base de datos.
@@ -70,12 +71,12 @@ export async function createScheduleService(body) {
 //* Servicio para actualizar un horario existente.
 export async function updateScheduleService(query, body) {
     try {
-        const { idSchedule, nameSchedule } = query;
+        const { idSchedule} = query;
 
         const scheduleRepository = AppDataSource.getRepository(Schedule); //* Obtiene el repositorio de la entidad Schedule.
 
         const scheduleFound = await scheduleRepository.findOne({
-            where: [{ id: idSchedule }, { name: nameSchedule }], //* Busca el horario por id o nombre.
+            where: [{ id: idSchedule}], //* Busca el horario por id o nombre.
         });
 
         if (!scheduleFound) return [null, "Horario no encontrado."]; //* Si no se encuentra, devuelve un mensaje de error.
@@ -95,12 +96,12 @@ export async function updateScheduleService(query, body) {
 //* Servicio para eliminar un horario existente.
 export async function deleteScheduleService(query) {
     try {
-        const { idSchedule, nameSchedule } = query;
+        const { idSchedule} = query;
 
         const scheduleRepository = AppDataSource.getRepository(Schedule); //* Obtiene el repositorio de la entidad Schedule.
 
         const scheduleFound = await scheduleRepository.findOne({
-            where: [{ id: idSchedule }, { name: nameSchedule }], //* Busca el horario por id o nombre.
+            where: [{ id: idSchedule }], //* Busca el horario por id o nombre.
         });
 
         if (!scheduleFound) return [null, "Horario no encontrado."]; //* Si no se encuentra, devuelve un mensaje de error.
@@ -113,3 +114,4 @@ export async function deleteScheduleService(query) {
         return [null, "Error interno del servidor."]; //* Devuelve un mensaje de error.
     }
 }
+
