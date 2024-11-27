@@ -9,10 +9,10 @@ router
     .use(authenticateJWT);
 
 router
-    .post("/", verifyRole("Encargado"), createResource) // Crear un recurso
+    .post("/", verifyRole("admin"), createResource) // Crear un recurso
     .get("/all", getResources) // Listar recursos (disponibles y no disponibles)
-    .patch("/detail/", verifyRole("Encargado"), updateResource) // Actualizar recurso
+    .patch("/update/", verifyRole(["Encargado", "admin"]), updateResource) // Actualizar recurso
     .get("/detail/", getResource) // Mostrar información de un recurso en particular
-    .delete("/detail/", verifyRole("Encargado"), deleteResource); // Eliminar un recurso
+    .delete("/delete/", verifyRole("admin"), deleteResource); // Eliminar un recurso
 
 export default router;

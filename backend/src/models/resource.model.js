@@ -1,4 +1,5 @@
-// models/resource.model.js
+"use strict";
+
 import { EntitySchema } from "typeorm";
 
 const ResourceSchema = new EntitySchema({
@@ -16,10 +17,6 @@ const ResourceSchema = new EntitySchema({
             nullable: false,
             unique: true,
         },
-        available: {
-            type: "boolean",
-            default: true,
-        }
     }
 });
 
