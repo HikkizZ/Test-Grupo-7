@@ -19,8 +19,8 @@ export async function createReservationService(req) {
         const fecha_Desde = parse(fechaDesde, "dd/MM/yyyy HH:mm", new Date());
         const fecha_Hasta = parse(fechaHasta, "dd/MM/yyyy HH:mm", new Date());
 
-        // Buscar reservas existentes con condiciones similares
-        const existingReservation = await reservationRepository.findOne({
+        // Buscar todas las reservas existentes con condiciones similares
+        const existingReservations = await reservationRepository.find({
             where: {
                 tipoReserva: tipoReserva,
                 ...(tipoReserva === "recurso" && { Recurso: { id: recurso_id } }),
@@ -31,23 +31,28 @@ export async function createReservationService(req) {
             relations: ["Reservante", "Recurso", "Sala"],
         });
 
-        if (existingReservation) {
-            const reservanteId = existingReservation.Reservante?.id;
+        // Verificar si el mismo usuario ya tiene una reserva pendiente o aprobada
+        const userExistingReservation = existingReservations.find(
+            (reservation) => reservation.Reservante?.id === loggedUserId
+        );
 
-            // Bloquear si el mismo usuario tiene una reserva pendiente
-            if (existingReservation.estado === "pendiente" && reservanteId === loggedUserId) {
+        if (userExistingReservation) {
+            if (userExistingReservation.estado === "pendiente") {
                 return [null, "Ya tienes una reserva pendiente para este recurso o sala en las mismas fechas."];
             }
 
-            // Bloquear si el mismo usuario tiene una reserva aprobada
-            if (existingReservation.estado === "aprobada" && reservanteId === loggedUserId) {
+            if (userExistingReservation.estado === "aprobada") {
                 return [null, "Ya tienes una reserva aprobada para este recurso o sala en las mismas fechas."];
             }
+        }
 
-            // Bloquear si otro usuario intenta reservar un recurso o sala ya aprobado
-            if (existingReservation.estado === "aprobada" && reservanteId !== loggedUserId) {
-                return [null, "No puedes reservar este recurso o sala porque ya está aprobado para otro usuario en las mismas fechas."];
-            }
+        // Verificar si otro usuario tiene una reserva aprobada para el mismo recurso o sala
+        const otherUserApprovedReservation = existingReservations.find(
+            (reservation) => reservation.Reservante?.id !== loggedUserId && reservation.estado === "aprobada"
+        );
+
+        if (otherUserApprovedReservation) {
+            return [null, "No puedes reservar este recurso o sala porque ya está aprobado para otro usuario en las mismas fechas."];
         }
 
         // Crear la nueva reserva
