@@ -15,7 +15,7 @@ const RoomSchema = new EntitySchema({
             length: 255,
             nullable: false,
             unique: true,
-        },
+        }
     },
     relations:{
         schedules: { // Relación con Schedule

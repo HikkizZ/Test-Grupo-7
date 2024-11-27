@@ -44,7 +44,6 @@ export const roomBodyValidation = Joi.object({
             "string.max": "The name must be at most 70 characters long.",
         })
 })
-.or("name")
 .messages({
     "object.missing": "The name is required.",
     "object.unknown": "Don't send more properties than the ones required.",
