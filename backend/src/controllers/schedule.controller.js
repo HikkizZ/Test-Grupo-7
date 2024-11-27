@@ -23,7 +23,7 @@ import {
 export async function createSchedule(req, res) {
     try {
         const { cursoId, teacherId, classroomId, subjectId, period, dayOfWeek } = req.body;
-
+        
         const { error } = scheduleBodyValidation.validate({ cursoId, teacherId, classroomId, subjectId, period, dayOfWeek }); //* Validar los parámetros del cuerpo.
 
         if (error) return handleErrorClient(res, 400, "Validation Error", error.message); //* Si los parámetros son inválidos, devuelve un error 400.
@@ -41,13 +41,13 @@ export async function createSchedule(req, res) {
 //* Controlador para obtener un horario por id o nombre.
 export async function getSchedule(req, res) {
     try {
-        const { id, name } = req.query;
+        const { id } = req.query;
 
         const { error } = scheduleQueryValidation.validate({ id, name }); //* Validar los parámetros de la consulta.
 
         if (error) return handleErrorClient(res, 400, "Validation Error", error.message); //* Si los parámetros son inválidos, devuelve un error 400.
 
-        const [scheduleFound, errorSchedule] = await getScheduleService({ idSchedule: id, nameSchedule: name }); //* Llamar al servicio para obtener el horario.
+        const [scheduleFound, errorSchedule] = await getScheduleService({ idSchedule: id}); //* Llamar al servicio para obtener el horario.
 
         if (errorSchedule) return handleErrorClient(res, 404, errorSchedule); //* Si no se encuentra el horario, devuelve un error 404.
 
@@ -64,9 +64,11 @@ export async function getSchedules(req, res) {
 
         if (errorSchedules) return handleErrorClient(res, 404, errorSchedules); //* Si no se encuentran horarios, devuelve un error 404.
 
-        schedules.length === 0
-            ? handleSuccess(res, 204, "No se encontraron horarios.") //* Si no hay horarios, devolver un 204.
-            : handleSuccess(res, 200, "Horarios encontrados", schedules); //* Si se encuentran horarios, devolverlos.
+        if (schedules.length === 0) {
+            handleSuccess(res, 204, "No se encontraron horarios.");//* Si no hay horarios, devolver un 204.
+        } else {
+            handleSuccess(res, 200, "Horarios encontrados", schedules);//* Si se encuentran horarios, devolverlos.
+        }
     } catch (error) {
         handleErrorServer(res, 500, "Internal Server Error", error.message); //* Si ocurre un error interno, devuelve un error 500.
     }
@@ -99,7 +101,7 @@ export async function updateSchedule(req, res) {
 //* Controlador para eliminar un horario.
 export async function deleteSchedule(req, res) {
     try {
-        const { id} = req.query;
+        const {id} = req.query;
 
         const { error } = scheduleQueryValidation.validate({ id }); //* Validar los parámetros de la consulta.
 
@@ -114,3 +116,4 @@ export async function deleteSchedule(req, res) {
         handleErrorServer(res, 500, "Internal Server Error", error.message); //* Si ocurre un error interno, devuelve un error 500.
     }
 }
+
