@@ -8,18 +8,6 @@ import {
     handleErrorServer
 } from "../handlers/responseHandlers.js";
 
-export function verifyRole(requiredRole) {
-    return (req, res, next) => {
-        const user = req.user; //* Se asume que el usuario ya está autenticado y disponible en req.user
-
-        if (!user || user.role !== requiredRole) {
-            return res.status(403).json({ message: "No tienes permisos para acceder a esta ruta." });
-        }
-
-        next();
-    };
-}
-
 export async function isAdmin(req, res, next) { //? Function that checks if the user is an administrator.
     try {
         const userRepository = AppDataSource.getRepository(User);
@@ -43,11 +31,17 @@ export async function isAdmin(req, res, next) { //? Function that checks if the 
     }
 }
 
-export function verifyRole(requiredRole) {
+export function verifyRole(requiredRoles) { //* Function that verifies the role of the user.
     return (req, res, next) => {
-        const user = req.user; //* Se asume que el usuario ya está autenticado y disponible en req.user
+        const user = req.user; //° It is assumed that the user is already authenticated and available in req.user.
         
-        if (!user || user.role !== requiredRole) {
+        if (!user) { //? If the user is not found, return an error message.
+            return res.status(403).json({ message: "No tienes permisos para acceder a esta ruta." });
+        }
+        //? If the requiredRoles is an array, assign it to roles, otherwise, assign it to an array.
+        const roles = Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles]; 
+        
+        if (!roles.includes(user.role)) { //? If the user's role is not in the roles array, return an error message.
             return res.status(403).json({ message: "No tienes permisos para acceder a esta ruta." });
         }
         
