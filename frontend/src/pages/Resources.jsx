@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createResource, getResources, deleteResource } from '@services/resource.service.js';
+import {deleteDataAlert, showSuccessAlert} from '../utils/alerts.js';
 
 export default function Resources() { 
     const [resources, setResources] = useState([]);
@@ -15,13 +16,18 @@ export default function Resources() {
     
     const handleDelete = async (id) => {
         try {
-            const response = await deleteResource(id);
-            console.log("Recurso Eliminado", response);
-            fetchResources();
+            const result = await deleteDataAlert();
+            if (result.isConfirmed) {
+                const response = await deleteResource(id);
+                console.log(response);
+                showSuccessAlert('¡Recurso eliminado!', 'El recurso ha sido eliminado correctamente');
+                await fetchResources();
+            }
         } catch (error) {
             console.error("Error: ", error);
         }
-    };
+    }
+
 
 
     useEffect(() => {
