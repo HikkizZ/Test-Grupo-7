@@ -4,6 +4,8 @@ import {deleteDataAlert, showSuccessAlert} from '../utils/alerts.js';
 
 export default function Resources() { 
     const [resources, setResources] = useState([]);
+    const [showForm, setShowForm] = useState(false);
+    const [newResourceName, setNewResourceName] = useState("");
 
     const fetchResources = async () => {
         try {
@@ -28,72 +30,67 @@ export default function Resources() {
         }
     }
 
-
+    const handleCreate = async () => {
+        try {
+            await createResource({ name: newResourceName });
+            setNewResourceName("");
+            setShowForm(false);
+            fetchResources();
+        } catch (error) {
+            console.error("Error: ", error);
+        }
+    };
 
     useEffect(() => {
         fetchResources();
     }, []);
 
-    const [showForm, setShowForm] = useState(false);
-const [newResourceName, setNewResourceName] = useState("");
-
-const handleCreate = async () => {
-    try {
-        await createResource({ name: newResourceName });
-        setNewResourceName("");
-        setShowForm(false);
-        fetchResources();
-    } catch (error) {
-        console.error("Error: ", error);
-    }
-};
-
-return (
-    <div>
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <h1>Recursos</h1>
-        <button onClick={() => setShowForm(true)}>Crear Recurso</button>
-        {showForm && (
-            <div>
-                <input
-                    type="text"
-                    value={newResourceName}
-                    onChange={(e) => setNewResourceName(e.target.value)}
-                    placeholder="Nombre del recurso"
-                />
-                <button onClick={handleCreate}>Guardar</button>
-            </div>
-        )}
-        <br />
-        <br />
-        {resources.length > 0 ? (
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {resources.map((resource, index) => (
-                        <tr key={index}>
-                            <td>{resource.id}</td>
-                            <td>{resource.name}</td>
-                            <button onClick={() => handleDelete(resource.id)}>Eliminar</button>
+    return (
+        <div>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <h1>Recursos</h1>
+            <button onClick={() => setShowForm(true)}>Crear Recurso</button>
+            {showForm && (
+                <div>
+                    <input
+                        type="text"
+                        value={newResourceName}
+                        onChange={(e) => setNewResourceName(e.target.value)}
+                        placeholder="Nombre del recurso"
+                    />
+                    <button onClick={handleCreate}>Guardar</button>
+                </div>
+            )}
+            <br />
+            <br />
+            {resources.length > 0 ? (
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Acciones</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-        ) : (
-            <h2>No hay recursos disponibles</h2>
-        )}
-    </div>
-);
+                    </thead>
+                    <tbody>
+                        {resources.map((resource, index) => (
+                            <tr key={index}>
+                                <td>{resource.id}</td>
+                                <td>{resource.name}</td>
+                                <button onClick={() => handleDelete(resource.id)}>Eliminar</button>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            ) : (
+                <h2>No hay recursos disponibles</h2>
+            )}
+        </div>
+    );
 }
 // export default function Resources() {
 //     return (
