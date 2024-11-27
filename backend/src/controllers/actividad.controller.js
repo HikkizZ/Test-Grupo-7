@@ -10,7 +10,7 @@ import { // Servicios
 
 import {
   handleSuccess,
-  handleErrorService,
+  handleErrorServer,
   handleErrorClient
 } from "../handlers/responseHandlers.js";
 
@@ -27,7 +27,7 @@ export async function getActividades(req, res) {
     actividades === 0 ? handleSuccess(res, 204, "No se encontraron actividades") : handleSuccess(res, 200, "Actividades Encontradas", actividades);
 
   } catch (error) {
-    handleErrorService(res, 500, "Error interno del servidor", error.message);
+    handleErrorServer(res, 500, "Error interno del servidor", error.message);
   }
 }
 
@@ -40,7 +40,7 @@ export async function getActividad(req, res) {
     handleSuccess(res, 200, "Actividad encontrada", actividad);
 
   } catch (error) {
-    handleErrorService(res, 500, "Error interno del servidor", error.message);
+    handleErrorSever(res, 500, "Error interno del servidor", error.message);
   }
 }
 
@@ -71,7 +71,7 @@ export async function crearActividad(req, res) {
 
   } catch (error) {
     console.error("Error en el bloque catch:", error);
-    handleErrorService(res, 500, "Error interno del servidor", error.message);
+    handleErrorServer(res, 500, "Error interno del servidor", error.message);
   }
 }
 export async function modificarActividad(req, res) {
@@ -87,7 +87,7 @@ export async function modificarActividad(req, res) {
     handleSuccess(res, 200, "Actividad modificada", actividadModificada);
 
   } catch (error) {
-    handleErrorService(res, 500, "Error interno del servidor", error.message);
+    handleErrorServer(res, 500, "Error interno del servidor", error.message);
   }
 }
 
@@ -100,6 +100,6 @@ export async function eliminarActividad(req, res) {
     handleSuccess(res, 200, mensaje);
 
   } catch (error) {
-    handleErrorService(res, 500, "Error interno del servidor", error.message);
+    handleErrorServer(res, 500, "Error interno del servidor", error.message);
   }
 }
