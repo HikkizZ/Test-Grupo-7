@@ -42,6 +42,12 @@ const CursoSchema = new EntitySchema({
             type: "one-to-many",
             inverseSide: "curso", //? This is the name of the property that the Subject entity has to relate to the Course entity.
         },
+        schedules: { // Relación con Schedule
+            target: "Schedule", 
+            type: "one-to-many", 
+            inverseSide: "room", 
+            onDelete: "CASCADE", 
+        }
     },
     indices: [ //? Indexes of the table to optimize the search.
         {

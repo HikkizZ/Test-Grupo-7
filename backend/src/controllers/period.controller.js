@@ -1,68 +1,119 @@
 "use strict";
+
 import {
-    getAllPeriods as getAllPeriodsService,
-    getPeriodById as getPeriodByIdService,
-    createPeriod as createPeriodService,
-    updatePeriod as updatePeriodService,
-    deletePeriod as deletePeriodService
-} from '../services/period.service.js';
+    createPeriodService,
+    getPeriodService,
+    getPeriodsService,
+    updatePeriodService,
+    deletePeriodService,
+} from "../services/period.service.js";
+
 import {
     handleSuccess,
     handleErrorClient,
-    handleErrorServer
+    handleErrorServer,
 } from "../handlers/responseHandlers.js";
 
+import {
+    periodBodyValidation,
+    periodQueryValidation,
+} from "../validations/period.validation.js";
 
-export async function getAllPeriods(req, res) {
-    try {
-        const periods = await getAllPeriodsService();
-        handleSuccess(res, 200, "Periodos obtenidos exitosamente", periods);
-    } catch (error) {
-        handleErrorServer(res, 500, "Error al obtener los periodos");
-    }
-}
-
-export async function getPeriodById(req, res) {
-    try {
-        const period = await getPeriodByIdService(req.params.id);
-        if (!period) return handleErrorClient(res, 404, "Periodo no encontrado");
-        handleSuccess(res, 200, "Periodo obtenido exitosamente", period);
-    } catch (error) {
-        handleErrorServer(res, 500, "Error al obtener el periodo");
-    }
-}
-
-
+//* Controlador para crear un nuevo período
 export async function createPeriod(req, res) {
     try {
-        const newPeriod = await createPeriodService(req.body);
-        handleSuccess(res, 201, "Periodo creado exitosamente", newPeriod);
+        const { name, startTime, endTime } = req.body;
+
+        const { error } = periodBodyValidation.validate({ name, startTime, endTime }); //* Validación del cuerpo de la solicitud.
+
+        if (error) return handleErrorClient(res, 400, error.message); //* Si hay errores de validación, retorna un error 400.
+
+        const [periodCreated, errorPeriod] = await createPeriodService({ name, startTime, endTime }); //* Llama al servicio para crear el período.
+
+        if (errorPeriod) return handleErrorClient(res, 400, errorPeriod); //* Si ocurre un error al crear, retorna un error 400.
+
+        handleSuccess(res, 201, "Período creado", periodCreated); //* Respuesta exitosa con el período creado.
     } catch (error) {
-        if (error.message === "El nombre del periodo ya existe.") {
-            handleErrorClient(res, 400, "Nombre duplicado", { error: error.message });
-        } else {
-            handleErrorServer(res, 500, "Error al crear el periodo", { error: error.message });
-        }
+        handleErrorServer(res, 500, error.message); //* Respuesta de error interno del servidor.
     }
 }
 
+//* Controlador para obtener un período por id o nombre
+export async function getPeriod(req, res) {
+    try {
+        const { id, name } = req.query;
 
+        const { error } = periodQueryValidation.validate({ id, name }); //* Validación de los parámetros de la query.
+
+        if (error) return handleErrorClient(res, 400, error.message); //* Si hay errores de validación, retorna un error 400.
+
+        const [periodFound, errorPeriod] = await getPeriodService({ idPeriod: id, namePeriod: name }); //* Llama al servicio para obtener el período.
+
+        if (errorPeriod) return handleErrorClient(res, 404, errorPeriod); //* Si no encuentra el período, retorna un error 404.
+
+        handleSuccess(res, 200, "Período encontrado", periodFound); //* Respuesta exitosa con el período encontrado.
+    } catch (error) {
+        handleErrorServer(res, 500, error.message); //* Respuesta de error interno del servidor.
+    }
+}
+
+//* Controlador para obtener todos los períodos
+export async function getPeriods(req, res) {
+    try {
+        const [periods, errorPeriods] = await getPeriodsService(); //* Llama al servicio para obtener todos los períodos.
+
+        if (errorPeriods) return handleErrorClient(res, 404, errorPeriods); //* Si no hay períodos, retorna un error 404.
+
+        periods.length === 0
+            ? handleSuccess(res, 204, "No se encontraron períodos")
+            : handleSuccess(res, 200, "Períodos encontrados", periods); //* Respuesta exitosa con los períodos encontrados.
+    } catch (error) {
+        handleErrorServer(res, 500, error.message); //* Respuesta de error interno del servidor.
+    }
+}
+
+//* Controlador para actualizar un período por id o nombre
 export async function updatePeriod(req, res) {
     try {
-        const updatedPeriod = await updatePeriodService(req.params.id, req.body);
-        if (!updatedPeriod) return handleErrorClient(res, 404, "Periodo no encontrado");
-        handleSuccess(res, 200, "Periodo actualizado exitosamente", updatedPeriod);
+        const { id, name } = req.query;
+        const { name: newName, startTime, endTime } = req.body;
+
+        const { error: queryError } = periodQueryValidation.validate({ id, name }); //* Validación de los parámetros de la query.
+
+        if (queryError) return handleErrorClient(res, 400, queryError.message); //* Si hay errores de validación, retorna un error 400.
+
+        const { error: bodyError } = periodBodyValidation.validate({ name: newName, startTime, endTime }); //* Validación del cuerpo de la solicitud.
+
+        if (bodyError) return handleErrorClient(res, 400, bodyError.message); //* Si hay errores de validación, retorna un error 400.
+
+        const [periodUpdated, errorPeriod] = await updatePeriodService(
+            { idPeriod: id, namePeriod: name },
+            { name: newName, startTime, endTime }
+        ); //? Llama al servicio para actualizar el período.
+
+        if (errorPeriod) return handleErrorClient(res, 400, errorPeriod); //* Si ocurre un error al actualizar, retorna un error 400.
+
+        handleSuccess(res, 200, "Período actualizado", periodUpdated); //* Respuesta exitosa con el período actualizado.
     } catch (error) {
-        handleErrorClient(res, 400, "Error al actualizar el periodo");
+        handleErrorServer(res, 500, error.message); //* Respuesta de error interno del servidor.
     }
 }
 
+//* Controlador para eliminar un período por id o nombre
 export async function deletePeriod(req, res) {
     try {
-        const deletedPeriod = await deletePeriodService(req.params.id);
-        if (!deletedPeriod) return handleErrorClient(res, 404, "Periodo no encontrado");
-        handleSuccess(res, 200, "Periodo eliminado exitosamente");
+        const { id, name } = req.query;
+
+        const { error } = periodQueryValidation.validate({ id, name }); //* Validación de los parámetros de la query.
+
+        if (error) return handleErrorClient(res, 400, error.message); //* Si hay errores de validación, retorna un error 400.
+
+        const [periodDeleted, errorPeriod] = await deletePeriodService({ idPeriod: id, namePeriod: name }); //* Llama al servicio para eliminar el período.
+
+        if (errorPeriod) return handleErrorClient(res, 404, errorPeriod); //* Si no encuentra el período, retorna un error 404.
+
+        handleSuccess(res, 200, "Período eliminado", periodDeleted); //* Respuesta exitosa con el período eliminado.
     } catch (error) {
-        handleErrorServer(res, 500, "Error al eliminar el periodo");
+        handleErrorServer(res, 500, error.message); //* Respuesta de error interno del servidor.
     }
 }

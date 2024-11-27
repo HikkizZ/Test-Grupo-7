@@ -1,70 +1,135 @@
 "use strict";
+
 import Joi from "joi";
 
-
-export const scheduleValidation = Joi.object({
-    cursoId: Joi.number()
-        .positive()
+export const scheduleQueryValidation = Joi.object({
+    id: Joi.number()
         .integer()
-        .required()
+        .positive()
+        .optional()
         .messages({
-            "number.base": "The course ID must be a number.",
-            "number.positive": "The course ID must be a positive number.",
-            "number.integer": "The course ID must be an integer.",
-            "any.required": "The course ID is required."
+            "number.base": "The id must be a number.",
+            "number.integer": "The id must be an integer.",
+            "number.positive": "The id must be a positive number.",
+        }),
+    cursoId: Joi.number()
+        .integer()
+        .positive()
+        .optional()
+        .messages({
+            "number.base": "The cursoId must be a number.",
+            "number.integer": "The cursoId must be an integer.",
+            "number.positive": "The cursoId must be a positive number.",
         }),
     teacherId: Joi.number()
-        .positive()
         .integer()
-        .required()
+        .positive()
+        .optional()
         .messages({
-            "number.base": "The teacher ID must be a number.",
-            "number.positive": "The teacher ID must be a positive number.",
-            "number.integer": "The teacher ID must be an integer.",
-            "any.required": "The teacher ID is required."
+            "number.base": "The teacherId must be a number.",
+            "number.integer": "The teacherId must be an integer.",
+            "number.positive": "The teacherId must be a positive number.",
         }),
     classroomId: Joi.number()
-        .positive()
         .integer()
-        .required()
+        .positive()
+        .optional()
         .messages({
-            "number.base": "The classroom ID must be a number.",
-            "number.positive": "The classroom ID must be a positive number.",
-            "number.integer": "The classroom ID must be an integer.",
-            "any.required": "The classroom ID is required."
+            "number.base": "The classroomId must be a number.",
+            "number.integer": "The classroomId must be an integer.",
+            "number.positive": "The classroomId must be a positive number.",
         }),
     subjectId: Joi.number()
-        .positive()
         .integer()
-        .required()
+        .positive()
+        .optional()
         .messages({
-            "number.base": "The subject ID must be a number.",
-            "number.positive": "The subject ID must be a positive number.",
-            "number.integer": "The subject ID must be an integer.",
-            "any.required": "The subject ID is required."
+            "number.base": "The subjectId must be a number.",
+            "number.integer": "The subjectId must be an integer.",
+            "number.positive": "The subjectId must be a positive number.",
         }),
     period: Joi.number()
-        .positive()
         .integer()
+        .positive()
+        .optional()
+        .messages({
+            "number.base": "The period must be a number.",
+            "number.integer": "The period must be an integer.",
+            "number.positive": "The period must be a positive number.",
+        }),
+    dayOfWeek: Joi.string()
+        .valid("Lunes", "Martes", "Miércoles", "Jueves", "Viernes")
+        .optional()
+        .messages({
+            "any.only": "The dayOfWeek must be one of: Lunes, Martes, Miércoles, Jueves, Viernes.",
+        }),
+})
+.or("id", "cursoId", "teacherId", "classroomId", "subjectId", "period", "dayOfWeek")
+.messages({
+    "object.missing": "At least one query parameter must be provided.",
+    "object.unknown": "The query contains invalid properties.",
+});
+
+export const scheduleBodyValidation = Joi.object({
+    cursoId: Joi.number()
+        .integer()
+        .positive()
+        .required()
+        .messages({
+            "number.base": "The cursoId must be a number.",
+            "number.integer": "The cursoId must be an integer.",
+            "number.positive": "The cursoId must be a positive number.",
+            "any.required": "The cursoId is required.",
+        }),
+    teacherId: Joi.number()
+        .integer()
+        .positive()
+        .required()
+        .messages({
+            "number.base": "The teacherId must be a number.",
+            "number.integer": "The teacherId must be an integer.",
+            "number.positive": "The teacherId must be a positive number.",
+            "any.required": "The teacherId is required.",
+        }),
+    classroomId: Joi.number()
+        .integer()
+        .positive()
+        .required()
+        .messages({
+            "number.base": "The classroomId must be a number.",
+            "number.integer": "The classroomId must be an integer.",
+            "number.positive": "The classroomId must be a positive number.",
+            "any.required": "The classroomId is required.",
+        }),
+    subjectId: Joi.number()
+        .integer()
+        .positive()
+        .required()
+        .messages({
+            "number.base": "The subjectId must be a number.",
+            "number.integer": "The subjectId must be an integer.",
+            "number.positive": "The subjectId must be a positive number.",
+            "any.required": "The subjectId is required.",
+        }),
+    period: Joi.number()
+        .integer()
+        .positive()
         .required()
         .messages({
             "number.base": "The period must be a number.",
-            "number.positive": "The period must be a positive number.",
             "number.integer": "The period must be an integer.",
-            "any.required": "The period is required."
+            "number.positive": "The period must be a positive number.",
+            "any.required": "The period is required.",
         }),
-    dayOfWeek: Joi.number()
-        .integer()
-        .min(1)
-        .max(5)
+    dayOfWeek: Joi.string()
+        .valid("Lunes", "Martes", "Miércoles", "Jueves", "Viernes")
         .required()
         .messages({
-            "number.base": "The day of the week must be a number.",
-            "number.integer": "The day of the week must be an integer.",
-            "number.min": "The day of the week must be between 1 and 5.",
-            "number.max": "The day of the week must be between 1 and 5.",
-            "any.required": "The day of the week is required."
-        })
-}).messages({
-    "object.unknown": "The request contains unknown fields."
+            "any.only": "The dayOfWeek must be one of: Lunes, Martes, Miércoles, Jueves, Viernes.",
+            "any.required": "The dayOfWeek is required.",
+        }),
+})
+.unknown(false)
+.messages({
+    "object.unknown": "The body contains invalid properties.",
 });

@@ -1,13 +1,28 @@
-import { Router } from 'express';
-import { getAllPeriods, getPeriodById, createPeriod, updatePeriod, deletePeriod} from '../controllers/period.controller.js';
+"use strict";
+
+import { Router } from "express";
+import { authenticateJWT } from "../middlewares/authentication.middleware.js";
+import { verifyRole } from "../middlewares/authorization.middleware.js";
+import {
+    createPeriod,
+    getPeriod,
+    getPeriods,
+    updatePeriod,
+    deletePeriod,
+} from "../controllers/period.controller.js";
 
 const router = Router();
 
+// Middleware global para autenticar JWT
+router.use(authenticateJWT);
+
+// Definición de las rutas para la entidad "Period"
 router
-    .get('/', getAllPeriods) //! http://localhost:3000/api/period/
-    .get('/:id', getPeriodById) //! http://localhost:3000/api/period/:id
-    .post('/create', createPeriod) //! http://localhost:3000/api/period/create
-    .put('/update/:id', updatePeriod) //! http://localhost:3000/api/period/update/:id
-    .delete('/delete/:id', deletePeriod); //! http://localhost:3000/api/period/delete/:id
+    .get("/", getPeriod) // Obtener un período específico por id o nombre
+    .get("/all", getPeriods) // Obtener todos los períodos
+    .post("/", verifyRole("admin"), createPeriod) // Crear un período (solo administradores)
+    .patch("/", verifyRole("admin"), updatePeriod) // Actualizar un período (solo administradores)
+    .delete("/", verifyRole("admin"), deletePeriod); // Eliminar un período (solo administradores)
+
 
 export default router;
