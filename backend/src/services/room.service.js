@@ -17,7 +17,6 @@ export async function createRoomService(req) {
         // Crear una nueva sala
         const newRoom = roomRepository.create({
             name: req.body.name,
-            available: true,
         });
 
         await roomRepository.save(newRoom);

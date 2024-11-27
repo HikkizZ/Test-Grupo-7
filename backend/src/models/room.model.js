@@ -16,10 +16,6 @@ const RoomSchema = new EntitySchema({
             nullable: false,
             unique: true,
         },
-        available: {
-            type: "boolean",
-            default: true,
-        }
     },
     relations:{
         schedules: { // Relación con Schedule
