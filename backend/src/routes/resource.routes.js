@@ -10,9 +10,9 @@ router
 
 router
     .post("/", verifyRole("admin"), createResource) // Crear un recurso
-    .get("/all", getResources) // Listar recursos (disponibles y no disponibles)
+    .get("/all", verifyRole (["Encargado", "admin", "Profesor", "Alumno"]), getResources) // Listar recursos (disponibles y no disponibles)
+    .get("/detail/", verifyRole (["Encargado", "admin", "Profesor", "Alumno"]), getResource) // Mostrar información de un recurso en particular
     .patch("/update/", verifyRole(["Encargado", "admin"]), updateResource) // Actualizar recurso
-    .get("/detail/", getResource) // Mostrar información de un recurso en particular
     .delete("/delete/", verifyRole("admin"), deleteResource); // Eliminar un recurso
 
 export default router;
