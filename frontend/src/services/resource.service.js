@@ -29,3 +29,20 @@ export async function createResource(data){
         return error.response.data;
     }
 }
+
+export async function getResource({ id, name }) {
+    try {
+        // Construir los parámetros dinámicamente
+        const params = {};
+        if (id) params.id = id.trim();
+        if (name) params.name = name.trim();
+
+        // Llamada al backend
+        const response = await axios.get(`resource/detail`, { params });
+
+        return response.data.data; // Retornar solo la propiedad `data` del backend
+    } catch (error) {
+        console.error('Error fetching resource:', error.response?.data?.message || error.message);
+        throw error.response?.data?.message || 'Error desconocido al buscar el recurso'; // Retornar el mensaje de error del backend
+    }
+}
