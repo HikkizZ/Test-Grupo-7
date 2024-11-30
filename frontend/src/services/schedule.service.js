@@ -11,7 +11,7 @@ export async function getSchedules() {
 
 export async function deleteSchedule(id) {
   try {
-    const response = await axios.delete(`/schedule/?id=${id}`); //*Verifica que esta sea la ruta correcta
+    const response = await axios.delete(`/schedule/?id=${id}`); 
     return response.data;
   } catch (error) {
     return error.response?.data || error.message;
@@ -20,7 +20,7 @@ export async function deleteSchedule(id) {
 
 export async function createSchedule(data) {
   try {
-    const response = await axios.post("/schedule", data); //* Verifica que esta sea la ruta correcta
+    const response = await axios.post("/schedule", data);
     return response.data;
   } catch (error) {
     return error.response?.data || error.message;
