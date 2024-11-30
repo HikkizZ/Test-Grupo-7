@@ -10,9 +10,6 @@ router
     .use(authenticateJWT);
 
 router
-    // .post("/request", verifyRole("Profesor"), requestReservation) // Solicitud de reserva
-    // .patch("/approve/:reservationId", verifyRole("Encargado"), approveReservation) // Aprobar reserva
-    // .patch("/deny/:reservationId", verifyRole("Encargado"), denyReservation); // Denegar reserva
     .post("/solicitar", verifyRole(["Profesor", "Alumno"]), createReservationController) // Solicitar reserva
     .get("/all", verifyRole (["Encargado", "admin", "Profesor", "Alumno"]), getReservationsController) // Listar reservas
     .get("/get", verifyRole (["Encargado", "admin", "Profesor", "Alumno"]), getReservationController) // Mostrar información de una reserva en particular
