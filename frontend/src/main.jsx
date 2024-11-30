@@ -8,7 +8,7 @@ import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import Resources from './pages/Resources';
 import Schedule from '@pages/Schedule';
-import ProtectedRoute from '@components/ProtectedRoute';
+//import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
 
 //? Import services Felipe
