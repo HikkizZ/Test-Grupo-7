@@ -11,6 +11,10 @@ import Schedule from '@pages/Schedule';
 import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
 
+//? Import services Felipe
+import Cursos from './pages/Cursos';
+import Subjects from './pages/Subjects';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -37,6 +41,14 @@ const router = createBrowserRouter([
     {
         path: '/resources',
         element: <Resources/>
+      },
+      {
+        path: '/cursos',
+        element: <Cursos/>
+      },
+      {
+        path: 'subjects',
+        element: <Subjects/>
       }
     ]
   },
