@@ -86,6 +86,7 @@ export default function Schedules() {
       <br />
       <br />
       <br />
+      <br />
       <h1>Horarios 🤙</h1>
       <button onClick={() => setShowForm(!showForm)}>
         {showForm ? "Cerrar Formulario" : "Crear Horario"}
