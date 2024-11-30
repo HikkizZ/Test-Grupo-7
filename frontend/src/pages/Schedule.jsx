@@ -3,30 +3,27 @@ import { getSchedules, createSchedule, deleteSchedule } from "@services/schedule
 import { deleteDataAlert, showSuccessAlert, showErrorAlert } from "@helpers/sweetAlert";
 
 export default function Schedules() {
-  const [schedules, setSchedules] = useState([]); // Estado para almacenar horarios
-  const [showSchedules, setShowSchedules] = useState(false); // Estado para mostrar/ocultar lista
-  const [showForm, setShowForm] = useState(false); // Estado para mostrar/ocultar formulario
+  const [schedules, setSchedules] = useState([]); 
+  const [showSchedules, setShowSchedules] = useState(false);
+  const [showForm, setShowForm] = useState(false); 
   const [newSchedule, setNewSchedule] = useState({
-    curso: "",
-    profesor: "",
-    sala: "",
-    asignatura: "",
-    periodo: "",
-    dia: "",
+    cursoId: "",
+    teacherId: "",
+    classroomId: "",
+    subjectId: "",
+    period: "",
+    dayOfWeek: "",
   });
 
-  // Función para obtener los horarios
   const fetchSchedules = async () => {
     try {
       const response = await getSchedules();
-      console.log(response);
       setSchedules(response);
     } catch (error) {
       console.error("Error al cargar los horarios:", error);
     }
   };
 
-  // Manejador para alternar la visualización de los horarios
   const handleShowSchedules = async () => {
     setShowSchedules((prevState) => !prevState);
     if (!showSchedules) {
@@ -34,19 +31,18 @@ export default function Schedules() {
     }
   };
 
-  // Validación del formulario antes de enviar
   const validateForm = () => {
-    const { curso, profesor, sala, asignatura, periodo, dia } = newSchedule;
-    if (!curso || !profesor || !sala || !asignatura || !periodo || !dia) {
+    const { cursoId, teacherId, classroomId, subjectId, period, dayOfWeek } = newSchedule;
+    if (!cursoId || !teacherId || !classroomId || !subjectId || !period || !dayOfWeek) {
       showErrorAlert("Error", "Todos los campos son obligatorios.");
       return false;
     }
     return true;
   };
+  
 
-  // Manejador para crear un horario
   const handleCreate = async () => {
-    if (!validateForm()) return; // Valida antes de enviar
+    if (!validateForm()) return; 
     try {
       await createSchedule(newSchedule);
       setNewSchedule({
@@ -66,7 +62,6 @@ export default function Schedules() {
     }
   };
 
-  // Manejador para eliminar un horario
   const handleDelete = async (id) => {
     try {
       const result = await deleteDataAlert();
@@ -97,45 +92,44 @@ export default function Schedules() {
       </button>
       <br />
       <br />
-
       {showForm && (
         <div style={{ marginTop: "20px" }}>
           <h2>Nuevo Horario</h2>
           <input
             type="text"
             placeholder="Curso"
-            value={newSchedule.curso}
-            onChange={(e) => setNewSchedule({ ...newSchedule, curso: e.target.value })}
+            value={newSchedule.cursoId}
+            onChange={(e) => setNewSchedule({ ...newSchedule, cursoId: e.target.value })}
           />
           <input
             type="text"
             placeholder="Profesor"
-            value={newSchedule.profesor}
-            onChange={(e) => setNewSchedule({ ...newSchedule, profesor: e.target.value })}
+            value={newSchedule.teacherId}
+            onChange={(e) => setNewSchedule({ ...newSchedule, teacherId: e.target.value })}
           />
           <input
             type="text"
             placeholder="Sala"
-            value={newSchedule.sala}
-            onChange={(e) => setNewSchedule({ ...newSchedule, sala: e.target.value })}
+            value={newSchedule.classroomId}
+            onChange={(e) => setNewSchedule({ ...newSchedule, classroomId: e.target.value })}
           />
           <input
             type="text"
             placeholder="Asignatura"
-            value={newSchedule.asignatura}
-            onChange={(e) => setNewSchedule({ ...newSchedule, asignatura: e.target.value })}
+            value={newSchedule.subjectId}
+            onChange={(e) => setNewSchedule({ ...newSchedule, subjectId: e.target.value })}
           />
           <input
             type="text"
             placeholder="Periodo"
-            value={newSchedule.periodo}
-            onChange={(e) => setNewSchedule({ ...newSchedule, periodo: e.target.value })}
+            value={newSchedule.period}
+            onChange={(e) => setNewSchedule({ ...newSchedule, period: e.target.value })}
           />
           <input
             type="text"
             placeholder="Día"
-            value={newSchedule.dia}
-            onChange={(e) => setNewSchedule({ ...newSchedule, dia: e.target.value })}
+            value={newSchedule.dayOfWeek}
+            onChange={(e) => setNewSchedule({ ...newSchedule, dayOfWeek: e.target.value })}
           />
           <button onClick={handleCreate}>Guardar</button>
         </div>
@@ -167,14 +161,15 @@ export default function Schedules() {
             {schedules.map((schedule) => (
               <tr key={schedule.id}>
                 <td>{schedule.id}</td>
-                <td>{schedule.curso || "Desconocido"}</td>
-                <td>{schedule.profesor || "Desconocido"}</td>
-                <td>{schedule.sala || "Desconocido"}</td>
-                <td>{schedule.asignatura || "Desconocido"}</td>
-                <td>{schedule.periodo || "Desconocido"}</td>
-                <td>{schedule.dia || "Desconocido"}</td>
+                <td>{schedule.cursoId}</td>
+                <td>{schedule.teacherId}</td>
+                <td>{schedule.classroomId}</td>
+                <td>{schedule.subjectId}</td>
+                <td>{schedule.period}</td>
+                <td>{schedule.dayOfWeek}</td>
                 <td>
-                  <button onClick={() => handleDelete(schedule.id)}>Eliminar</button>
+                  <button onClick={() => handleDelete(schedule.id)}>Eliminar</button>   
+                            
                 </td>
               </tr>
             ))}
