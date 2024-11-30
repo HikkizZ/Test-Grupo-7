@@ -9,8 +9,6 @@ import Root from '@pages/Root';
 // import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
 import Resources from './pages/Resources';
-
-//? Import services Felipe
 import Cursos from './pages/Cursos';
 import Subjects from './pages/Subjects';
 
