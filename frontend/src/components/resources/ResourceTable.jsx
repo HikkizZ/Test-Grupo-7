@@ -1,12 +1,6 @@
 import ResourceRow from "./ResourceRow";
 
-export default function ResourceTable({ resources, onDelete, loading }) {
-    if (loading) return <p>Cargando recursos...</p>;
-
-    if (!resources || resources.length === 0) {
-        return <h2>No se han encontrado recursos.</h2>;
-    }
-
+export default function ResourceTable({ resources, onDelete, onUpdate }) {
     return (
         <table>
             <thead>
@@ -18,7 +12,12 @@ export default function ResourceTable({ resources, onDelete, loading }) {
             </thead>
             <tbody>
                 {resources.map((resource) => (
-                    <ResourceRow key={resource.id} resource={resource} onDelete={onDelete} />
+                    <ResourceRow
+                        key={resource.id}
+                        resource={resource}
+                        onDelete={onDelete}
+                        onUpdate={onUpdate}
+                    />
                 ))}
             </tbody>
         </table>

@@ -47,3 +47,14 @@ export async function getResource({ id, name }) {
         throw error.response?.data?.message || 'Error desconocido al buscar el recurso.';
     }
 }
+
+// Actualizar un recurso
+export async function updateResource(id, data) {
+    try {
+        const response = await axios.patch(`/resource/update/?id=${id}`, data);
+        return response.data.data;
+    } catch (error) {
+        console.error("Error al actualizar el recurso:", error);
+        throw error.response?.data?.message || "Error desconocido al actualizar el recurso.";
+    }
+}
