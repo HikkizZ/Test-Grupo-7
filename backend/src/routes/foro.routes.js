@@ -4,18 +4,18 @@ import { createForo, getForos, getForo, updateForo, deleteForo } from "../contro
 const router = express.Router();
 
 // Ruta para crear un nuevo anuncio
-router.post("/foro", createForo);
+router.post("/", createForo);
 
 // Ruta para obtener todos los anuncios
-router.get("/foro", getForos);
+router.get("/all", getForos);
 
 // Ruta para obtener un anuncio por su ID
-router.get("/foro/:id", getForo);
+router.get("/:id", getForo);
 
 // Ruta para actualizar un anuncio por su ID
-router.put("/foro/:id", updateForo);
+router.put("/:id", updateForo);
 
 // Ruta para eliminar un anuncio por su ID
-router.delete("/foro/:id", deleteForo);
+router.delete("/:id", deleteForo);
 
 export default router;
