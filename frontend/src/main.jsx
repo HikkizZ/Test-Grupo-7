@@ -10,7 +10,8 @@ import Resources from './pages/Resources';
 import Schedule from '@pages/Schedule';
 //import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
-
+//import Hallam
+import Foro from '@pages/Foro';
 //? Import services Felipe
 import Cursos from './pages/Cursos';
 import Subjects from './pages/Subjects';
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: 'subjects',
         element: <Subjects/>
+      },
+      {
+        path: '/posts',
+        element: <Foro/>,
       }
     ]
   },
