@@ -17,7 +17,7 @@ export const foroValidation = Joi.object({
             "string.max": "El nombre del profesor no puede exceder los 255 caracteres.",
         }),
     categoria: Joi.string()
-        .valid("tarea", "contenido", "variedad")
+        .valid("Tarea", "Contenido","Variedad")
         .required()
         .messages({
             "any.only": "La categoría debe ser una de las siguientes: tarea, contenido o variedad.",
