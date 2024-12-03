@@ -2,7 +2,7 @@ import { useState } from "react";
 import { deleteResource } from "@services/resource.service";
 import { deleteDataAlert, showSuccessAlert } from "../../utils/alerts";
 
-export function useDeleteResource(fetchResources, resources) {
+export function useDeleteResource({ setResources, setSearchResults }) {
     const [loading, setLoading] = useState(false);
 
     const handleDelete = async (id) => {
@@ -11,18 +11,21 @@ export function useDeleteResource(fetchResources, resources) {
             if (result.isConfirmed) {
                 setLoading(true);
 
-                // Eliminar recurso del backend
+                // Llamar al servicio para eliminar el recurso
                 await deleteResource(id);
+
+                // Actualizar la lista de recursos
+                setResources((prevResources) =>
+                    prevResources.filter((resource) => resource.id !== id)
+                );
+
+                // Actualizar los resultados de búsqueda
+                setSearchResults((prevResults) =>
+                    prevResults.filter((resource) => resource.id !== id)
+                );
 
                 // Mostrar alerta de éxito
                 showSuccessAlert("¡Recurso eliminado!", "El recurso ha sido eliminado correctamente");
-
-                // Actualizar recursos o recargar si es el último
-                if (resources.length === 1) {
-                    window.location.reload(); // Recargar página si no hay más recursos
-                } else {
-                    fetchResources(); // Actualizar tabla si quedan recursos
-                }
             }
         } catch (error) {
             alert("Error al eliminar el recurso: " + error.message);

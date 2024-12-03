@@ -1,30 +1,49 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCreateResource } from "../hooks/resources/useCreateResource";
-import { useDeleteResource } from "../hooks/resources/useDeleteResource";
 import { useGetResources } from "../hooks/resources/useGetResources";
 import { useSearchResource } from "../hooks/resources/useSearchResource";
 import { useUpdateResource } from "../hooks/resources/useUpdateResource";
+import { useDeleteResource } from "../hooks/resources/useDeleteResource";
 import ResourceForm from "../components/resources/ResourceForm";
 import ResourceTable from "../components/resources/ResourceTable";
 
 export default function Resources() {
     const { resources, fetchResources, loading: loadingResources } = useGetResources();
     const { handleCreate, loading: loadingCreate } = useCreateResource(fetchResources);
-    const { handleDelete, loading: loadingDelete } = useDeleteResource(fetchResources, resources);
     const { handleUpdate, loading: loadingUpdate } = useUpdateResource(fetchResources);
+
+    const [searchResults, setSearchResults] = useState(resources); // Estado de resultados de búsqueda
+
     const {
         searchQuery,
         setSearchQuery,
         searchFilter,
         setSearchFilter,
-        searchResults,
+        searchResults: filteredResults,
         loading: loadingSearch,
         error: errorSearch,
     } = useSearchResource(resources);
 
+    // Combinar resultados de búsqueda con el estado de eliminación
+    useEffect(() => {
+        setSearchResults(filteredResults);
+    }, [filteredResults]);
+
+    // Usar el hook de eliminación con los estados principales
+    const { handleDelete, loading: loadingDelete } = useDeleteResource({
+        resources,
+        setResources: fetchResources, // Reutilizar la lógica de fetchResources para mantener la consistencia
+        searchResults,
+        setSearchResults,
+    });
+
     useEffect(() => {
         fetchResources();
     }, [fetchResources]);
+
+    // Determinar los mensajes correctos
+    const noResources = resources.length === 0; // No hay recursos registrados
+    const noSearchResults = searchResults.length === 0 && !noResources; // No coincidencias en la búsqueda
 
     return (
         <div>
@@ -78,11 +97,14 @@ export default function Resources() {
                 <p>Cargando recursos...</p>
             ) : errorSearch ? (
                 <p style={{ color: "red" }}>{errorSearch}</p>
-            ) : resources.length === 0 ? (
+            ) : noResources ? (
+                // Mostrar mensaje si no hay recursos
                 <p>No hay recursos registrados.</p>
-            ) : searchResults.length === 0 ? (
+            ) : noSearchResults ? (
+                // Mostrar mensaje si no hay resultados de búsqueda
                 <p>No se encontraron recursos que coincidan con tu búsqueda.</p>
             ) : (
+                // Mostrar la tabla de recursos
                 <ResourceTable
                     resources={searchResults}
                     onDelete={handleDelete}
