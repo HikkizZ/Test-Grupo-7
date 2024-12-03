@@ -10,7 +10,7 @@ import ResourceTable from "../components/resources/ResourceTable";
 export default function Resources() {
     const { resources, fetchResources, loading: loadingResources } = useGetResources();
     const { handleCreate, loading: loadingCreate } = useCreateResource(fetchResources);
-    const { handleDelete, loading: loadingDelete } = useDeleteResource(fetchResources);
+    const { handleDelete, loading: loadingDelete } = useDeleteResource(fetchResources, resources);
     const { handleUpdate, loading: loadingUpdate } = useUpdateResource(fetchResources);
     const {
         searchQuery,
@@ -79,10 +79,8 @@ export default function Resources() {
             ) : errorSearch ? (
                 <p style={{ color: "red" }}>{errorSearch}</p>
             ) : resources.length === 0 ? (
-                // Si no hay recursos en la tabla
                 <p>No hay recursos registrados.</p>
             ) : searchResults.length === 0 ? (
-                // Si no hay resultados en la búsqueda
                 <p>No se encontraron recursos que coincidan con tu búsqueda.</p>
             ) : (
                 <ResourceTable

@@ -10,6 +10,15 @@ export default function ResourceTable({
     // Ordenar los recursos por ID de menor a mayor
     const sortedResources = [...resources].sort((a, b) => a.id - b.id);
 
+    // Renderizar mensaje si no hay recursos
+    if (resources.length === 0) {
+        return (
+            <p style={{ textAlign: "center", marginTop: "20px", fontSize: "16px", color: "#888" }}>
+                No hay recursos registrados.
+            </p>
+        );
+    }
+
     return (
         <table>
             <thead>
