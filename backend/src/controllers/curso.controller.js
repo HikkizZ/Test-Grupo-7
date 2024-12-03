@@ -15,15 +15,16 @@ import {
 } from "../handlers/responseHandlers.js";
 
 import {
-    cursoBodyValidation,
-    cursoQueryValidation
+    createCursoBodyValidation,
+    updateCursoBodyValidation,
+    cursoQueryValidation,
 } from "../validations/curso.validation.js";
 
 export async function createCurso(req, res) { //* This function creates a course.
     try {
         const { name, level, year, section } = req.body; //? Getting the body parameters: name, level, year, section.
 
-        const { error } = cursoBodyValidation.validate({ name, level, year, section }); //? Validating the body parameters.
+        const { error } = createCursoBodyValidation.validate({ name, level, year, section }); //? Validating the body parameters.
 
         if (error) return handleErrorClient(res, 400, error.message); //? If the body parameters are invalid, return a 400 error.
 
@@ -76,7 +77,7 @@ export async function updateCurso(req, res) { //* This function updates a course
 
         if (error) return handleErrorClient(res, 400, error.message); //? If the query parameters are invalid, return a 400 error.
 
-        const { error: errorBody } = cursoBodyValidation.validate({ name: newName, level, year, section }); //? Validating the body parameters.
+        const { error: errorBody } = updateCursoBodyValidation.validate({ name: newName, level, year, section }); //? Validating the body parameters.
 
         if (errorBody) return handleErrorClient(res, 400, errorBody.message); //? If the body parameters are invalid, return a 400 error.
 
