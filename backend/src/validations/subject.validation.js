@@ -26,7 +26,7 @@ export const createSubjectBodyValidation = Joi.object({ //* This is the subject 
             "string.max": "The name must be at most 35 characters long.",
             "string.pattern.base": "The name must only contain letters.",
             "string.empty": "The name should not be empty.",
-           "any.required": "The name is required.",
+            "any.required": "The name is required.",
         }),
     description: Joi.string()
         .max(255)
