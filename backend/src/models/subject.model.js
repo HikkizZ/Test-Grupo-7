@@ -35,6 +35,7 @@ const SubjectSchema = new EntitySchema({
             target: "User",
             type: "many-to-one",
             joinColumn: true,
+            nullable: false
         },
         grades: { //? Relation with the Grade entity. A subject has many grades.
             target: "Grade",
