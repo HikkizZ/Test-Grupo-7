@@ -3,7 +3,7 @@ import { useCreateResource } from "../hooks/resources/useCreateResource";
 import { useDeleteResource } from "../hooks/resources/useDeleteResource";
 import { useGetResources } from "../hooks/resources/useGetResources";
 import { useSearchResource } from "../hooks/resources/useSearchResource";
-import { useUpdateResource } from "../hooks/resources/useUpdateResource"; // Importamos el hook de update
+import { useUpdateResource } from "../hooks/resources/useUpdateResource";
 import ResourceForm from "../components/resources/ResourceForm";
 import ResourceTable from "../components/resources/ResourceTable";
 
@@ -11,7 +11,7 @@ export default function Resources() {
     const { resources, fetchResources, loading: loadingResources } = useGetResources();
     const { handleCreate, loading: loadingCreate } = useCreateResource(fetchResources);
     const { handleDelete, loading: loadingDelete } = useDeleteResource(fetchResources);
-    const { handleUpdate, loading: loadingUpdate } = useUpdateResource(fetchResources); // Usamos el hook de update
+    const { handleUpdate, loading: loadingUpdate } = useUpdateResource(fetchResources);
     const {
         searchQuery,
         setSearchQuery,
@@ -24,7 +24,7 @@ export default function Resources() {
 
     // Cargar recursos al montar el componente
     useEffect(() => {
-        fetchResources(); // Ahora `fetchResources` es estable
+        fetchResources();
     }, [fetchResources]);
 
     return (
@@ -41,28 +41,48 @@ export default function Resources() {
 
             {/* Buscar recurso */}
             <h3>Buscar Recurso</h3>
-            <div>
-                <label>
-                    Selecciona un filtro:
-                    <select value={searchFilter} onChange={(e) => setSearchFilter(e.target.value)}>
-                        <option value="">--Seleccionar filtro--</option>
-                        <option value="id">Buscar por ID</option>
-                        <option value="name">Buscar por Nombre</option>
-                    </select>
-                </label>
-                <br />
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "10px",
+                }}
+            >
                 <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={
                         searchFilter === "id"
-                            ? "Buscar por ID"
+                            ? "Buscar recurso por ID"
                             : searchFilter === "name"
-                            ? "Buscar por Nombre"
+                            ? "Buscar recurso por Nombre"
                             : "Buscar recurso"
                     }
+                    style={{
+                        flexGrow: 1,
+                        padding: "10px",
+                        borderRadius: "5px",
+                        border: "1px solid #ccc",
+                        fontSize: "14px",
+                    }}
                 />
+                <select
+                    value={searchFilter}
+                    onChange={(e) => setSearchFilter(e.target.value)}
+                    style={{
+                        width: "200px",
+                        padding: "10px",
+                        borderRadius: "5px",
+                        border: "1px solid #ccc",
+                        fontSize: "14px",
+                    }}
+                >
+                    <option value="">--Seleccionar filtro--</option>
+                    <option value="id">Buscar recurso por ID</option>
+                    <option value="name">Buscar recurso por Nombre</option>
+                </select>
             </div>
 
             {/* Lista de recursos */}
@@ -76,10 +96,14 @@ export default function Resources() {
                     resources={searchResults}
                     onDelete={handleDelete}
                     loadingDelete={loadingDelete}
-                    onUpdate={handleUpdate} // Pasamos la función de update a la tabla
-                    loadingUpdate={loadingUpdate} // Pasamos el estado de carga de update
+                    onUpdate={handleUpdate}
+                    loadingUpdate={loadingUpdate}
                 />
             )}
         </div>
     );
 }
+
+
+
+
