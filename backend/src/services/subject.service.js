@@ -4,6 +4,7 @@ import { AppDataSource } from "../config/configDB.js";
 import Subject from "../models/subject.model.js";
 import Curso from "../models/curso.model.js";
 import User from "../models/user.model.js";
+import { Not } from "typeorm";
 
 export async function getSubjectService(query) { //* This function gets a subject by id and name.
     try {
@@ -64,12 +65,19 @@ export async function createSubjectService(body) { //* This function creates a s
 
         const { name, description, cursoCode, rutProfesor } = body; //? Getting the body parameters: name, description, cursoCode.
 
+        //° Verificar si el curso existe.
         const cursoFound = await cursoRepository.findOne({ where: { code: cursoCode } }); //? Finding the course by id.
         if (!cursoFound) return [null, "Curso no encontrado."]; //? If the course is not found, return null and a message.
 
+        //° Verificar si el profesor existe.
         const teacherFound = await userRepository.findOne({
             where: { rut: rutProfesor, role: "profesor"} }); //? Finding the teacher by rut.
         if (!teacherFound) return [null, "Profesor no encontrado."]; //? If the teacher is not found, return null and a message.
+        
+        //° Verificar si la asignatura ya existe.
+        const subjectExist = await subjectRepository.findOne({ //? Finding the subject by name and course.
+            where: { name: name, curso: cursoFound } }); 
+        if (subjectExist) return [null, "La asignatura ya existe."]; //? If the subject is found, return null and a message.
 
         const newSubject = subjectRepository.create({ //? Creating a new subject.
             name: name,
@@ -125,6 +133,11 @@ export async function updateSubjectService(query, body) { //* This function upda
         //° Actualizar los campos básicos si son proporcionados
         if (body.name) subjectFound.name = body.name;
         if (body.description) subjectFound.description = body.description;
+
+        //° Verificar si la asignatura ya existe.
+        const subjectExist = await subjectRepository.findOne({ //? Finding the subject by name and course.
+            where: { name: subjectFound.name, curso: subjectFound.curso, id: Not(idSubject) } });
+        if (subjectExist) return [null, "Ya existe otra asignatura con el mismo nombre en el curso"]; //? If the subject is found, return null and a message.
 
         const subjectUpdated = await subjectRepository.save(subjectFound); //? Saving the updated subject.
 
