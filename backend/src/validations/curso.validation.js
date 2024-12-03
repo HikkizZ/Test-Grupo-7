@@ -39,11 +39,73 @@ export const cursoQueryValidation = Joi.object({ //* This is the course query va
     "object.missing": "The request must contain at least one property.",
 });
 
-export const cursoBodyValidation = Joi.object({ //* This is the course body validation schema.
+export const createCursoBodyValidation = Joi.object({ //* This is the course body validation schema.
+    name: Joi.string()
+        .min(3)
+        .max(30)
+        .required()
+        .pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)
+        .messages({
+            "string.base": "The name must be a string.",
+            "string.min": "The name must be at least 3 characters long.",
+            "string.max": "The name must be at most 30 characters long.",
+            "string.empty": "The name should not be empty.",
+            "string.pattern.base": "The name must only contain letters and spaces.",
+            "any.required": "The name is required.",
+        }),
+    level: Joi.number()
+        .integer()
+        .positive()
+        .min(1)
+        .max(4)
+        .required()
+        .messages({
+            "number.base": "The level must be a number.",
+            "number.positive": "The level must be a positive number.",
+            "number.integer": "The level must be an integer.",
+            "number.min": "The level must be at least 1.",
+            "number.max": "The level must be at most 4.",
+            "any.required": "The level is required.",
+        }),
+    year: Joi.number()
+        .integer()
+        .positive()
+        .min(2024)
+        .max(2100)
+        .required()
+        .messages({
+            "number.base": "The year must be a number.",
+            "number.positive": "The year must be a positive number.",
+            "number.integer": "The year must be an integer.",
+            "number.min": "The year must be at least 2024.",
+            "number.max": "The year must be at most 2100.",
+            "any.required": "The year is required.",
+        }),
+    section: Joi.string()
+        .length(1)
+        .pattern(/^[A-Z]+$/)
+        .required()
+        .messages({
+            "string.base": "The section must be a string.",
+            "string.length": "The section must be 1 character long.",
+            "string.empty": "The section should not be empty.",
+            "string.pattern.base": "The section must only contain uppercase letters.",
+            "any.required": "The section is required.",
+        })
+})
+.or("name", "level", "year", "section")
+.unknown(false)
+.messages({
+    "object.unknown": "The request contains invalid properties.",
+    "object.missing": "The request must contain at least one property.",
+});
+
+export const updateCursoBodyValidation = Joi.object({ //* This is the course body validation schema.
     name: Joi.string()
         .min(3)
         .max(30)
         .pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)
+        .optional()
         .messages({
             "string.base": "The name must be a string.",
             "string.min": "The name must be at least 3 characters long.",
@@ -56,6 +118,7 @@ export const cursoBodyValidation = Joi.object({ //* This is the course body vali
         .positive()
         .min(1)
         .max(4)
+        .optional()
         .messages({
             "number.base": "The level must be a number.",
             "number.positive": "The level must be a positive number.",
@@ -66,18 +129,20 @@ export const cursoBodyValidation = Joi.object({ //* This is the course body vali
     year: Joi.number()
         .integer()
         .positive()
-        .min(2024)
+        .min(2020)
         .max(2100)
+        .optional()
         .messages({
             "number.base": "The year must be a number.",
             "number.positive": "The year must be a positive number.",
             "number.integer": "The year must be an integer.",
-            "number.min": "The year must be at least 2024.",
+            "number.min": "The year must be at least 2020.",
             "number.max": "The year must be at most 2100.",
         }),
     section: Joi.string()
         .length(1)
         .pattern(/^[A-Z]+$/)
+        .optional()
         .messages({
             "string.base": "The section must be a string.",
             "string.length": "The section must be 1 character long.",
