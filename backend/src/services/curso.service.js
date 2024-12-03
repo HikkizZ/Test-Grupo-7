@@ -18,7 +18,7 @@ export async function getCursoService(query) { //* This function gets a course b
         return [cursoFound, null];
     } catch (error) {
         console.error("Ocurró un error al encontrar el curso:", error);
-        return [null, "Error interno del servidor."];
+        return [null, "Error interno del servidor"];
     }
 };
 
@@ -35,7 +35,7 @@ export async function getCursosService() { //* This function gets all the course
         return [cursos, null];
     } catch (error) {
         console.error("Ocurrió un error al encontrar los cursos:", error);
-        return [null, "Error interno del servidor."];
+        return [null, "Error interno del servidor"];
     }
 };
 
@@ -43,11 +43,14 @@ export async function createCursoService(body) { //* This function creates a cou
     try {
         const cursoRepository = AppDataSource.getRepository(Curso); //? Getting the course repository.
 
-        const cursoExist = await cursoRepository.findOne({
-            where: { name: body.name },
-        }); //? Finding the course by name.
+        const cursoExist = await cursoRepository.findOne({ //? Finding the course by name or code.
+            where: [
+                { name: body.name },
+                { code: generatedSubjectCode(body.year, body.level, body.section) }
+            ]
+        }); 
 
-        if (cursoExist) return [null, "El curso ya existe."];
+        if (cursoExist) return [null, "Error al crear el curso. El curso ya existe"]; //? If the course already exists, return null and a message.
 
         const newCurso = cursoRepository.create({
             name: body.name,
@@ -62,7 +65,7 @@ export async function createCursoService(body) { //* This function creates a cou
         return [cursoCreated, null];
     } catch (error) {
         console.error("Ocurrió un error al crear el curso:", error);
-        return [null, "Error interno del servidor."];
+        return [null, "Error interno del servidor"];
     }
 };
 
@@ -76,7 +79,7 @@ export async function updateCursoService(query, body) { //* This function update
             where: [{ id: idCurso }, { code: codeCurso }, { name: nameCurso }],
         });
 
-        if (!cursoFound) return [null, "Curso no encontrado."]; //? If the course is not found, return null and a message.
+        if (!cursoFound) return [null, "Curso no encontrado"]; //? If the course is not found, return null and a message.
 
         const existingCurso = await cursoRepository.findOne({ //? Finding the course by code and name.
             where: [
@@ -85,14 +88,21 @@ export async function updateCursoService(query, body) { //* This function update
             ]
         });
 
-        if (existingCurso) return [null, "El curso ya existe."]; //? If the course already exists, return null and a message.
+        if (existingCurso) return [null, "Ya existe un curso con estos datos"]; //? If the course already exists, return null and a message.
 
+        const newCode = generatedSubjectCode(body.year, body.level, body.section); //? Generating the course code.
+        
+        const existingCode = await cursoRepository.findOne({ where: { code: newCode } }); //? Finding the course by code.
+        if (existingCode) return [null, "Ya existe un curso con estos datos"]; //? If the course already exists, return null and a message.
+
+        cursoFound.code = newCode; //? Updating the course code.
+        
         const cursoUpdated = await cursoRepository.save({ ...cursoFound, ...body }); //? Updating the course.
 
         return [cursoUpdated, null];
     } catch (error) {
         console.error("Ocurrió un error al actualizar el curso:", error);
-        return [null, "Error interno del servidor."];
+        return [null, "Error interno del servidor"];
     }
 };
 
@@ -106,14 +116,14 @@ export async function deleteCursoService(query) { //* This function deletes a co
             where: [{ id: idCurso }, { code: codeCurso }, { name: nameCurso }],
         });
 
-        if (!cursoFound) return [null, "Curso no encontrado."]; //? If the course is not found, return null and a message.
+        if (!cursoFound) return [null, "Curso no encontrado"]; //? If the course is not found, return null and a message.
 
         const cursoDeleted = await cursoRepository.remove(cursoFound); //? Removing the course.
 
         return [cursoDeleted, null];
     } catch (error) {
         console.error("Ocurrió un error al eliminar el curso:", error);
-        return [null, "Error interno del servidor."];
+        return [null, "Error interno del servidor"];
     }
 };
 
