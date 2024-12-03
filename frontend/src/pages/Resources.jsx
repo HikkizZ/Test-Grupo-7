@@ -22,7 +22,6 @@ export default function Resources() {
         error: errorSearch,
     } = useSearchResource(resources);
 
-    // Cargar recursos al montar el componente
     useEffect(() => {
         fetchResources();
     }, [fetchResources]);
@@ -41,42 +40,30 @@ export default function Resources() {
 
             {/* Buscar recurso */}
             <h3>Buscar Recurso</h3>
-            <div
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: "10px",
-                }}
-            >
+            <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
                 <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={
                         searchFilter === "id"
-                            ? "Buscar recurso por ID"
+                            ? "Buscar por ID"
                             : searchFilter === "name"
-                            ? "Buscar recurso por Nombre"
+                            ? "Buscar por Nombre"
                             : "Buscar recurso"
                     }
-                    style={{
-                        flexGrow: 1,
-                        padding: "10px",
-                        borderRadius: "5px",
-                        border: "1px solid #ccc",
-                        fontSize: "14px",
-                    }}
+                    style={{ flex: "1" }}
                 />
                 <select
                     value={searchFilter}
                     onChange={(e) => setSearchFilter(e.target.value)}
                     style={{
-                        width: "200px",
-                        padding: "10px",
+                        maxWidth: "200px",
+                        minWidth: "150px",
+                        height: "38px",
                         borderRadius: "5px",
                         border: "1px solid #ccc",
-                        fontSize: "14px",
+                        padding: "5px",
                     }}
                 >
                     <option value="">--Seleccionar filtro--</option>
@@ -91,6 +78,12 @@ export default function Resources() {
                 <p>Cargando recursos...</p>
             ) : errorSearch ? (
                 <p style={{ color: "red" }}>{errorSearch}</p>
+            ) : resources.length === 0 ? (
+                // Si no hay recursos en la tabla
+                <p>No hay recursos registrados.</p>
+            ) : searchResults.length === 0 ? (
+                // Si no hay resultados en la búsqueda
+                <p>No se encontraron recursos que coincidan con tu búsqueda.</p>
             ) : (
                 <ResourceTable
                     resources={searchResults}
@@ -103,7 +96,3 @@ export default function Resources() {
         </div>
     );
 }
-
-
-
-

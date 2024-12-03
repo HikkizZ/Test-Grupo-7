@@ -1,7 +1,13 @@
 import ResourceRow from "./ResourceRow";
 
-export default function ResourceTable({ resources, onDelete, loadingDelete, onUpdate, loadingUpdate }) {
-    // Ordenar los recursos por ID
+export default function ResourceTable({
+    resources,
+    onUpdate,
+    onDelete,
+    loadingUpdate,
+    loadingDelete,
+}) {
+    // Ordenar los recursos por ID de menor a mayor
     const sortedResources = [...resources].sort((a, b) => a.id - b.id);
 
     return (
@@ -18,14 +24,13 @@ export default function ResourceTable({ resources, onDelete, loadingDelete, onUp
                     <ResourceRow
                         key={resource.id}
                         resource={resource}
-                        onDelete={onDelete}
-                        loadingDelete={loadingDelete}
                         onUpdate={onUpdate}
+                        onDelete={onDelete}
                         loadingUpdate={loadingUpdate}
+                        loadingDelete={loadingDelete}
                     />
                 ))}
             </tbody>
         </table>
     );
 }
-
