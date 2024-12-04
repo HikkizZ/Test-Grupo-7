@@ -5,7 +5,7 @@ import {
     getForo,
     updateForo,
     deleteForo
-} from "../controllers/Foro.controller.js";
+} from "../controllers/foro.controller.js";
 import { authenticateJWT } from "../middlewares/authentication.middleware.js";
 import { verifyRole } from "../middlewares/authorization.middleware.js";
 
