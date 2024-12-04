@@ -1,48 +1,51 @@
-import { useEffect } from "react";
-import { useCreateForo } from "@hooks/foro/useCreateForo";  // Hook adaptado para foros
-import { useDeleteForo } from "@hooks/foro/useDeleteForo";  // Hook adaptado para foros
-import { useGetForos } from "@hooks/foro/useGetForos";  // Hook adaptado para foros
-import { useUpdateForo } from "@hooks/foro/useUpdateForo";  // Hook adaptado para foros
-import ForoForm from "@components/ForoForm";  // Formulario para foros
-import ForoTable from "@components/ForoTable";  // Tabla para foros
+import React from "react";
+import { useCreateForo } from "@hooks/foro/useCreateForo";
+import { useDeleteForo } from "@hooks/foro/useDeleteForo";
+import { useGetForos } from "@hooks/foro/useGetForos";
+import { useSearchForo } from "@hooks/foro/useSearchForo";
+import ForoForm from "@components/Foro/ForoForm";
+import ForoTable from "@components/Foro/ForoTable";
+import SearchForm from "@components/Foro/SearchFormForo";
 
-//IMPORT CSS
-
-import '../styles/Foro.css';  // Ajusta la ruta según la ubicación de tu archivo
-
+import '../styles/Foro.css';
 
 export default function Foros() {
     const { foros, fetchForos, loading: loadingForos } = useGetForos();
     const { handleCreate, loading: loadingCreate } = useCreateForo(fetchForos);
     const { handleDelete, loading: loadingDelete } = useDeleteForo(fetchForos);
-    const { handleUpdate, loading: loadingUpdate } = useUpdateForo(fetchForos);
-
-    useEffect(() => {
-        fetchForos(); // Cargar foros cuando el componente se monta
-    }, [fetchForos]);
+    const { 
+        searchQuery, 
+        setSearchQuery, 
+        searchFilter, 
+        setSearchFilter, 
+        searchResults 
+    } = useSearchForo(foros);
 
     return (
-        <div>
-            <br />
-            <br />
-            <br />
-            <br />
+        <div className="foros-container">
             <h1>Foros</h1>
 
-            {/* Crear foro */}
             <h3>Crear Foro</h3>
             <ForoForm onCreate={handleCreate} loading={loadingCreate} />
 
-            {/* Lista de foros */}
-            <h3>Lista de Foros</h3>
-            <ForoTable
-                foros={foros}  // Muestra la lista de foros siempre
-                onDelete={handleDelete}
-                loadingDelete={loadingDelete}
-                onUpdate={handleUpdate}
-                loadingUpdate={loadingUpdate}
+            <h3>Buscar Foros</h3>
+            <SearchForm 
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                searchFilter={searchFilter}
+                setSearchFilter={setSearchFilter}
             />
-            {loadingForos && <p>Cargando foros...</p>} {/* Mensaje de carga debajo de la tabla */}
+
+            <h3>Lista de Foros</h3>
+            {loadingForos ? (
+                <p>Cargando foros...</p>
+            ) : (
+                <ForoTable
+                    foros={searchResults}
+                    onDelete={handleDelete}
+                    loadingDelete={loadingDelete}
+                />
+            )}
         </div>
     );
 }
