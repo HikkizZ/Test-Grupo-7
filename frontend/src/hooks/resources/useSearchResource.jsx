@@ -7,7 +7,12 @@ export function useSearchResource(resources) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Ejecutar búsqueda automáticamente cuando searchQuery o searchFilter cambian
+    const resetSearch = () => {
+        setSearchQuery("");
+        setSearchFilter("");
+        setSearchResults(resources); // Restablecer a todos los recursos
+    };
+
     useEffect(() => {
         const performSearch = async () => {
             setLoading(true);
@@ -17,7 +22,6 @@ export function useSearchResource(resources) {
                 let filteredResults = [];
 
                 if (!searchQuery) {
-                    // Si no hay query, mostramos todos los recursos
                     filteredResults = resources;
                 } else {
                     if (searchFilter === "id") {
@@ -29,7 +33,6 @@ export function useSearchResource(resources) {
                             resource.name.toLowerCase().includes(searchQuery.toLowerCase())
                         );
                     } else {
-                        // Buscar por ambos (ID y Nombre)
                         filteredResults = resources.filter((resource) =>
                             `${resource.id} ${resource.name.toLowerCase()}`.includes(searchQuery.toLowerCase())
                         );
@@ -46,7 +49,7 @@ export function useSearchResource(resources) {
         };
 
         performSearch();
-    }, [searchQuery, searchFilter, resources]); // Se ejecuta cuando cambian searchQuery, searchFilter o resources
+    }, [searchQuery, searchFilter, resources]);
 
     return {
         searchQuery,
@@ -54,6 +57,7 @@ export function useSearchResource(resources) {
         searchFilter,
         setSearchFilter,
         searchResults,
+        resetSearch, // Exportar método
         loading,
         error,
     };
