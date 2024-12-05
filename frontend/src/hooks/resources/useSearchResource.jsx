@@ -53,18 +53,27 @@ export function useSearchResource(resources) {
                 title: "Error de búsqueda",
                 text: "El ID debe contener solo números.",
             }).then(() => {
-                // Mantener el cursor al final del texto después de SweetAlert
                 const inputElement = document.querySelector('input[type="text"]');
                 if (inputElement) {
-                    const currentValue = searchQuery; // Mantener el valor actual
-                    inputElement.value = currentValue; // Restaurar el valor al input
-                    inputElement.focus(); // Enfocar el input nuevamente
-                    inputElement.setSelectionRange(currentValue.length, currentValue.length); // Cursor al final
+                    inputElement.focus();
+                    inputElement.setSelectionRange(searchQuery.length, searchQuery.length);
                 }
             });
             return;
         }
         setSearchQuery(query);
+    };
+
+    const handleFilterChange = (filter) => {
+        if (filter === "id" && /\D/.test(searchQuery)) {
+            Swal.fire({
+                icon: "info",
+                title: "Búsqueda restablecida",
+                text: "El buscador ha sido limpiado porque el filtro 'ID' acepta solo números.",
+            });
+            setSearchQuery(""); // Limpia el buscador si contiene letras
+        }
+        setSearchFilter(filter);
     };
 
     const resetSearch = () => {
@@ -77,7 +86,7 @@ export function useSearchResource(resources) {
         searchQuery,
         setSearchQuery: handleQueryChange,
         searchFilter,
-        setSearchFilter,
+        setSearchFilter: handleFilterChange,
         searchResults,
         resetSearch,
         loading,
