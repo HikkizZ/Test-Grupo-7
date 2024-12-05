@@ -59,7 +59,7 @@ export default function Resources() {
 
             {/* Buscar recurso */}
             <h3>Buscar Recurso</h3>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", gap: "10px", alignItems: "center" }}>
                 <input
                     type="text"
                     value={searchQuery}
@@ -89,6 +89,21 @@ export default function Resources() {
                     <option value="id">Buscar recurso por ID</option>
                     <option value="name">Buscar recurso por Nombre</option>
                 </select>
+                {searchQuery && (
+                    <button
+                        onClick={() => setSearchQuery("")}
+                        style={{
+                            backgroundColor: "#007bff",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "5px",
+                            padding: "10px 15px",
+                            cursor: "pointer",
+                        }}
+                    >
+                        Ver Todos los Recursos
+                    </button>
+                )}
             </div>
 
             {/* Lista de recursos */}
