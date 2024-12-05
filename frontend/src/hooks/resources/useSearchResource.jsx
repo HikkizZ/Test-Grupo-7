@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Swal from "sweetalert2"; // Importamos SweetAlert
+import Swal from "sweetalert2";
 
 export function useSearchResource(resources) {
     const [searchQuery, setSearchQuery] = useState("");
@@ -8,21 +8,7 @@ export function useSearchResource(resources) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const handleInputChange = (value) => {
-        if (searchFilter === "id" && value && !/^\d*$/.test(value)) {
-            // Mostrar alerta si no es un número
-            Swal.fire({
-                icon: "error",
-                title: "Error de entrada",
-                text: "El ID debe contener solo números.",
-                confirmButtonText: "Aceptar",
-            });
-            return; // Evitar que se actualice el estado si no es un número
-        }
-
-        setSearchQuery(value); // Actualizar el estado si es válido
-    };
-
+    // Ejecutar búsqueda automáticamente cuando searchQuery o searchFilter cambian
     useEffect(() => {
         const performSearch = async () => {
             setLoading(true);
@@ -36,6 +22,15 @@ export function useSearchResource(resources) {
                     filteredResults = resources;
                 } else {
                     if (searchFilter === "id") {
+                        if (isNaN(searchQuery)) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error de búsqueda",
+                                text: "El ID debe contener solo números.",
+                            });
+                            return;
+                        }
+
                         filteredResults = resources.filter((resource) =>
                             resource.id.toString().includes(searchQuery)
                         );
@@ -61,14 +56,37 @@ export function useSearchResource(resources) {
         };
 
         performSearch();
-    }, [searchQuery, searchFilter, resources]);
+    }, [searchQuery, searchFilter, resources]); // Se ejecuta cuando cambian searchQuery, searchFilter o resources
+
+    // Validar entrada para ID
+    const handleQueryChange = (query) => {
+        if (searchFilter === "id") {
+            if (!/^\d*$/.test(query)) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error de búsqueda",
+                    text: "El ID debe contener solo números.",
+                });
+                return; // Evitar cambios en el query
+            }
+        }
+        setSearchQuery(query); // Actualizar query solo si es válido
+    };
+
+    // Resetear búsqueda
+    const resetSearch = () => {
+        setSearchQuery("");
+        setSearchResults(resources);
+        setSearchFilter("");
+    };
 
     return {
         searchQuery,
-        setSearchQuery: handleInputChange, // Usamos nuestra función personalizada
+        setSearchQuery: handleQueryChange, // Usamos la validación aquí
         searchFilter,
         setSearchFilter,
         searchResults,
+        resetSearch, // Agregamos esta función para el botón
         loading,
         error,
     };
