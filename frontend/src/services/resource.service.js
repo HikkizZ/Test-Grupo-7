@@ -1,31 +1,60 @@
 import axios from './root.service.js';
 
-// Función para mostrar todos los recursos
-export async function getResources(){
+// Obtener todos los recursos
+export async function getResources() {
     try {
         const { data } = await axios.get('/resource/all');
-        return data.data;
+        return data.data; // Retornar solo los datos relevantes
     } catch (error) {
-        return error.response.data;
+        console.error('Error fetching all resources:', error.response?.data?.message || error.message);
+        throw error.response?.data?.message || 'Error desconocido al obtener los recursos.';
     }
 }
 
-// Funcion para eliminar un recurso
-export async function deleteResource(id){
+// Crear un recurso
+export async function createResource(resourceData) {
     try {
-        const response = await axios.delete(`/resource/delete/?id=${id}`);
-        return response.data;
+        const { data } = await axios.post('/resource/', resourceData); // Revisa que la ruta sea correcta
+        return data; // Retornar toda la respuesta en caso de necesitar más propiedades
     } catch (error) {
-        return error.response.data;
+        console.error('Error creating resource:', error.response?.data?.message || error.message);
+        throw error.response?.data?.message || 'Error desconocido al crear el recurso.';
     }
 }
 
-// Funcion para crear un recurso
-export async function createResource(data){
+// Eliminar un recurso
+export async function deleteResource(id) {
     try {
-        const response = await axios.post('/resource/', data);
-        return response.data;
+        const { data } = await axios.delete(`/resource/delete/?id=${id}`);
+        return data; // Retornar toda la respuesta en caso de necesitar más propiedades
     } catch (error) {
-        return error.response.data;
+        console.error('Error deleting resource:', error.response?.data?.message || error.message);
+        throw error.response?.data?.message || 'Error desconocido al eliminar el recurso.';
+    }
+}
+
+// Buscar un recurso por ID o Nombre
+export async function getResource({ id, name }) {
+    try {
+        const params = {}; // Construir los parámetros dinámicamente
+        if (id) params.id = id.trim();
+        if (name) params.name = name.trim();
+
+        const { data } = await axios.get('/resource/detail', { params });
+        return data.data; // Retornar solo los datos relevantes
+    } catch (error) {
+        console.error('Error fetching resource:', error.response?.data?.message || error.message);
+        throw error.response?.data?.message || 'Error desconocido al buscar el recurso.';
+    }
+}
+
+// Actualizar un recurso
+export async function updateResource(id, data) {
+    try {
+        const response = await axios.patch(`/resource/update/?id=${id}`, data);
+        return response.data.data;
+    } catch (error) {
+        console.error("Error al actualizar el recurso:", error);
+        throw error.response?.data?.message || "Error desconocido al actualizar el recurso.";
     }
 }

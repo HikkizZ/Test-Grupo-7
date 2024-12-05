@@ -8,8 +8,13 @@ import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import Resources from './pages/Resources';
 import Schedule from '@pages/Schedule';
-import ProtectedRoute from '@components/ProtectedRoute';
+//import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
+//import Hallam
+import Foro from '@pages/Foro';
+//? Import services Felipe
+import Cursos from './pages/Cursos';
+import Subjects from './pages/Subjects';
 
 const router = createBrowserRouter([
   {
@@ -37,6 +42,18 @@ const router = createBrowserRouter([
     {
         path: '/resources',
         element: <Resources/>
+      },
+      {
+        path: '/cursos',
+        element: <Cursos/>
+      },
+      {
+        path: 'subjects',
+        element: <Subjects/>
+      },
+      {
+        path: '/posts',
+        element: <Foro/>,
       }
     ]
   },

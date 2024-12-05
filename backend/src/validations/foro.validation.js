@@ -12,12 +12,14 @@ export const foroValidation = Joi.object({
     nombreProfesor: Joi.string()
         .max(255)
         .required()
+        .pattern(/^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/) // Solo letras y espacios
         .messages({
             "string.empty": "El nombre del profesor es obligatorio.",
             "string.max": "El nombre del profesor no puede exceder los 255 caracteres.",
+            "string.pattern.base": "El nombre del profesor solo puede contener letras y un único espacio entre palabras."
         }),
     categoria: Joi.string()
-        .valid("tarea", "contenido", "variedad")
+        .valid("Tarea", "Contenido","Variedad")
         .required()
         .messages({
             "any.only": "La categoría debe ser una de las siguientes: tarea, contenido o variedad.",

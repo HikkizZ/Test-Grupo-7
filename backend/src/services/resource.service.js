@@ -8,7 +8,7 @@ export async function createResourceService(req) {
 
         const existingResource = await resourceRepository.findOne({ where: { name: req.body.name } });
 
-        if (existingResource) return [null, "Resource already exists."];
+        if (existingResource) return [null, "El recurso ya existe"];
 
         const newResource = resourceRepository.create({
             name: req.body.name,
@@ -28,7 +28,7 @@ export async function getResourcesService() {
 
         const resources = await resourceRepository.find();
 
-        if (!resources || resources.length === 0) return [null, "No resources found."];
+        if (!resources || resources.length === 0) return [null, "No se encontraron recursos."];
 
         return [resources, null];
     } catch (error) {
@@ -46,7 +46,7 @@ export async function getResourceService(query) {
             where: [{ id: idResource }, { name: nameResource }]
          });
 
-        if (!resourceFound) return [null, "Resource not found."];
+        if (!resourceFound) return [null, "Recurso no encontrado."];
 
         return [resourceFound, null];
     } catch (error) {
@@ -62,7 +62,7 @@ export async function updateResourceService(query, body) {
 
         const resourceFound = await resourceRepository.findOne({ where: [{ id: idResource }, { name: nameResource }] });
 
-        if (!resourceFound) return [null, "Resource not found."];
+        if (!resourceFound) return [null, "Recurso no encontrado."];
 
         const resourceUpdated = await resourceRepository.update(resourceFound.id, body);
 
@@ -80,7 +80,7 @@ export async function deleteResourceService(query) {
 
         const resourceFound = await resourceRepository.findOne({ where: [{ id: idResource }, { name: nameResource }] });
 
-        if (!resourceFound) return [null, "Resource not found."];
+        if (!resourceFound) return [null, "Recurso no encontrado."];
 
         await resourceRepository.remove(resourceFound);
 

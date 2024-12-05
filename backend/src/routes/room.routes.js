@@ -10,9 +10,9 @@ router
 
 router
     .post("/", verifyRole("admin"), createRoom) // Crear una aula
-    .get("/all", getRooms) // Listar aulas (disponibles y no disponibles)
+    .get("/all", verifyRole (["Encargado", "admin", "Profesor", "Alumno"]), getRooms) // Listar salas (disponibles y no disponibles)
+    .get("/detail/", verifyRole (["Encargado", "admin", "Profesor", "Alumno"]), getRoom) // Mostrar información de un aula en particular
     .patch("/update/", verifyRole(["Encargado", "admin"]), updateRoom) // Actualizar aula
-    .get("/detail/", getRoom) // Mostrar información de un aula en particular
     .delete("/delete/", verifyRole("admin"), deleteRoom); // Eliminar un aula
 
 export default router;
