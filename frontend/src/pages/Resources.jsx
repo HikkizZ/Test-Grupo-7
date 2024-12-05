@@ -12,7 +12,7 @@ export default function Resources() {
     const { handleCreate, loading: loadingCreate } = useCreateResource(fetchResources);
     const { handleUpdate, loading: loadingUpdate } = useUpdateResource(fetchResources);
 
-    const [searchResults, setSearchResults] = useState(resources); // Estado de resultados de búsqueda
+    const [searchResults, setSearchResults] = useState(resources);
 
     const {
         searchQuery,
@@ -21,18 +21,16 @@ export default function Resources() {
         setSearchFilter,
         searchResults: filteredResults,
         loading: loadingSearch,
-        error: errorSearch,
+        error: errorSearch, // Recibimos el error
     } = useSearchResource(resources);
 
-    // Combinar resultados de búsqueda con el estado de eliminación
     useEffect(() => {
         setSearchResults(filteredResults);
     }, [filteredResults]);
 
-    // Usar el hook de eliminación con los estados principales
     const { handleDelete, loading: loadingDelete } = useDeleteResource({
         resources,
-        setResources: fetchResources, // Reutilizar la lógica de fetchResources para mantener la consistencia
+        setResources: fetchResources,
         searchResults,
         setSearchResults,
     });
@@ -41,9 +39,8 @@ export default function Resources() {
         fetchResources();
     }, [fetchResources]);
 
-    // Determinar los mensajes correctos
-    const noResources = resources.length === 0; // No hay recursos registrados
-    const noSearchResults = searchResults.length === 0 && !noResources; // No coincidencias en la búsqueda
+    const noResources = resources.length === 0;
+    const noSearchResults = searchResults.length === 0 && !noResources;
 
     return (
         <div>
@@ -53,13 +50,11 @@ export default function Resources() {
             <br />
             <h1>Recursos</h1>
 
-            {/* Crear recurso */}
             <h3>Crear Recurso</h3>
             <ResourceForm onCreate={handleCreate} loading={loadingCreate} />
 
-            {/* Buscar recurso */}
             <h3>Buscar Recurso</h3>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: "10px", alignItems: "center" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
                 <input
                     type="text"
                     value={searchQuery}
@@ -89,37 +84,18 @@ export default function Resources() {
                     <option value="id">Buscar recurso por ID</option>
                     <option value="name">Buscar recurso por Nombre</option>
                 </select>
-                {searchQuery && (
-                    <button
-                        onClick={() => setSearchQuery("")}
-                        style={{
-                            backgroundColor: "#007bff",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "5px",
-                            padding: "10px 15px",
-                            cursor: "pointer",
-                        }}
-                    >
-                        Ver Todos los Recursos
-                    </button>
-                )}
             </div>
 
-            {/* Lista de recursos */}
+            {/* Mostrar mensajes de error o resultados */}
+            {errorSearch && <p style={{ color: "red" }}>{errorSearch}</p>} {/* Mostrar el error */}
             <h3>Lista de Recursos</h3>
             {loadingSearch || loadingResources ? (
                 <p>Cargando recursos...</p>
-            ) : errorSearch ? (
-                <p style={{ color: "red" }}>{errorSearch}</p>
             ) : noResources ? (
-                // Mostrar mensaje si no hay recursos
                 <p>No hay recursos registrados.</p>
             ) : noSearchResults ? (
-                // Mostrar mensaje si no hay resultados de búsqueda
                 <p>No se encontraron recursos que coincidan con tu búsqueda.</p>
             ) : (
-                // Mostrar la tabla de recursos
                 <ResourceTable
                     resources={searchResults}
                     onDelete={handleDelete}

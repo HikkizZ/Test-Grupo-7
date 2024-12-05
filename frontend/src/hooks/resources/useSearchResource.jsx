@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Swal from "sweetalert2"; // Importamos SweetAlert
 
 export function useSearchResource(resources) {
     const [searchQuery, setSearchQuery] = useState("");
@@ -7,10 +8,19 @@ export function useSearchResource(resources) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const resetSearch = () => {
-        setSearchQuery("");
-        setSearchFilter("");
-        setSearchResults(resources); // Restablecer a todos los recursos
+    const handleInputChange = (value) => {
+        if (searchFilter === "id" && value && !/^\d*$/.test(value)) {
+            // Mostrar alerta si no es un número
+            Swal.fire({
+                icon: "error",
+                title: "Error de entrada",
+                text: "El ID debe contener solo números.",
+                confirmButtonText: "Aceptar",
+            });
+            return; // Evitar que se actualice el estado si no es un número
+        }
+
+        setSearchQuery(value); // Actualizar el estado si es válido
     };
 
     useEffect(() => {
@@ -22,6 +32,7 @@ export function useSearchResource(resources) {
                 let filteredResults = [];
 
                 if (!searchQuery) {
+                    // Si no hay query, mostramos todos los recursos
                     filteredResults = resources;
                 } else {
                     if (searchFilter === "id") {
@@ -33,6 +44,7 @@ export function useSearchResource(resources) {
                             resource.name.toLowerCase().includes(searchQuery.toLowerCase())
                         );
                     } else {
+                        // Buscar por ambos (ID y Nombre)
                         filteredResults = resources.filter((resource) =>
                             `${resource.id} ${resource.name.toLowerCase()}`.includes(searchQuery.toLowerCase())
                         );
@@ -53,11 +65,10 @@ export function useSearchResource(resources) {
 
     return {
         searchQuery,
-        setSearchQuery,
+        setSearchQuery: handleInputChange, // Usamos nuestra función personalizada
         searchFilter,
         setSearchFilter,
         searchResults,
-        resetSearch, // Exportar método
         loading,
         error,
     };
