@@ -8,7 +8,6 @@ export function useSearchResource(resources) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Ejecutar búsqueda automáticamente cuando searchQuery o searchFilter cambian
     useEffect(() => {
         const performSearch = async () => {
             setLoading(true);
@@ -18,19 +17,9 @@ export function useSearchResource(resources) {
                 let filteredResults = [];
 
                 if (!searchQuery) {
-                    // Si no hay query, mostramos todos los recursos
                     filteredResults = resources;
                 } else {
                     if (searchFilter === "id") {
-                        if (isNaN(searchQuery)) {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Error de búsqueda",
-                                text: "El ID debe contener solo números.",
-                            });
-                            return;
-                        }
-
                         filteredResults = resources.filter((resource) =>
                             resource.id.toString().includes(searchQuery)
                         );
@@ -39,7 +28,6 @@ export function useSearchResource(resources) {
                             resource.name.toLowerCase().includes(searchQuery.toLowerCase())
                         );
                     } else {
-                        // Buscar por ambos (ID y Nombre)
                         filteredResults = resources.filter((resource) =>
                             `${resource.id} ${resource.name.toLowerCase()}`.includes(searchQuery.toLowerCase())
                         );
@@ -56,24 +44,29 @@ export function useSearchResource(resources) {
         };
 
         performSearch();
-    }, [searchQuery, searchFilter, resources]); // Se ejecuta cuando cambian searchQuery, searchFilter o resources
+    }, [searchQuery, searchFilter, resources]);
 
-    // Validar entrada para ID
     const handleQueryChange = (query) => {
-        if (searchFilter === "id") {
-            if (!/^\d*$/.test(query)) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Error de búsqueda",
-                    text: "El ID debe contener solo números.",
-                });
-                return; // Evitar cambios en el query
-            }
+        if (searchFilter === "id" && !/^\d*$/.test(query)) {
+            Swal.fire({
+                icon: "error",
+                title: "Error de búsqueda",
+                text: "El ID debe contener solo números.",
+            }).then(() => {
+                // Mantener el cursor al final del texto después de SweetAlert
+                const inputElement = document.querySelector('input[type="text"]');
+                if (inputElement) {
+                    const currentValue = searchQuery; // Mantener el valor actual
+                    inputElement.value = currentValue; // Restaurar el valor al input
+                    inputElement.focus(); // Enfocar el input nuevamente
+                    inputElement.setSelectionRange(currentValue.length, currentValue.length); // Cursor al final
+                }
+            });
+            return;
         }
-        setSearchQuery(query); // Actualizar query solo si es válido
+        setSearchQuery(query);
     };
 
-    // Resetear búsqueda
     const resetSearch = () => {
         setSearchQuery("");
         setSearchResults(resources);
@@ -82,11 +75,11 @@ export function useSearchResource(resources) {
 
     return {
         searchQuery,
-        setSearchQuery: handleQueryChange, // Usamos la validación aquí
+        setSearchQuery: handleQueryChange,
         searchFilter,
         setSearchFilter,
         searchResults,
-        resetSearch, // Agregamos esta función para el botón
+        resetSearch,
         loading,
         error,
     };
