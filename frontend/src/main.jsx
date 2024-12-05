@@ -24,19 +24,20 @@ const router = createBrowserRouter([
       {
         path: '/users',
         element: (
-        <ProtectedRoute allowedRoles={['administrador']}>
-          <Users />
-        </ProtectedRoute>
+          <Users/>
+        // <ProtectedRoute allowedRoles={['administrador']}>
+        //   <Users />
+        // </ProtectedRoute>
         ),
     },
     {
       path: '/schedule',
-      element: <Schedule />  
+      element: <Schedule /> 
     },
     {
-      path: '/resources',
-      element: <Resources/>
-    }
+        path: '/resources',
+        element: <Resources/>
+      }
     ]
   },
   {

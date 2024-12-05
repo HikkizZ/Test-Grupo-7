@@ -42,13 +42,8 @@ export const roomBodyValidation = Joi.object({
             "string.base": "The name must be a string.",
             "string.min": "The name must be at least 3 characters long.",
             "string.max": "The name must be at most 70 characters long.",
-        }),
-    available: Joi.boolean()
-        .messages({
-            "boolean.base": "The available must be a boolean.",
-        }),
+        })
 })
-.or("name", "available")
 .messages({
     "object.missing": "The name is required.",
     "object.unknown": "Don't send more properties than the ones required.",

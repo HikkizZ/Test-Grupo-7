@@ -15,7 +15,7 @@ export async function isAdmin(req, res, next) { //? Function that checks if the 
         const userFound = await userRepository.findOne({ where : { email: req.user.email } });
 
         if (!userFound) { //? If the user is not found, return an error message.
-            return handleErrorClient(res, 401, "User not found in the database.");
+            return handleErrorClient(res, 401, "No se encontró el user en la base de datos.");
         }
 
         const rolUser = userFound.role;
@@ -25,7 +25,7 @@ export async function isAdmin(req, res, next) { //? Function that checks if the 
             return;
         }
 
-        return handleErrorClient(res, 401, "You need to be an administrator to perform this action"); 
+        return handleErrorClient(res, 401, "Necesitas ser administrador para realizar esta acción."); 
     } catch (error) {
         handleErrorServer(res, 500, "Internal server Middleware error. -> isAdmin()", error.message);
     }

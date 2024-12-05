@@ -2,7 +2,7 @@
 import Resource from "../models/resource.model.js";
 import { AppDataSource } from "../config/configDB.js";
 
-export async function createResourceService(req, res) {
+export async function createResourceService(req) {
     try {
         const resourceRepository = AppDataSource.getRepository(Resource);
 
@@ -12,7 +12,6 @@ export async function createResourceService(req, res) {
 
         const newResource = resourceRepository.create({
             name: req.body.name,
-            available: true,
         });
 
         await resourceRepository.save(newResource);
@@ -23,7 +22,7 @@ export async function createResourceService(req, res) {
     }
 };
 
-export async function getResourcesService(req, res) {
+export async function getResourcesService() {
     try {
         const resourceRepository = AppDataSource.getRepository(Resource);
 
