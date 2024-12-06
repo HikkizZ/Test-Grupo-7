@@ -1,19 +1,27 @@
 import { useState } from "react";
+import { showErrorAlert } from "../../utils/alerts"; // Importamos la alerta de error
 
 export default function ResourceForm({ onCreate, loading }) {
-    const [showForm, setShowForm] = useState(false); // Estado para mostrar/ocultar el formulario
+    const [showForm, setShowForm] = useState(false);
     const [resourceName, setResourceName] = useState("");
 
     const handleCancel = () => {
         setResourceName("");
-        setShowForm(false); // Ocultar el formulario al cancelar
+        setShowForm(false);
     };
 
     const handleSubmit = () => {
-        if (!resourceName.trim()) return; // Validar que el nombre no esté vacío
+        if (!resourceName.trim()) return;
+        if (resourceName.trim().length < 3) {
+            showErrorAlert(
+                "Nombre demasiado corto",
+                "El nombre del recurso debe tener al menos 3 caracteres."
+            );
+            return;
+        }
         onCreate({ name: resourceName });
-        setResourceName(""); // Limpiar el campo después de crear
-        setShowForm(false); // Ocultar el formulario
+        setResourceName("");
+        setShowForm(false);
     };
 
     return (
@@ -40,5 +48,3 @@ export default function ResourceForm({ onCreate, loading }) {
         </div>
     );
 }
-
-
