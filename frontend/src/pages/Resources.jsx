@@ -109,7 +109,7 @@ export default function Resources() {
                     onClick={() => setShowCreateModal(true)}
                     style={{
                         height: "38px",
-                        backgroundColor: "#007bff",
+                        backgroundColor: "#28a745",
                         color: "#fff",
                         border: "none",
                         borderRadius: "5px",
