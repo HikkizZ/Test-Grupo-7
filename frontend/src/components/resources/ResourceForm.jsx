@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Modal from "react-modal";
-import { showErrorAlert } from "../../utils/alerts"; // Importamos la alerta de error
+import { showErrorAlert } from "../../utils/alerts";
 
 // Estilo para la ventana modal
 const modalStyles = {
@@ -28,7 +28,7 @@ export default function ResourceForm({ onCreate, loading, onClose }) {
 
     const handleCancel = () => {
         setResourceName("");
-        onClose(); // Cerrar el modal sin crear el recurso
+        onClose();
     };
 
     const handleSubmit = () => {
@@ -42,15 +42,15 @@ export default function ResourceForm({ onCreate, loading, onClose }) {
         }
         onCreate({ name: resourceName });
         setResourceName("");
-        onClose(); // Cerrar el modal después de guardar
+        onClose();
     };
 
     return (
         <Modal
-            isOpen={true} // Siempre mostrar el modal si el componente es renderizado
+            isOpen={true}
             onRequestClose={handleCancel}
             style={modalStyles}
-            ariaHideApp={false} // Importante para evitar errores en pruebas
+            ariaHideApp={false}
         >
             <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Crear Recurso</h2>
             <input
@@ -69,7 +69,6 @@ export default function ResourceForm({ onCreate, loading, onClose }) {
                 }}
             />
             <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
-                {/* Botón Guardar primero */}
                 <button
                     onClick={handleSubmit}
                     disabled={loading}
@@ -86,7 +85,6 @@ export default function ResourceForm({ onCreate, loading, onClose }) {
                 >
                     Guardar
                 </button>
-                {/* Botón Cancelar después */}
                 <button
                     onClick={handleCancel}
                     disabled={loading}
