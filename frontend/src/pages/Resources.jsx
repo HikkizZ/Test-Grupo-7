@@ -4,8 +4,8 @@ import { useGetResources } from "../hooks/resources/useGetResources";
 import { useSearchResource } from "../hooks/resources/useSearchResource";
 import { useUpdateResource } from "../hooks/resources/useUpdateResource";
 import { useDeleteResource } from "../hooks/resources/useDeleteResource";
-import ResourceForm from "../components/resources/ResourceForm";
 import ResourceTable from "../components/resources/ResourceTable";
+import ResourceForm from "../components/resources/ResourceForm";
 
 export default function Resources() {
     const { resources, fetchResources, loading: loadingResources } = useGetResources();
@@ -13,6 +13,7 @@ export default function Resources() {
     const { handleUpdate, loading: loadingUpdate } = useUpdateResource(fetchResources);
 
     const [searchResults, setSearchResults] = useState(resources); // Estado de resultados de búsqueda
+    const [showCreateModal, setShowCreateModal] = useState(false); // Control de visibilidad del modal
 
     const {
         searchQuery,
@@ -20,7 +21,7 @@ export default function Resources() {
         searchFilter,
         setSearchFilter,
         searchResults: filteredResults,
-        resetSearch, // Obtenemos la función para el botón
+        resetSearch,
         loading: loadingSearch,
         error: errorSearch,
     } = useSearchResource(resources);
@@ -31,7 +32,7 @@ export default function Resources() {
 
     const { handleDelete, loading: loadingDelete } = useDeleteResource({
         resources,
-        setResources: fetchResources, // Reutilizar fetchResources
+        setResources: fetchResources,
         searchResults,
         setSearchResults,
     });
@@ -50,10 +51,6 @@ export default function Resources() {
             <br />
             <br />
             <h1>Recursos</h1>
-
-            {/* Crear recurso */}
-            <h3>Crear Recurso</h3>
-            <ResourceForm onCreate={handleCreate} loading={loadingCreate} />
 
             {/* Buscar recurso */}
             <h3>Buscar Recurso</h3>
@@ -105,8 +102,25 @@ export default function Resources() {
                 )}
             </div>
 
-            {/* Lista de recursos */}
-            <h3>Lista de Recursos</h3>
+            {/* Lista de recursos y botón Crear */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px" }}>
+                <h3>Lista de Recursos</h3>
+                <button
+                    onClick={() => setShowCreateModal(true)}
+                    style={{
+                        height: "38px",
+                        backgroundColor: "#007bff",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "5px",
+                        padding: "5px 10px",
+                        cursor: "pointer",
+                    }}
+                >
+                    Crear Recurso
+                </button>
+            </div>
+
             {loadingSearch || loadingResources ? (
                 <p>Cargando recursos...</p>
             ) : errorSearch ? (
@@ -122,6 +136,15 @@ export default function Resources() {
                     loadingDelete={loadingDelete}
                     onUpdate={handleUpdate}
                     loadingUpdate={loadingUpdate}
+                />
+            )}
+
+            {/* Modal para Crear Recurso */}
+            {showCreateModal && (
+                <ResourceForm
+                    onCreate={handleCreate}
+                    loading={loadingCreate}
+                    onClose={() => setShowCreateModal(false)} // Manejo del cierre del modal
                 />
             )}
         </div>
