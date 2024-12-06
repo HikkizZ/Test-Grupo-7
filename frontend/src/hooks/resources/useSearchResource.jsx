@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 
 export function useSearchResource(resources) {
     const [searchQuery, setSearchQuery] = useState("");
@@ -6,12 +7,6 @@ export function useSearchResource(resources) {
     const [searchResults, setSearchResults] = useState(resources || []);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
-    const resetSearch = () => {
-        setSearchQuery("");
-        setSearchFilter("");
-        setSearchResults(resources); // Restablecer a todos los recursos
-    };
 
     useEffect(() => {
         const performSearch = async () => {
@@ -51,13 +46,49 @@ export function useSearchResource(resources) {
         performSearch();
     }, [searchQuery, searchFilter, resources]);
 
+    const handleQueryChange = (query) => {
+        if (searchFilter === "id" && !/^\d*$/.test(query)) {
+            Swal.fire({
+                icon: "error",
+                title: "Error de búsqueda",
+                text: "El ID debe contener solo números.",
+            }).then(() => {
+                const inputElement = document.querySelector('input[type="text"]');
+                if (inputElement) {
+                    inputElement.focus();
+                    inputElement.setSelectionRange(searchQuery.length, searchQuery.length);
+                }
+            });
+            return;
+        }
+        setSearchQuery(query);
+    };
+
+    const handleFilterChange = (filter) => {
+        if (filter === "id" && /\D/.test(searchQuery)) {
+            Swal.fire({
+                icon: "info",
+                title: "Búsqueda restablecida",
+                text: "El buscador ha sido limpiado porque el filtro 'ID' acepta solo números.",
+            });
+            setSearchQuery(""); // Limpia el buscador si contiene letras
+        }
+        setSearchFilter(filter);
+    };
+
+    const resetSearch = () => {
+        setSearchQuery("");
+        setSearchResults(resources);
+        setSearchFilter("");
+    };
+
     return {
         searchQuery,
-        setSearchQuery,
+        setSearchQuery: handleQueryChange,
         searchFilter,
-        setSearchFilter,
+        setSearchFilter: handleFilterChange,
         searchResults,
-        resetSearch, // Exportar método
+        resetSearch,
         loading,
         error,
     };

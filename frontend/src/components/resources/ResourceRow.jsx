@@ -43,19 +43,65 @@ export default function ResourceRow({ resource, onUpdate, onDelete, loadingUpdat
             <td>
                 {isEditing ? (
                     <>
-                        <button onClick={handleSaveEdit} disabled={loadingUpdate}>
+                        <button
+                            onClick={handleSaveEdit}
+                            disabled={loadingUpdate}
+                            style={{
+                                backgroundColor: "#007bff",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "5px",
+                                padding: "5px 10px",
+                                marginRight: "5px",
+                                cursor: "pointer",
+                            }}
+                        >
                             Guardar
                         </button>
-                        <button onClick={handleCancelEdit} disabled={loadingUpdate}>
+                        <button
+                            onClick={handleCancelEdit}
+                            disabled={loadingUpdate}
+                            style={{
+                                backgroundColor: "#d33",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "5px",
+                                padding: "5px 10px",
+                                cursor: "pointer",
+                            }}
+                        >
                             Cancelar
                         </button>
                     </>
                 ) : (
                     <>
-                        <button onClick={handleEditClick} disabled={loadingUpdate}>
+                        <button
+                            onClick={handleEditClick}
+                            disabled={loadingUpdate}
+                            style={{
+                                backgroundColor: "#cc8400",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "5px",
+                                padding: "5px 10px",
+                                marginRight: "5px",
+                                cursor: "pointer",
+                            }}
+                        >
                             Modificar
                         </button>
-                        <button onClick={() => onDelete(resource.id)} disabled={loadingDelete}>
+                        <button
+                            onClick={() => onDelete(resource.id)}
+                            disabled={loadingDelete}
+                            style={{
+                                backgroundColor: "#d33",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "5px",
+                                padding: "5px 10px",
+                                cursor: "pointer",
+                            }}
+                        >
                             Eliminar
                         </button>
                     </>
@@ -64,4 +110,3 @@ export default function ResourceRow({ resource, onUpdate, onDelete, loadingUpdat
         </tr>
     );
 }
-

@@ -4,8 +4,8 @@ import { useGetResources } from "../hooks/resources/useGetResources";
 import { useSearchResource } from "../hooks/resources/useSearchResource";
 import { useUpdateResource } from "../hooks/resources/useUpdateResource";
 import { useDeleteResource } from "../hooks/resources/useDeleteResource";
-import ResourceForm from "../components/resources/ResourceForm";
 import ResourceTable from "../components/resources/ResourceTable";
+import ResourceForm from "../components/resources/ResourceForm";
 
 export default function Resources() {
     const { resources, fetchResources, loading: loadingResources } = useGetResources();
@@ -13,6 +13,7 @@ export default function Resources() {
     const { handleUpdate, loading: loadingUpdate } = useUpdateResource(fetchResources);
 
     const [searchResults, setSearchResults] = useState(resources); // Estado de resultados de búsqueda
+    const [showCreateModal, setShowCreateModal] = useState(false); // Control de visibilidad del modal
 
     const {
         searchQuery,
@@ -20,19 +21,18 @@ export default function Resources() {
         searchFilter,
         setSearchFilter,
         searchResults: filteredResults,
+        resetSearch,
         loading: loadingSearch,
         error: errorSearch,
     } = useSearchResource(resources);
 
-    // Combinar resultados de búsqueda con el estado de eliminación
     useEffect(() => {
         setSearchResults(filteredResults);
     }, [filteredResults]);
 
-    // Usar el hook de eliminación con los estados principales
     const { handleDelete, loading: loadingDelete } = useDeleteResource({
         resources,
-        setResources: fetchResources, // Reutilizar la lógica de fetchResources para mantener la consistencia
+        setResources: fetchResources,
         searchResults,
         setSearchResults,
     });
@@ -41,9 +41,8 @@ export default function Resources() {
         fetchResources();
     }, [fetchResources]);
 
-    // Determinar los mensajes correctos
-    const noResources = resources.length === 0; // No hay recursos registrados
-    const noSearchResults = searchResults.length === 0 && !noResources; // No coincidencias en la búsqueda
+    const noResources = resources.length === 0;
+    const noSearchResults = searchResults.length === 0 && !noResources;
 
     return (
         <div>
@@ -53,13 +52,9 @@ export default function Resources() {
             <br />
             <h1>Recursos</h1>
 
-            {/* Crear recurso */}
-            <h3>Crear Recurso</h3>
-            <ResourceForm onCreate={handleCreate} loading={loadingCreate} />
-
             {/* Buscar recurso */}
             <h3>Buscar Recurso</h3>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: "10px", alignItems: "center" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
                 <input
                     type="text"
                     value={searchQuery}
@@ -91,13 +86,14 @@ export default function Resources() {
                 </select>
                 {searchQuery && (
                     <button
-                        onClick={() => setSearchQuery("")}
+                        onClick={resetSearch}
                         style={{
+                            height: "38px",
                             backgroundColor: "#007bff",
-                            color: "white",
+                            color: "#fff",
                             border: "none",
                             borderRadius: "5px",
-                            padding: "10px 15px",
+                            padding: "5px 10px",
                             cursor: "pointer",
                         }}
                     >
@@ -106,26 +102,49 @@ export default function Resources() {
                 )}
             </div>
 
-            {/* Lista de recursos */}
-            <h3>Lista de Recursos</h3>
+            {/* Lista de recursos y botón Crear */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px" }}>
+                <h3>Lista de Recursos</h3>
+                <button
+                    onClick={() => setShowCreateModal(true)}
+                    style={{
+                        height: "38px",
+                        backgroundColor: "#007bff",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "5px",
+                        padding: "5px 10px",
+                        cursor: "pointer",
+                    }}
+                >
+                    Crear Recurso
+                </button>
+            </div>
+
             {loadingSearch || loadingResources ? (
                 <p>Cargando recursos...</p>
             ) : errorSearch ? (
                 <p style={{ color: "red" }}>{errorSearch}</p>
             ) : noResources ? (
-                // Mostrar mensaje si no hay recursos
                 <p>No hay recursos registrados.</p>
             ) : noSearchResults ? (
-                // Mostrar mensaje si no hay resultados de búsqueda
                 <p>No se encontraron recursos que coincidan con tu búsqueda.</p>
             ) : (
-                // Mostrar la tabla de recursos
                 <ResourceTable
                     resources={searchResults}
                     onDelete={handleDelete}
                     loadingDelete={loadingDelete}
                     onUpdate={handleUpdate}
                     loadingUpdate={loadingUpdate}
+                />
+            )}
+
+            {/* Modal para Crear Recurso */}
+            {showCreateModal && (
+                <ResourceForm
+                    onCreate={handleCreate}
+                    loading={loadingCreate}
+                    onClose={() => setShowCreateModal(false)} // Manejo del cierre del modal
                 />
             )}
         </div>
