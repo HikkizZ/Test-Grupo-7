@@ -1,25 +1,21 @@
-import { Router } from "express";
-import {
-    createForo,
-    getForos,
-    getForo,
-    updateForo,
-    deleteForo
-} from "../controllers/foro.controller.js";
-import { authenticateJWT } from "../middlewares/authentication.middleware.js";
-import { verifyRole } from "../middlewares/authorization.middleware.js";
+import express from "express";
+import { createForo, getForos, getForo, updateForo, deleteForo } from "../controllers/foro.controller.js";
 
-const router = Router();
+const router = express.Router();
 
-// Aplicar autenticación a todas las rutas
-router.use(authenticateJWT);
+// Ruta para crear un nuevo anuncio
+router.post("/", createForo);
 
-// Definición de rutas con autorización
-router
-    .post("/", verifyRole("admin", "Profesor", "Encargado"), createForo) // Crear un recurso
-    .get("/all", verifyRole(["Encargado", "admin", "Profesor", "Alumno"]), getForos) // Listar recursos
-    .get("/:id", verifyRole(["Encargado", "admin", "Profesor", "Alumno"]), getForo) // Ver un recurso
-    .patch("/:id", verifyRole(["Encargado", "admin", "Profesor"]), updateForo) // Actualizar recurso
-    .delete("/:id", verifyRole("admin", "Profesor", "Encargado"), deleteForo); // Eliminar recurso
+// Ruta para obtener todos los anuncios
+router.get("/all", getForos);
+
+// Ruta para obtener un anuncio por su ID
+router.get("/:id", getForo);
+
+// Ruta para actualizar un anuncio por su ID
+router.put("/:id", updateForo);
+
+// Ruta para eliminar un anuncio por su ID
+router.delete("/:id", deleteForo);
 
 export default router;
