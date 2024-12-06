@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import { useCreateResource } from "../hooks/resources/useCreateResource";
-import { useGetResources } from "../hooks/resources/useGetResources";
-import { useSearchResource } from "../hooks/resources/useSearchResource";
-import { useUpdateResource } from "../hooks/resources/useUpdateResource";
-import { useDeleteResource } from "../hooks/resources/useDeleteResource";
-import ResourceTable from "../components/resources/ResourceTable";
-import ResourceForm from "../components/resources/ResourceForm";
+import { useCreateRoom } from "../hooks/rooms/useCreateRoom";
+import { useGetRooms } from "../hooks/rooms/useGetRooms";
+import { useSearchRoom } from "../hooks/rooms/useSearchRoom";
+import { useUpdateRoom } from "../hooks/rooms/useUpdateRoom";
+import { useDeleteRoom } from "../hooks/rooms/useDeleteRoom";
+import RoomTable from "../components/rooms/RoomTable";
+import RoomForm from "../components/rooms/RoomForm";
 
-export default function Resources() {
-    const { resources, fetchResources, loading: loadingResources } = useGetResources();
-    const { handleCreate, loading: loadingCreate } = useCreateResource(fetchResources);
-    const { handleUpdate, loading: loadingUpdate } = useUpdateResource(fetchResources);
+export default function Rooms() {
+    const { rooms, fetchRooms, loading: loadingRooms } = useGetRooms();
+    const { handleCreate, loading: loadingCreate } = useCreateRoom(fetchRooms);
+    const { handleUpdate, loading: loadingUpdate } = useUpdateRoom(fetchRooms);
 
-    const [searchResults, setSearchResults] = useState(resources); // Estado de resultados de búsqueda
+    const [searchResults, setSearchResults] = useState(rooms); // Estado de resultados de búsqueda
     const [showCreateModal, setShowCreateModal] = useState(false); // Control de visibilidad del modal
 
     const {
@@ -24,25 +24,25 @@ export default function Resources() {
         resetSearch,
         loading: loadingSearch,
         error: errorSearch,
-    } = useSearchResource(resources);
+    } = useSearchRoom(rooms);
 
     useEffect(() => {
         setSearchResults(filteredResults);
     }, [filteredResults]);
 
-    const { handleDelete, loading: loadingDelete } = useDeleteResource({
-        resources,
-        setResources: fetchResources,
+    const { handleDelete, loading: loadingDelete } = useDeleteRoom({
+        rooms,
+        setRooms: fetchRooms,
         searchResults,
         setSearchResults,
     });
 
     useEffect(() => {
-        fetchResources();
-    }, [fetchResources]);
+        fetchRooms();
+    }, [fetchRooms]);
 
-    const noResources = resources.length === 0;
-    const noSearchResults = searchResults.length === 0 && !noResources;
+    const noRooms = rooms.length === 0;
+    const noSearchResults = searchResults.length === 0 && !noRooms;
 
     return (
         <div>
@@ -50,10 +50,10 @@ export default function Resources() {
             <br />
             <br />
             <br />
-            <h1>Recursos</h1>
+            <h1>Salas</h1>
 
-            {/* Buscar recurso */}
-            <h3>Buscar Recurso</h3>
+            {/* Buscar sala */}
+            <h3>Buscar Sala</h3>
             <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
                 <input
                     type="text"
@@ -64,7 +64,7 @@ export default function Resources() {
                             ? "Buscar por ID"
                             : searchFilter === "name"
                             ? "Buscar por Nombre"
-                            : "Buscar recurso"
+                            : "Buscar sala"
                     }
                     style={{ flex: "1" }}
                 />
@@ -81,8 +81,8 @@ export default function Resources() {
                     }}
                 >
                     <option value="">--Seleccionar filtro--</option>
-                    <option value="id">Buscar recurso por ID</option>
-                    <option value="name">Buscar recurso por Nombre</option>
+                    <option value="id">Buscar sala por ID</option>
+                    <option value="name">Buscar sala por Nombre</option>
                 </select>
                 {searchQuery && (
                     <button
@@ -97,14 +97,14 @@ export default function Resources() {
                             cursor: "pointer",
                         }}
                     >
-                        Ver Todos los Recursos
+                        Ver Todas las Salas
                     </button>
                 )}
             </div>
 
-            {/* Lista de recursos y botón Crear */}
+            {/* Lista de salas y botón Crear */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px" }}>
-                <h3>Lista de Recursos</h3>
+                <h3>Lista de Salas</h3>
                 <button
                     onClick={() => setShowCreateModal(true)}
                     style={{
@@ -117,21 +117,21 @@ export default function Resources() {
                         cursor: "pointer",
                     }}
                 >
-                    Crear Recurso
+                    Crear Sala
                 </button>
             </div>
 
-            {loadingSearch || loadingResources ? (
-                <p>Cargando recursos...</p>
+            {loadingSearch || loadingRooms ? (
+                <p>Cargando salas...</p>
             ) : errorSearch ? (
                 <p style={{ color: "red" }}>{errorSearch}</p>
-            ) : noResources ? (
-                <p>No hay recursos registrados.</p>
+            ) : noRooms ? (
+                <p>No hay salas registradas.</p>
             ) : noSearchResults ? (
-                <p>No se encontraron recursos que coincidan con tu búsqueda.</p>
+                <p>No se encontraron salas que coincidan con tu búsqueda.</p>
             ) : (
-                <ResourceTable
-                    resources={searchResults}
+                <RoomTable
+                    rooms={searchResults}
                     onDelete={handleDelete}
                     loadingDelete={loadingDelete}
                     onUpdate={handleUpdate}
@@ -139,9 +139,9 @@ export default function Resources() {
                 />
             )}
 
-            {/* Modal para Crear Recurso */}
+            {/* Modal para Crear Sala */}
             {showCreateModal && (
-                <ResourceForm
+                <RoomForm
                     onCreate={handleCreate}
                     loading={loadingCreate}
                     onClose={() => setShowCreateModal(false)} // Manejo del cierre del modal
