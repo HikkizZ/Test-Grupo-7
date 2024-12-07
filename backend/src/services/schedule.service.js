@@ -8,40 +8,77 @@ import Room from "../models/room.model.js"; // Importa el modelo de Room
 import Subject from "../models/subject.model.js"; // Importa el modelo de Subject
 import Period from "../models/period.model.js"; // Importa el modelo de Period
 //* Servicio para obtener un horario por id o nombre.
-export async function getScheduleService(query) {
+export async function getScheduleService(query) { 
     try {
-        const { idSchedule} = query;
+        const { idSchedule } = query; //? Obtener el id del horario
 
-        const scheduleRepository = AppDataSource.getRepository(Schedule); //* Obtiene el repositorio de la entidad Schedule.
+        const scheduleRepository = AppDataSource.getRepository(Schedule); //* Obtener el repositorio de horarios
 
-        const scheduleFound = await scheduleRepository.findOne({
-            where: [{ id: idSchedule}], //* Busca el horario por id o nombre.
+        const scheduleFound = await scheduleRepository.findOne({ 
+            where: { id: idSchedule },
+            relations: ["curso", "teacher", "room", "subject", "period"], //* Carga las relaciones necesarias
         });
 
-        if (!scheduleFound) return [null, "Horario no encontrado."]; //* Si no se encuentra, devuelve un mensaje de error.
+        if (!scheduleFound) return [null, "Horario no encontrado"]; //* Si no se encuentra, devuelve un mensaje de error
 
-        return [scheduleFound, null]; //* Devuelve el horario encontrado.
+        //? Formatear los datos del horario
+        return [{
+            id: scheduleFound.id,
+            curso: scheduleFound.curso.name, // Entrega el nombre del curso
+            teacher: {
+                rut: scheduleFound.teacher.rut, //Muestra el rut del profesor
+                name: scheduleFound.teacher.name, //Muestra el nombre del profesor
+            },
+            classroom: scheduleFound.room.name, // Entrega el nombre de la sala
+            subject: scheduleFound.subject.name, // Entrega el nombre de la asignatura
+            period: {
+                startTime: scheduleFound.period.startTime, //  Enrega la hora de inicio
+                endTime: scheduleFound.period.endTime, // Entrega la hora de término
+            },
+            dayOfWeek: scheduleFound.dayOfWeek, // Entrega el día de la semana
+        }, null];
     } catch (error) {
         console.error("Ocurrió un error al obtener el horario:", error);
-        return [null, "Error interno del servidor."]; //* Devuelve un mensaje de error.
+        return [null, "Error interno del servidor"]; //* Si hay un error, devuelve un mensaje
     }
 }
+
 
 //* Servicio para obtener todos los horarios.
 export async function getSchedulesService() {
     try {
-        const scheduleRepository = AppDataSource.getRepository(Schedule); //* Obtiene el repositorio de la entidad Schedule.
+        const scheduleRepository = AppDataSource.getRepository(Schedule); //* Obtiene el repositorio de horarios
 
-        const schedules = await scheduleRepository.find(); //* Recupera todos los horarios de la base de datos.
+        const schedules = await scheduleRepository.find({ 
+            relations: ["curso", "teacher", "room", "subject", "period"], //* Carga las relaciones necesarias
+        });
 
-        if (!schedules || schedules.length === 0) return [null, "No se encontraron horarios."]; //* Si no hay horarios, devuelve un mensaje.
+        if (!schedules || schedules.length === 0) return [null, "No se encontraron horarios"]; //* Si no hay horarios, devuelve un mensaje de que no se encuentran
 
-        return [schedules, null]; //* Devuelve la lista de horarios.
+        //* Formatea los datos de cada horario
+        return [{
+            schedules: schedules.map(schedule => ({
+                id: schedule.id,
+                curso: schedule.curso.name, // Entrega el nombre del curso
+                teacher: {
+                    rut: schedule.teacher.rut, //Muestra el rut del profesor
+                    name: schedule.teacher.name, //muestra el nombre del profesor
+                },
+                classroom: schedule.room.name, // Entrega el nombre de la sala
+                subject: schedule.subject.name, // Entrega el nombre de la asignatura
+                period: {
+                    startTime: schedule.period.startTime, // Enrega la hora de inicio
+                    endTime: schedule.period.endTime, // Entrega la hora de término
+                },
+                dayOfWeek: schedule.dayOfWeek, // Entrega el día de la semana
+            })),
+        }, null];
     } catch (error) {
         console.error("Ocurrió un error al obtener los horarios:", error);
-        return [null, "Error interno del servidor."]; //* Devuelve un mensaje de error.
+        return [null, "Error interno del servidor"]; //? Si hay un error, devuelve un mensaje
     }
 }
+
 
 //* Servicio para crear un nuevo horario.
 export async function createScheduleService(body) {
@@ -66,7 +103,7 @@ export async function createScheduleService(body) {
         });
         
         if (existingSchedule) {
-            return [null, "El horario ya existe."]; // Si ya existe, devuelve un mensaje de error.
+            return [null, "El horario ya existe."]; //* Si ya existe, devuelve un mensaje de error.
         }
         
 
