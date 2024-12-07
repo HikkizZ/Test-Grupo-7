@@ -43,7 +43,7 @@ export async function getSchedule(req, res) {
     try {
         const { id } = req.query;
 
-        const { error } = scheduleQueryValidation.validate({ id, name }); //* Validar los parámetros de la consulta.
+        const { error } = scheduleQueryValidation.validate({ id }); //* Validar los parámetros de la consulta.
 
         if (error) return handleErrorClient(res, 400, "Validation Error", error.message); //* Si los parámetros son inválidos, devuelve un error 400.
 
