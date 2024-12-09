@@ -8,12 +8,12 @@ import { Not } from "typeorm";
 
 export async function getSubjectService(query) { //* This function gets a subject by id and name.
     try {
-        const { idSubject } = query; //? Getting the id and name of the subject.
+        const { idSubject, codeSubject } = query; //? Getting the id and name of the subject.
 
         const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 
         const subjectFound = await subjectRepository.findOne({ //? Finding the subject by id and name.
-            where: { id: idSubject },
+            where: [{ id: idSubject }, { code: codeSubject }],
             relations: ["curso", "teacher"],
         });
 
@@ -21,6 +21,7 @@ export async function getSubjectService(query) { //* This function gets a subjec
 
         return [{
             id: subjectFound.id,
+            code: subjectFound.code,
             name: subjectFound.name,
             description: subjectFound.description,
             curso: subjectFound.curso.code,
@@ -45,6 +46,7 @@ export async function getSubjectsService() { //* This function gets all the subj
         return [{ //? Returning the subjects. Se muestra el id, nombre, descripción, curso y profesor de la asignatura.
             subjects: subjects.map(subject => ({
                 id: subject.id,
+                code: subject.code,
                 name: subject.name,
                 description: subject.description,
                 curso: subject.curso.code,
@@ -78,18 +80,23 @@ export async function createSubjectService(body) { //* This function creates a s
         const subjectExist = await subjectRepository.findOne({ //? Finding the subject by name and course.
             where: { name: name, curso: cursoFound } }); 
         if (subjectExist) return [null, "La asignatura ya existe."]; //? If the subject is found, return null and a message.
+        
+        //° Generar el código de la asignatura.
+        const codeSubject = generateSubjectCode(name, cursoFound.code);
 
         const newSubject = subjectRepository.create({ //? Creating a new subject.
             name: name,
             description: description,
             curso: cursoFound,
             teacher: teacherFound,
+            code: codeSubject,
         });
 
         const subjectCreated = await subjectRepository.save(newSubject); //? Saving the new subject.
 
         return [{
             id: subjectCreated.id,
+            code: subjectCreated.code,
             name: subjectCreated.name,
             description: subjectCreated.description,
             curso: subjectCreated.curso.code,
@@ -103,14 +110,14 @@ export async function createSubjectService(body) { //* This function creates a s
 
 export async function updateSubjectService(query, body) { //* This function updates a subject by id and name.
     try {
-        const { idSubject } = query; //? Getting the id and name of the subject.
+        const { idSubject, codeSubject } = query; //? Getting the id and name of the subject.
         
         const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
         const cursoRepository = AppDataSource.getRepository(Curso); //? Getting the course repository.
         const userRepository = AppDataSource.getRepository(User); //? Getting the user repository.
 
         const subjectFound = await subjectRepository.findOne({ //? Finding the subject by id.
-            where: { id: idSubject },
+            where: [{ id: idSubject }, { code: codeSubject }],
             relations: ["curso", "teacher"],
         });
         if (!subjectFound) return [null, "Asignatura no encontrada"]; //? If the subject is not found, return null and a message.
@@ -136,13 +143,21 @@ export async function updateSubjectService(query, body) { //* This function upda
 
         //° Verificar si la asignatura ya existe.
         const subjectExist = await subjectRepository.findOne({ //? Finding the subject by name and course.
-            where: { name: subjectFound.name, curso: subjectFound.curso, id: Not(idSubject) } });
+            where: { name: subjectFound.name, curso: subjectFound.curso, code: Not(codeSubject) } });
         if (subjectExist) return [null, "Ya existe otra asignatura con el mismo nombre en el curso"]; //? If the subject is found, return null and a message.
+
+        const newCode = generateSubjectCode(body.name, body.cursoCode || subjectFound.curso.code); //? Generar el nuevo código de la asignatura.
+        
+        const subjectExistCode = await subjectRepository.findOne({ where: { code: newCode } }); //? Verificar si el nuevo código ya existe.
+        if (subjectExistCode) return [null, "Ya existe otra asignatura con estos datos"]; //? If the subject is found, return null and a message.
+
+        subjectFound.code = newCode; //? Actualizar el código de la asignatura.
 
         const subjectUpdated = await subjectRepository.save(subjectFound); //? Saving the updated subject.
 
         return [{
             id: subjectUpdated.id,
+            code: subjectUpdated.code,
             name: subjectUpdated.name,
             description: subjectUpdated.description,
             curso: subjectUpdated.curso.code,
@@ -156,11 +171,11 @@ export async function updateSubjectService(query, body) { //* This function upda
 
 export async function deleteSubjectService(query) { //* This function deletes a subject by id and name.
     try {
-        const { idSubject } = query; //? Getting the id and name of the subject.
+        const { idSubject, codeSubject } = query; //? Getting the id and name of the subject.
 
         const subjectRepository = AppDataSource.getRepository(Subject); //? Getting the subject repository.
 
-        const subjectFound = await subjectRepository.findOne({ where: { id: idSubject } }); //? Finding the subject by id.
+        const subjectFound = await subjectRepository.findOne({ where: [{id: idSubject}, { code: codeSubject }] }); //? Finding the subject by id.
 
         if (!subjectFound) return [null, "Asignatura no encontrada"]; //? If the subject is not found, return null and a message.
 
@@ -172,3 +187,22 @@ export async function deleteSubjectService(query) { //* This function deletes a 
         return [null, "Internal server error."];
     }
 };
+
+function generateSubjectCode(subjectName, cursoCode) {
+    // Separar el nombre de la asignatura en palabras
+    const words = subjectName.split(" ");
+    if (words.length > 1) {
+        // Si hay más de una palabra, tomar la primera letra de cada palabra
+        if (words.length === 2) {
+            // Si solo hay dos palabras, tomar las primeras dos letras de la primera palabra y la primera letra de la segunda palabra
+            const abbreviation = words[0].slice(0, 2).toUpperCase() + words[1].charAt(0).toUpperCase();
+            return `${abbreviation}${cursoCode}`; // Combinar con el código del curso
+        }
+        const abbreviation = words.map(word => word[0].toUpperCase()).join("");
+        return `${abbreviation}${cursoCode}`; // Combinar con el código del curso
+    }
+
+    // Si solo hay una palabra, abreviar el nombre a 3 letras
+    const abbreviation = subjectName.slice(0, 3).toUpperCase(); // Abreviar el nombre a 3 letras
+    return `${abbreviation}${cursoCode}`; // Combinar con el código del curso
+}
