@@ -47,6 +47,13 @@ const CursoSchema = new EntitySchema({
             type: "one-to-many", 
             inverseSide: "room", 
             onDelete: "CASCADE", 
+        },
+        students: { //? Relation with the User entity. A course has many students.
+            target: "User",
+            type: "one-to-many",
+            inverseSide: "curso",
+            onDelete: "SET NULL",
+            nullable: true,
         }
     },
     indices: [ //? Indexes of the table to optimize the search.
