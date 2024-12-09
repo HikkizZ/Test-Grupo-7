@@ -49,6 +49,29 @@ const UserSchema = new EntitySchema({
             nullable: false,
         },
     },
+    relations:{
+        curso: { //? Relation with the Curso entity. A user belongs to a course.
+            target: "Curso",
+            type: "many-to-one",
+            joinColumn: true,
+            onDelete: "SET NULL",
+        },
+        subjects: { //? Relation with the Subject entity. A user has many subjects.
+            target: "Subject",
+            type: "many-to-many",
+            joinTable: {
+                name: "student_subjects",
+                joinColumn: {
+                    name: "student_rut",
+                    referencedColumnName: "rut",
+                },
+                inverseJoinColumn: {
+                    name: "subject_id",
+                    referencedColumnName: "id",
+                },
+            },
+        },
+    },
     indices: [ //? Indexes of the table to optimize the search.
         {
             name: "IDX_USER", 
