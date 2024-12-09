@@ -8,6 +8,7 @@ import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import Resources from './pages/Resources';
 import Rooms from '@pages/Rooms';
+import Reservations from '@pages/Reservations';
 import Schedule from '@pages/Schedule';
 //import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: '/rooms',
         element: <Rooms/>
+      },
+      {
+        path: '/reservations',
+        element: <Reservations/>
       },
       {
         path: '/cursos',
