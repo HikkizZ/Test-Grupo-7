@@ -5,7 +5,9 @@ import {
     deleteCursoService,
     getCursosService,
     getCursoService,
-    updateCursoService
+    updateCursoService,
+    addStudentsToCursoService,
+    assingSubjectsToStudentsService
 } from "../services/curso.service.js";
 
 import {
@@ -106,5 +108,31 @@ export async function deleteCurso(req, res) { //* This function deletes a course
         handleSuccess(res, 200, "Curso eliminado", cursoDeleted); //? If the course is deleted, return the course.
     } catch (error) {
         handleErrorServer(res, 500, error.message); //? If an error occurred, return a 500 error.
+    }
+};
+
+export async function addStudentsToCurso(req, res){
+    try {
+        const {cursoCode, studentsRut} = req.body;
+        const [cursoUpdated, errorCurso] = await addStudentsToCursoService(cursoCode, studentsRut);
+
+        if (errorCurso) return handleErrorClient(res, 400, errorCurso);
+
+        handleSuccess(res, 200, "Estudiantes agregados al curso", cursoUpdated);
+    } catch (error) {
+        handleErrorServer(res, 500, error.message);
+    }
+};
+
+export async function assingSubjectsToStudents(req, res){
+    try {
+        const { code } = req.query;
+        const [students, error] = await assingSubjectsToStudentsService(code);
+        
+        if (error) return handleErrorClient(res, 400, error);
+
+        handleSuccess(res, 200, "Asignaturas asignadas a los estudiantes", students);
+    } catch (error) {
+        handleErrorServer(res, 500, error.message);
     }
 };
