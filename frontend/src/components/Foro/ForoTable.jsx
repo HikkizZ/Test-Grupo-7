@@ -1,58 +1,61 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import styles from '../../styles/foro.module.css';
 
 export default function ForoTable({ foros, onDelete, loadingDelete, onUpdate }) {
     const navigate = useNavigate();
 
     if (foros.length === 0) {
-        return <p>No se encontraron foros que coincidan con la búsqueda.</p>;
+        return <p className="text-center text-gray-500">No se encontraron foros que coincidan con la búsqueda.</p>;
     }
     
     return (
-        <table className="w-full">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Título</th>
-                    <th>Profesor</th>
-                    <th>Categoría</th>
-                    <th>Fecha</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {foros.map((foro) => (
-                    <tr key={foro.id}>
-                        <td>{foro.id}</td>
-                        <td>{foro.titulo}</td>
-                        <td>{foro.nombreProfesor}</td>
-                        <td>{foro.categoria}</td>
-                        <td>{foro.fecha}</td>
-                        <td>
-                            <button 
-                                onClick={() => navigate(`/post/${foro.id}`)} 
-                                className="mr-2 px-2 py-1 bg-blue-500 text-white rounded"
-                            >
-                                Ver
-                            </button>
-                            <button 
-                                onClick={() => onUpdate(foro)} 
-                                className="mr-2 px-2 py-1 bg-green-500 text-white rounded"
-                            >
-                                Actualizar
-                            </button>
-                            <button 
-                                onClick={() => onDelete(foro.id)} 
-                                disabled={loadingDelete}
-                                className="px-2 py-1 bg-red-500 text-white rounded disabled:opacity-50"
-                            >
-                                {loadingDelete ? 'Eliminando...' : 'Eliminar'}
-                            </button>
-                        </td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
+        <div className={styles.forosContainer}>
+            {foros.map((foro) => (
+                <div key={foro.id} className={styles.foroCard}>
+                    <div className={styles.foroHeader}>
+                        <div className={styles.foroTitle}>
+                            <h3>{foro.titulo}</h3>
+                        </div>
+                        <div className={styles.foroCategory}>
+                            <span>{foro.categoria}</span>
+                        </div>
+                        <div className={styles.foroDate}>
+                            <span>{foro.fecha}</span>
+                        </div>
+                    </div>
+                    <div className={styles.foroContent}>
+                        <div className={styles.foroProfessor}>
+                            <span>{foro.nombreProfesor}</span>
+                        </div>
+                        <div className={styles.foroSummary}>
+                            <p>{foro.contenido || 'Sin contenido'}</p>
+                        </div>
+                    </div>
+                    <div className={styles.foroActions}>
+                        <button 
+                            onClick={() => navigate(`/post/${foro.id}`)} 
+                            className={`${styles.foroButton} ${styles.foroButtonView}`}
+                        >
+                            Ver
+                        </button>
+                        <button 
+                            onClick={() => onUpdate(foro)} 
+                            className={`${styles.foroButton} ${styles.foroButtonUpdate}`}
+                        >
+                            Actualizar
+                        </button>
+                        <button 
+                            onClick={() => onDelete(foro.id)} 
+                            disabled={loadingDelete}
+                            className={`${styles.foroButton} ${styles.foroButtonDelete}`}
+                        >
+                            {loadingDelete ? 'Eliminando...' : 'Eliminar'}
+                        </button>
+                    </div>
+                </div>
+            ))}
+        </div>
     );
 }
 

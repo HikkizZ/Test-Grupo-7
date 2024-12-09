@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function ForoForm({ onCreate, loading }) {
+function ForoForm({ onCreate, loading, onCancel }) {
     const [titulo, setTitulo] = useState('');
     const [nombreProfesor, setNombreProfesor] = useState('');
     const [categoria, setCategoria] = useState('');
@@ -85,13 +85,22 @@ function ForoForm({ onCreate, loading }) {
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 />
             </div>
-            <button 
-                type="submit" 
-                disabled={loading}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50"
-            >
-                {loading ? 'Creando...' : 'Crear Foro'}
-            </button>
+            <div className="flex justify-end space-x-2">
+                <button 
+                    type="button" 
+                    onClick={onCancel}
+                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+                >
+                    Cancelar
+                </button>
+                <button 
+                    type="submit" 
+                    disabled={loading}
+                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50"
+                >
+                    {loading ? 'Creando...' : 'Crear Foro'}
+                </button>
+            </div>
         </form>
     );
 }

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useCreateForo } from "@hooks/foro/useCreateForo";
 import { useDeleteForo } from "@hooks/foro/useDeleteForo";
 import { useGetForos } from "@hooks/foro/useGetForos";
-import { useUpdateForo } from "@hooks/foro/useUpdateForo";
 import { useSearchForo } from "@hooks/foro/useSearchForo";
 import ForoForm from "@components/Foro/ForoForm";
 import ForoTable from "@components/Foro/ForoTable";
@@ -14,7 +13,6 @@ export default function Foros() {
     const { foros, fetchForos, loading: loadingForos } = useGetForos();
     const { handleCreate, loading: loadingCreate } = useCreateForo(fetchForos);
     const { handleDelete, loading: loadingDelete } = useDeleteForo(fetchForos);
-    const { handleUpdate, loading: loadingUpdate } = useUpdateForo(fetchForos);
     const { 
         searchQuery, 
         setSearchQuery, 
@@ -25,17 +23,18 @@ export default function Foros() {
 
     const [selectedForo, setSelectedForo] = useState(null);
     const [isUpdating, setIsUpdating] = useState(false);
+    const [isCreating, setIsCreating] = useState(false);
 
     useEffect(() => {
         fetchForos();
-    }, [fetchForos]);
+    }, []);
 
     const handleView = (foro) => {
         setSelectedForo(foro);
         setIsUpdating(false);
     };
 
-    const handleUpdateClick = (foro) => {
+    const handleUpdate = (foro) => {
         setSelectedForo(foro);
         setIsUpdating(true);
     };
@@ -45,30 +44,49 @@ export default function Foros() {
         setIsUpdating(false);
     };
 
-    const handleUpdateSubmit = async (id, updatedData) => {
-        await handleUpdate(id, updatedData);
-        setIsUpdating(false);
-        setSelectedForo(null);
+    const handleUpdateSubmit = (id, updatedData) => {
+        // Implement the update logic here
+        console.log("Updating foro:", id, updatedData);
+        // After updating, refresh the foros list
+        fetchForos();
+        handleCloseView();
+    };
+
+    const handleCreateSubmit = (foroData) => {
+        handleCreate(foroData);
+        setIsCreating(false);
     };
     
     return (
         <div className="foros-container p-4">
             <h1 className="text-3xl font-bold mb-6">Foros</h1>
     
-            <section className="mb-8">
-                <h2 className="text-2xl font-semibold mb-4">Crear Foro</h2>
-                <ForoForm onCreate={handleCreate} loading={loadingCreate} />
-            </section>
-    
-            <section className="mb-8">
-                <h2 className="text-2xl font-semibold mb-4">Buscar Foros</h2>
-                <SearchForm 
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    searchFilter={searchFilter}
-                    setSearchFilter={setSearchFilter}
-                />
-            </section>
+            <div className="mb-8">
+                <div className="flex justify-between items-center mb-4">
+                    <SearchForm 
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
+                        searchFilter={searchFilter}
+                        setSearchFilter={setSearchFilter}
+                    />
+                    <button 
+                        onClick={() => setIsCreating(!isCreating)}
+                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                    >
+                        {isCreating ? 'Cancelar' : 'Crear Foro'}
+                    </button>
+                </div>
+                {isCreating && (
+                    <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
+                        <h2 className="text-2xl font-semibold mb-4">Crear Foro</h2>
+                        <ForoForm 
+                            onCreate={handleCreateSubmit} 
+                            loading={loadingCreate} 
+                            onCancel={() => setIsCreating(false)}
+                        />
+                    </div>
+                )}
+            </div>
     
             <section>
                 <h2 className="text-2xl font-semibold mb-4">Lista de Foros</h2>
@@ -80,7 +98,7 @@ export default function Foros() {
                         onDelete={handleDelete}
                         loadingDelete={loadingDelete}
                         onView={handleView}
-                        onUpdate={handleUpdateClick}
+                        onUpdate={handleUpdate}
                     />
                 )}
             </section>
@@ -94,7 +112,6 @@ export default function Foros() {
                     foro={selectedForo} 
                     onUpdate={handleUpdateSubmit} 
                     onCancel={handleCloseView}
-                    loading={loadingUpdate}
                 />
             )}
         </div>
