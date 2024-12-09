@@ -12,6 +12,17 @@ export const subjectQueryValidation = Joi.object({ //* This is the subject query
             "number.integer": "The id must be an integer.",
             "any.required": "The id is required.",
         }),
+    code: Joi.string()
+        .min(5)
+        .max(10)
+        .pattern(/^[0-9A-Z-]+$/)
+        .messages({
+            "string.base": "The code must be a string.",
+            "string.min": "The code must be at least 5 characters long.",
+            "string.max": "The code must be at most 10 characters long.",
+            "string.empty": "The code should not be empty.",
+            "string.pattern.base": "The code must only contain numbers, letters, and dashes.",
+        })
 });
 
 export const createSubjectBodyValidation = Joi.object({ //* This is the subject body validation schema.
