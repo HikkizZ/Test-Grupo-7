@@ -1,55 +1,74 @@
 import { useState, useEffect } from "react";
 
 export function useSearchReservation(reservations) {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [searchFilter, setSearchFilter] = useState("");
+    const [searchFilters, setSearchFilters] = useState({
+        id: "",
+        devuelto: "",
+        tipoReserva: "",
+        estado: "",
+    });
     const [searchResults, setSearchResults] = useState(reservations || []);
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false); 
+    // const [error, setError] = useState(null);
 
     useEffect(() => {
-        const performSearch = () => {
-            setLoading(true);
+        const filterReservations = () => {
+            let filteredResults = reservations;
 
-            let filteredResults = [];
+            // Aplicar filtros dinámicamente
+            if (searchFilters.id) {
+                filteredResults = filteredResults.filter((reservation) =>
+                    reservation.id.toString().includes(searchFilters.id)
+                );
+            }
 
-            if (!searchQuery) {
-                filteredResults = reservations;
-            } else {
-                if (searchFilter === "id") {
-                    filteredResults = reservations.filter((reservation) =>
-                        reservation.id.toString().includes(searchQuery)
-                    );
-                } else if (searchFilter === "estado") {
-                    filteredResults = reservations.filter((reservation) =>
-                        reservation.estado.toLowerCase().includes(searchQuery.toLowerCase())
-                    );
-                } else {
-                    filteredResults = reservations.filter((reservation) =>
-                        `${reservation.id} ${reservation.estado.toLowerCase()}`.includes(searchQuery.toLowerCase())
-                    );
-                }
+            if (searchFilters.devuelto) {
+                filteredResults = filteredResults.filter(
+                    (reservation) =>
+                        reservation.devuelto.toString() === searchFilters.devuelto
+                );
+            }
+
+            if (searchFilters.tipoReserva) {
+                filteredResults = filteredResults.filter(
+                    (reservation) => reservation.tipoReserva === searchFilters.tipoReserva
+                );
+            }
+
+            if (searchFilters.estado) {
+                filteredResults = filteredResults.filter(
+                    (reservation) => reservation.estado === searchFilters.estado
+                );
             }
 
             setSearchResults(filteredResults);
-            setLoading(false);
         };
 
-        performSearch();
-    }, [searchQuery, searchFilter, reservations]);
+        filterReservations();
+    }, [searchFilters, reservations]);
 
-    const resetSearch = () => {
-        setSearchQuery("");
-        setSearchResults(reservations);
-        setSearchFilter("");
+    const updateFilter = (filter, value) => {
+        setSearchFilters((prevFilters) => ({
+            ...prevFilters,
+            [filter]: value,
+        }));
+    };
+
+    const resetFilters = () => {
+        setSearchFilters({
+            id: "",
+            devuelto: "",
+            tipoReserva: "",
+            estado: "",
+        });
     };
 
     return {
-        searchQuery,
-        setSearchQuery,
-        searchFilter,
-        setSearchFilter,
+        searchFilters,
+        updateFilter,
+        resetFilters,
         searchResults,
-        resetSearch,
-        loading,
+        //loading,
+        //error,
     };
 }
