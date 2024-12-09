@@ -27,37 +27,46 @@ function ForoForm({ onCreate, loading }) {
         };
 
         onCreate(foroData); // Llamada al método para crear el foro
+        
+        // seteo de campos
+        setTitulo('');
+        setNombreProfesor('');
+        setCategoria('');
+        setFecha('');
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-                <label htmlFor="titulo">Título:</label>
+                <label htmlFor="titulo" className="block text-sm font-medium text-gray-700">Título:</label>
                 <input
                     id="titulo"
                     type="text"
                     value={titulo}
                     onChange={(e) => setTitulo(e.target.value)}
                     required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 />
             </div>
             <div>
-                <label htmlFor="nombreProfesor">Nombre del Profesor:</label>
+                <label htmlFor="nombreProfesor" className="block text-sm font-medium text-gray-700">Nombre del Profesor:</label>
                 <input
                     id="nombreProfesor"
                     type="text"
                     value={nombreProfesor}
                     onChange={(e) => setNombreProfesor(e.target.value)}
                     required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 />
             </div>
             <div>
-                <label htmlFor="categoria">Categoría:</label>
+                <label htmlFor="categoria" className="block text-sm font-medium text-gray-700">Categoría:</label>
                 <select
                     id="categoria"
                     value={categoria}
                     onChange={(e) => setCategoria(e.target.value)}
                     required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 >
                     <option value="">--Seleccionar--</option>
                     <option value="Tarea">Tarea</option>
@@ -66,20 +75,26 @@ function ForoForm({ onCreate, loading }) {
                 </select>
             </div>
             <div>
-                <label htmlFor="fecha">Fecha:</label>
+                <label htmlFor="fecha" className="block text-sm font-medium text-gray-700">Fecha:</label>
                 <input
                     id="fecha"
                     type="date"
                     value={fecha}
                     onChange={handleFechaChange}
                     required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 />
             </div>
-            <button type="submit" disabled={loading}>
-                {loading ? 'Cargando...' : 'Crear Foro'}
+            <button 
+                type="submit" 
+                disabled={loading}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50"
+            >
+                {loading ? 'Creando...' : 'Crear Foro'}
             </button>
         </form>
     );
 }
 
 export default ForoForm;
+

@@ -13,13 +13,15 @@ import periodRoutes from './period.routes.js';
 import Room from './room.routes.js';
 import Resource from './resource.routes.js';
 import Reservation from './reservation.routes.js';
-// Importando rutas
-import actividadRoutes from './actividad.routes.js';
-import foroRoutes from './foro.routes.js'; // Importando las rutas de foro (anuncios)
+
+import foroRoutes from './foro.routes.js'; 
+import newsRoutes from "./news.routes.js";
+import archivoRoutes from './archivo.routes.js'
 
 const router = Router(); //? Crea una nueva instancia del enrutador de express.
 
 router
+    .use('/archivo', archivoRoutes) //!!http://localhost:3000/api/archivo
     .use('/user', userRoutes) //! http://localhost:3000/api/user
     .use('/auth', authRoutes) //! http://localhost:3000/api/auth
     .use('/schedule', scheduleRoutes) //! http://localhost:3000/api/schedule
@@ -30,8 +32,9 @@ router
     .use('/room', Room) //! http://localhost:3000/api/room
     .use('/resource', Resource) //! http://localhost:3000/api/resource
     .use('/reservation', Reservation) //! http://localhost:3000/api/reservation
-    .use('/actividades', actividadRoutes) // Usamos /actividades directamente
-    .use('/posts', foroRoutes); // Añadimos la ruta para los anuncios (foro)
+    .use('/posts', foroRoutes)//!!http://localhost:3000/api/posts
+    .use('/news', newsRoutes) //!!http://localhost:3000/api/news
+
 
 // Exportando los enrutadores
 export default router;

@@ -10,6 +10,16 @@ export const showSuccessAlert = (title, text) => {
     });
 };
 
+// Alertas de error
+export const showErrorAlert = (title, text) => {
+    Swal.fire({
+        icon: "error",
+        title,
+        text,
+        confirmButtonText: "Aceptar",
+    });
+};
+
 // Alertas de confirmación (ejemplo para eliminar)
 export const deleteDataAlert = () => {
     return Swal.fire({
@@ -23,3 +33,4 @@ export const deleteDataAlert = () => {
         cancelButtonText: "Cancelar",
     });
 };
+

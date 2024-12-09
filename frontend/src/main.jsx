@@ -11,7 +11,8 @@ import Schedule from '@pages/Schedule';
 //import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
 //import Hallam
-import Foro from '@pages/Foro';
+import Foro from '@pages/foro/Foro';
+import News from '@pages/News';
 //? Import services Felipe
 import Cursos from './pages/Cursos';
 import Subjects from './pages/Subjects';
@@ -51,10 +52,20 @@ const router = createBrowserRouter([
         path: 'subjects',
         element: <Subjects/>
       },
+      //foro paginas
       {
         path: '/posts',
         element: <Foro/>,
-      }
+      },
+      {
+        path: '/post/:id',
+        element: <foroDetail/>,
+      },
+      {
+        path: '/news',
+        element: <News/>
+      },
+      
     ]
   },
   {

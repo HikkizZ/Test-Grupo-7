@@ -63,11 +63,15 @@ export async function updateForoService(id, { titulo, nombreProfesor, categoria,
             return [null, "El anuncio no existe."];
         }
 
+        // Convertir la fecha de "DD/MM/YYYY" a objeto Date
+        const [dia, mes, anio] = fecha.split("/");
+        const fechaObj = new Date(anio, mes - 1, dia);
+
         // Actualizar el anuncio
         foro.titulo = titulo;
         foro.nombreProfesor = nombreProfesor;
         foro.categoria = categoria;
-        foro.fecha = fecha;
+        foro.fecha = fechaObj;
 
         const foroActualizado = await foroRepository.save(foro);
 
@@ -77,6 +81,7 @@ export async function updateForoService(id, { titulo, nombreProfesor, categoria,
         return [null, "Error al actualizar el anuncio."];
     }
 }
+
 
 // Función para eliminar un anuncio
 export async function deleteForoService(id) {
