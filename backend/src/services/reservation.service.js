@@ -114,17 +114,29 @@ export async function getReservationsService() {
 
 export async function getReservationService(query) {
     try {
-        const { idReservation, devueltoReservation, TipoReservaReservation, estadoReservation } = query;
+        const { idReservation, devueltoReservation, TipoReservaReservation, estadoReservation, fechaDesde, fechaHasta } = query;
 
         const reservationRepository = AppDataSource.getRepository(Reservation);
 
+        // Construimos las condiciones dinámicamente
+        const conditions = {};
+
+        if (idReservation) conditions.id = idReservation;
+        if (devueltoReservation) conditions.devuelto = devueltoReservation;
+        if (TipoReservaReservation) conditions.tipoReserva = TipoReservaReservation;
+        if (estadoReservation) conditions.estado = estadoReservation;
+
+        // Parsear las fechas si están presentes en el query
+        if (fechaDesde) {
+            conditions.fechaDesde = parse(fechaDesde, "dd-MM-yyyy HH:mm", new Date());
+        }
+        if (fechaHasta) {
+            conditions.fechaHasta = parse(fechaHasta, "dd-MM-yyyy HH:mm", new Date());
+        }
+
+        // Buscamos las reservaciones con las condiciones dinámicas
         const reservationsFound = await reservationRepository.find({
-            where: {
-                ...(idReservation && { id: idReservation }),
-                ...(devueltoReservation && { devuelto: devueltoReservation }),
-                ...(TipoReservaReservation && { tipoReserva: TipoReservaReservation }),
-                ...(estadoReservation && { estado: estadoReservation }),
-            },
+            where: conditions,
             relations: ["Encargado", "Reservante", "Recurso", "Sala"],
         });
 

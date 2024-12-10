@@ -28,7 +28,7 @@ export const reservationQueryValidation = Joi.object({
         }),
     devuelto: Joi.boolean()
         .messages({
-            "boolean.base": "The available must be a boolean.",
+            "boolean.base": "The devuelto must be a boolean.",
         }),
     tipoReserva: Joi.string()
         .valid("recurso", "sala")
@@ -40,13 +40,23 @@ export const reservationQueryValidation = Joi.object({
         .valid("pendiente", "aprobada", "rechazada")
         .messages({
             "string.base": "The reservation status must be a string.",
-            "string.valid": "The reservation status must be either 'pendiente', 'aprobada' or 'rechazada'.",
-        })
+            "string.valid": "The reservation status must be either 'pendiente', 'aprobada', or 'rechazada'.",
+        }),
+    fechaDesde: Joi.string()
+        .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/) // Validación para el formato de fecha
+        .messages({
+            "string.pattern.base": "El campo 'fechaDesde' debe seguir el formato DD-MM-YYYY HH:mm, por ejemplo: '15-12-2024 10:00'.",
+        }),
+    fechaHasta: Joi.string()
+        .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/) // Validación para el formato de fecha
+        .messages({
+            "string.pattern.base": "El campo 'fechaHasta' debe seguir el formato DD-MM-YYYY HH:mm, por ejemplo: '15-12-2024 10:00'.",
+        }),
 })
-.or("id", "devuelto", "tipoReserva", "estado")
+.or("id", "devuelto", "tipoReserva", "estado", "fechaDesde", "fechaHasta") // Al menos un filtro es obligatorio
 .messages({
-    "object.unknown": "The query must have at least one field: id, devuelto or tipoReserva.",
-    "object.missing": "The query must have at least one field: id, devuelto or tipoReserva.",
+    "object.unknown": "The query must have at least one field: id, devuelto, tipoReserva, estado, fechaDesde, or fechaHasta.",
+    "object.missing": "The query must have at least one field: id, devuelto, tipoReserva, estado, fechaDesde, or fechaHasta.",
 });
 
 export const reservationBodyValidation = Joi.object({
