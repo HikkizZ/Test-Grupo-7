@@ -16,8 +16,8 @@ export async function createReservationService(req) {
 
         const { fechaDesde, fechaHasta, tipoReserva, recurso_id, sala_id } = req.body;
 
-        const fecha_Desde = parse(fechaDesde, "dd/MM/yyyy HH:mm", new Date());
-        const fecha_Hasta = parse(fechaHasta, "dd/MM/yyyy HH:mm", new Date());
+        const fecha_Desde = parse(fechaDesde, "dd-MM-yyyy HH:mm", new Date());
+        const fecha_Hasta = parse(fechaHasta, "dd-MM-yyyy HH:mm", new Date());
 
         // Buscar todas las reservas existentes con condiciones similares
         const existingReservations = await reservationRepository.find({
