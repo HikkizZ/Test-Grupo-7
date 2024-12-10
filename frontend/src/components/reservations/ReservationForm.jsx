@@ -79,7 +79,7 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
                 onChange={(e) =>
                     setFormData({ ...formData, fechaDesde: e.target.value })
                 }
-                placeholder="Fecha Desde (DD/MM/YYYY HH:mm)"
+                placeholder="Fecha Desde (DD-MM-YYYY HH:mm)"
                 disabled={loading}
                 style={{
                     width: "100%",
@@ -96,7 +96,7 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
                 onChange={(e) =>
                     setFormData({ ...formData, fechaHasta: e.target.value })
                 }
-                placeholder="Fecha Hasta (DD/MM/YYYY HH:mm)"
+                placeholder="Fecha Hasta (DD-MM-YYYY HH:mm)"
                 disabled={loading}
                 style={{
                     width: "100%",
