@@ -7,15 +7,12 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
         <div>
             <h3>Buscar Reservación</h3>
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                {/* Filtro por ID */}
                 <input
                     type="text"
                     placeholder="Buscar por ID"
                     onChange={(e) => handleFilterChange("id", e.target.value)}
                     style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
                 />
-
-                {/* Filtro por devuelto */}
                 <select
                     onChange={(e) => handleFilterChange("devuelto", e.target.value)}
                     style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
@@ -24,8 +21,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                     <option value="true">Sí</option>
                     <option value="false">No</option>
                 </select>
-
-                {/* Filtro por tipoReserva */}
                 <select
                     onChange={(e) => handleFilterChange("tipoReserva", e.target.value)}
                     style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
@@ -34,8 +29,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                     <option value="sala">Sala</option>
                     <option value="recurso">Recurso</option>
                 </select>
-
-                {/* Filtro por estado */}
                 <select
                     onChange={(e) => handleFilterChange("estado", e.target.value)}
                     style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
@@ -45,8 +38,18 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                     <option value="aprobada">Aprobada</option>
                     <option value="rechazada">Rechazada</option>
                 </select>
-
-                {/* Botón para resetear filtros */}
+                <input
+                    type="text"
+                    placeholder="Fecha Desde (DD-MM-YYYY HH:mm)"
+                    onChange={(e) => handleFilterChange("fechaDesde", e.target.value)}
+                    style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
+                />
+                <input
+                    type="text"
+                    placeholder="Fecha Hasta (DD-MM-YYYY HH:mm)"
+                    onChange={(e) => handleFilterChange("fechaHasta", e.target.value)}
+                    style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
+                />
                 <button
                     onClick={onReset}
                     style={{
