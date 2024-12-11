@@ -11,6 +11,8 @@ export default function ReservationTable({ reservations, onUpdate, onDelete, loa
                     <th>Tipo Reserva</th>
                     <th>Estado</th>
                     <th>Devuelto</th>
+                    <th>Reservante</th>
+                    <th>Sala/Recurso</th>
                     <th>Acciones</th>
                 </tr>
             </thead>

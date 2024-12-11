@@ -69,6 +69,12 @@ export default function ReservationRow({ reservation, onUpdate, onDelete, loadin
                     reservation.devuelto ? "Sí" : "No"
                 )}
             </td>
+            <td>{reservation.Reservante?.nombre || "No disponible"}</td>
+            <td>
+                {reservation.tipoReserva === "sala"
+                    ? reservation.Sala?.nombre || "No disponible"
+                    : reservation.Recurso?.nombre || "No disponible"}
+            </td>
             <td>
                 {isEditing ? (
                     <>

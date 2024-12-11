@@ -36,6 +36,8 @@ export default function Reservations() {
 
     return (
         <div>
+            <br />
+            <br />
             <h1>Reservaciones</h1>
 
             {/* Buscar reservaciones */}
