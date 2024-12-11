@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { parse } from "date-fns";
 
 export function useSearchReservation(reservations) {
     const [searchFilters, setSearchFilters] = useState({
@@ -16,6 +15,7 @@ export function useSearchReservation(reservations) {
         const filterReservations = () => {
             let filteredResults = reservations;
 
+            // Aplicar filtros dinámicamente
             if (searchFilters.id) {
                 filteredResults = filteredResults.filter((reservation) =>
                     reservation.id.toString().includes(searchFilters.id)
@@ -24,7 +24,8 @@ export function useSearchReservation(reservations) {
 
             if (searchFilters.devuelto) {
                 filteredResults = filteredResults.filter(
-                    (reservation) => reservation.devuelto.toString() === searchFilters.devuelto
+                    (reservation) =>
+                        reservation.devuelto.toString() === searchFilters.devuelto
                 );
             }
 
@@ -41,18 +42,16 @@ export function useSearchReservation(reservations) {
             }
 
             if (searchFilters.fechaDesde) {
-                const fechaDesde = parse(searchFilters.fechaDesde, "dd-MM-yyyy HH:mm", new Date());
+                // Comparación exacta de cadenas
                 filteredResults = filteredResults.filter(
-                    (reservation) =>
-                        parse(reservation.fechaDesde, "dd-MM-yyyy HH:mm", new Date()) >= fechaDesde
+                    (reservation) => reservation.fechaDesde === searchFilters.fechaDesde
                 );
             }
 
             if (searchFilters.fechaHasta) {
-                const fechaHasta = parse(searchFilters.fechaHasta, "dd-MM-yyyy HH:mm", new Date());
+                // Comparación exacta de cadenas
                 filteredResults = filteredResults.filter(
-                    (reservation) =>
-                        parse(reservation.fechaHasta, "dd-MM-yyyy HH:mm", new Date()) <= fechaHasta
+                    (reservation) => reservation.fechaHasta === searchFilters.fechaHasta
                 );
             }
 
