@@ -26,7 +26,12 @@ export async function getResourcesService() {
     try {
         const resourceRepository = AppDataSource.getRepository(Resource);
 
-        const resources = await resourceRepository.find();
+        // Obtener todos los recursos y ordenarlos por ID (de menor a mayor)
+        const resources = await resourceRepository.find({
+            order: {
+                id: "ASC", // Ordenar por ID
+            },
+        });
 
         if (!resources || resources.length === 0) return [null, "No se encontraron recursos."];
 

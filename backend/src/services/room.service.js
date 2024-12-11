@@ -31,8 +31,12 @@ export async function getRoomsService() {
     try {
         const roomRepository = AppDataSource.getRepository(Room);
 
-        // Obtener todas las salas
-        const rooms = await roomRepository.find();
+        // Obtener todas las salas y ordenarlas por ID (de menor a mayor)
+        const rooms = await roomRepository.find({
+            order: {
+                id: "ASC", // Ordenar por ID
+            },
+        });
 
         if (!rooms || rooms.length === 0) {
             return [null, "No se encontraron salas."];

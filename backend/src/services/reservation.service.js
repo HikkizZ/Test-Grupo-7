@@ -86,6 +86,9 @@ export async function getReservationsService() {
 
         const reservations = await reservationRepository.find({
             relations: ["Encargado", "Reservante", "Recurso", "Sala"],
+            order: {
+                id: "ASC", // Ordenar por ID de menor a mayor
+            },
         });
 
         if (!reservations || reservations.length === 0) return [null, "No reservations found."];
@@ -97,20 +100,19 @@ export async function getReservationsService() {
         });
 
         // Mapea para mostrar sólo los nombres de las relaciones
-        const formattedReservations = reservations.map(reservation => ({
+        const formattedReservations = reservations.map((reservation) => ({
             ...reservation,
             Encargado: reservation.Encargado ? { nombre: reservation.Encargado.name } : null,
             Reservante: reservation.Reservante ? { nombre: reservation.Reservante.name } : null,
             Recurso: reservation.Recurso ? { nombre: reservation.Recurso.name } : null,
             Sala: reservation.Sala ? { nombre: reservation.Sala.name } : null,
         }));
-        
-        return [formattedReservations, null];
 
+        return [formattedReservations, null];
     } catch (error) {
         return [null, "Internal Server Error", error.message];
     }
-};
+}
 
 export async function getReservationService(query) {
     try {
