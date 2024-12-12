@@ -51,13 +51,20 @@ export async function getReservationsController(req, res) {
 
 export async function getReservationController(req, res) {
     try {
-        const { id, devuelto, tipoReserva, estado } = req.query;
+        const { id, devuelto, tipoReserva, estado, fechaDesde, fechaHasta } = req.query;
 
-        const { error } = reservationQueryValidation.validate({ id, devuelto, tipoReserva, estado });
+        const { error } = reservationQueryValidation.validate({ id, devuelto, tipoReserva, estado, fechaDesde, fechaHasta });
 
         if (error) return handleErrorClient(res, 400, "Validation Error", error.message);
 
-        const [reservation, reservationError] = await getReservationService({ idReservation: id, devueltoReservation: devuelto, TipoReservaReservation: tipoReserva, estadoReservation: estado });
+        const [reservation, reservationError] = await getReservationService({
+            idReservation: id,
+            devueltoReservation: devuelto,
+            TipoReservaReservation: tipoReserva,
+            estadoReservation: estado,
+            fechaDesde,
+            fechaHasta,
+        });
 
         if (reservationError) return handleErrorServer(res, 400, reservationError);
 

@@ -16,8 +16,8 @@ export async function createReservationService(req) {
 
         const { fechaDesde, fechaHasta, tipoReserva, recurso_id, sala_id } = req.body;
 
-        const fecha_Desde = parse(fechaDesde, "dd/MM/yyyy HH:mm", new Date());
-        const fecha_Hasta = parse(fechaHasta, "dd/MM/yyyy HH:mm", new Date());
+        const fecha_Desde = parse(fechaDesde, "dd-MM-yyyy HH:mm", new Date());
+        const fecha_Hasta = parse(fechaHasta, "dd-MM-yyyy HH:mm", new Date());
 
         // Buscar todas las reservas existentes con condiciones similares
         const existingReservations = await reservationRepository.find({
@@ -86,6 +86,9 @@ export async function getReservationsService() {
 
         const reservations = await reservationRepository.find({
             relations: ["Encargado", "Reservante", "Recurso", "Sala"],
+            order: {
+                id: "ASC", // Ordenar por ID de menor a mayor
+            },
         });
 
         if (!reservations || reservations.length === 0) return [null, "No reservations found."];
@@ -97,34 +100,45 @@ export async function getReservationsService() {
         });
 
         // Mapea para mostrar sólo los nombres de las relaciones
-        const formattedReservations = reservations.map(reservation => ({
+        const formattedReservations = reservations.map((reservation) => ({
             ...reservation,
             Encargado: reservation.Encargado ? { nombre: reservation.Encargado.name } : null,
             Reservante: reservation.Reservante ? { nombre: reservation.Reservante.name } : null,
             Recurso: reservation.Recurso ? { nombre: reservation.Recurso.name } : null,
             Sala: reservation.Sala ? { nombre: reservation.Sala.name } : null,
         }));
-        
-        return [formattedReservations, null];
 
+        return [formattedReservations, null];
     } catch (error) {
         return [null, "Internal Server Error", error.message];
     }
-};
+}
 
 export async function getReservationService(query) {
     try {
-        const { idReservation, devueltoReservation, TipoReservaReservation, estadoReservation } = query;
+        const { idReservation, devueltoReservation, TipoReservaReservation, estadoReservation, fechaDesde, fechaHasta } = query;
 
         const reservationRepository = AppDataSource.getRepository(Reservation);
 
+        // Construimos las condiciones dinámicamente
+        const conditions = {};
+
+        if (idReservation) conditions.id = idReservation;
+        if (devueltoReservation) conditions.devuelto = devueltoReservation;
+        if (TipoReservaReservation) conditions.tipoReserva = TipoReservaReservation;
+        if (estadoReservation) conditions.estado = estadoReservation;
+
+        // Parsear las fechas si están presentes en el query
+        if (fechaDesde) {
+            conditions.fechaDesde = parse(fechaDesde, "dd-MM-yyyy HH:mm", new Date());
+        }
+        if (fechaHasta) {
+            conditions.fechaHasta = parse(fechaHasta, "dd-MM-yyyy HH:mm", new Date());
+        }
+
+        // Buscamos las reservaciones con las condiciones dinámicas
         const reservationsFound = await reservationRepository.find({
-            where: {
-                ...(idReservation && { id: idReservation }),
-                ...(devueltoReservation && { devuelto: devueltoReservation }),
-                ...(TipoReservaReservation && { tipoReserva: TipoReservaReservation }),
-                ...(estadoReservation && { estado: estadoReservation }),
-            },
+            where: conditions,
             relations: ["Encargado", "Reservante", "Recurso", "Sala"],
         });
 

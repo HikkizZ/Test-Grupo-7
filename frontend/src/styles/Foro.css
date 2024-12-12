@@ -1,187 +1,112 @@
-/* Contenedor principal */
-.foros-container {
-    max-width: 90%;
-    margin: 2rem auto;
-    padding: 2rem;
-    background-color: #ffffff;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+/* Estilos para la página de Foros */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
 }
 
-/* Estilos para los títulos */
+/* Contenedor principal */
+div {
+    max-width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Encabezado */
 h1 {
     font-size: 2rem;
-    color: #1a1a1a;
-    margin-bottom: 1.5rem;
-    text-align: center;
-}
-
-h3 {
-    font-size: 1.25rem;
     color: #333;
-    margin: 1.5rem 0 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e5e7eb;
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-/* Estilos para formularios */
+/* Títulos de secciones */
+h3 {
+    color: #555;
+    margin-top: 20px;
+}
+
+/* Formulario de creación */
 form {
-    display: grid;
-    gap: 1.25rem;
-    margin-bottom: 2rem;
-    padding: 1.5rem;
-    background-color: #f8f9fa;
-    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
 }
 
-form div {
-    display: grid;
-    gap: 0.5rem;
-}
-
-label {
-    font-weight: 500;
-    color: #4b5563;
-}
-
-input, select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
+/* Campos del formulario */
+input[type="text"], input[type="date"], select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
     font-size: 1rem;
-    transition: border-color 0.2s ease;
+    width: 100%;
 }
 
-input:focus, select:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-}
-
-/* Estilos para botones */
-button {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 0.375rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
+/* Botón de creación */
 button[type="submit"] {
-    background-color: #22c55e;
+    padding: 10px 15px;
+    border: none;
+    background-color: #4CAF50;
     color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
 }
 
 button[type="submit"]:hover {
-    background-color: #16a34a;
+    background-color: #45a049;
 }
 
-button[type="button"] {
-    background-color: #e5e7eb;
-    color: #4b5563;
-}
-
-button[type="button"]:hover {
-    background-color: #d1d5db;
-}
-
-/* Estilos para la sección de búsqueda */
-.search-form {
-    display: grid;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    padding: 1rem;
-    background-color: #f8f9fa;
-    border-radius: 0.5rem;
-}
-
-@media (min-width: 640px) {
-    .search-form {
-        grid-template-columns: 2fr 1fr;
-    }
-}
-
-/* Estilos para la tabla */
+/* Tabla de foros */
 table {
     width: 100%;
+    margin-top: 20px;
     border-collapse: collapse;
-    margin-top: 1rem;
-    background-color: white;
-    border-radius: 0.5rem;
-    overflow: hidden;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
 }
 
 th {
-    background-color: #f8f9fa;
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    color: #4b5563;
-}
-
-td {
-    padding: 1rem;
-    border-top: 1px solid #e5e7eb;
+    background-color: #f2f2f2;
 }
 
 tr:hover {
-    background-color: #f8f9fa;
+    background-color: #f9f9f9;
 }
 
-/* Estilos para los botones de acción en la tabla */
-.acciones {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.actualizar {
-    background-color: #3b82f6;
+/* Botones de acciones */
+button {
+    padding: 6px 12px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #007bff;
     color: white;
-    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.actualizar:hover {
-    background-color: #2563eb;
+button:hover {
+    background-color: #0056b3;
 }
 
-.eliminar {
-    background-color: #ef4444;
-    color: white;
-    padding: 0.5rem 1rem;
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
-.eliminar:hover {
-    background-color: #dc2626;
-}
-
-/* Estilos para estados de carga */
-.loading {
+/* Mensaje de carga */
+p {
     text-align: center;
-    color: #6b7280;
-    padding: 2rem;
-}
-
-/* Estilos para mensajes de error o sin resultados */
-.no-results {
-    text-align: center;
-    padding: 2rem;
-    color: #6b7280;
-    background-color: #f8f9fa;
-    border-radius: 0.5rem;
-    margin-top: 1rem;
-}
-
-/* Utilidades de espaciado */
-.mt-4 {
-    margin-top: 1rem;
-}
-
-.mb-4 {
-    margin-bottom: 1rem;
-}
-
-.mr-2 {
-    margin-right: 0.5rem;
+    font-size: 1.2rem;
+    color: #555;
 }
