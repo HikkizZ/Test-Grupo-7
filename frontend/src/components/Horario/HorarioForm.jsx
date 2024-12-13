@@ -49,7 +49,7 @@ export default function HorarioForm({ onCreate, loading }) {
                         onChange={(e) =>
                             setHorarioData({ ...horarioData, teacher: e.target.value })
                         }
-                        placeholder="Profesor"
+                        placeholder="Rut del Profesor"
                         disabled={loading}
                     />
                     <input
