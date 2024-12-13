@@ -177,23 +177,47 @@ export async function updateHorarioService(query, body) {
 
         const horarioRepository = AppDataSource.getRepository(Horario);
 
+        // Buscar el horario existente con las relaciones necesarias
         const horarioFound = await horarioRepository.findOne({
             where: { id: idHorario },
+            relations: ["teacher", "subject", "curso", "room", "period"],
         });
 
         if (!horarioFound) return [null, "Horario no encontrado."];
 
+        // Actualizar el horario con los nuevos datos
         const updatedHorario = await horarioRepository.save({
             ...horarioFound,
             ...body,
         });
 
-        return [updatedHorario, null];
+        // Volver a cargar las relaciones después de la actualización
+        const updatedHorarioWithRelations = await horarioRepository.findOne({
+            where: { id: updatedHorario.id },
+            relations: ["teacher", "subject", "curso", "room", "period"],
+        });
+
+        // Preparar los datos con nombres en lugar de IDs
+        const responseData = {
+            teacherName: updatedHorarioWithRelations.teacher.name,
+            subjectName: updatedHorarioWithRelations.subject.name,
+            cursoName: updatedHorarioWithRelations.curso.name,
+            classroomName: updatedHorarioWithRelations.room.name,
+            dayOfWeek: updatedHorarioWithRelations.dayOfWeek,
+            period: {
+                name: updatedHorarioWithRelations.period.name,
+                startTime: updatedHorarioWithRelations.period.startTime,
+                endTime: updatedHorarioWithRelations.period.endTime,
+            },
+        };
+
+        return [responseData, null];
     } catch (error) {
         console.error("Error al actualizar el horario:", error);
         return [null, "Error interno del servidor"];
     }
 }
+
 
 export async function deleteHorarioService(query) {
     try {
@@ -201,15 +225,32 @@ export async function deleteHorarioService(query) {
 
         const horarioRepository = AppDataSource.getRepository(Horario);
 
+        // Buscar el horario con las relaciones necesarias
         const horarioFound = await horarioRepository.findOne({
             where: { id: idHorario },
+            relations: ["teacher", "subject", "curso", "room", "period"],
         });
 
         if (!horarioFound) return [null, "Horario no encontrado."];
 
-        const horarioDeleted = await horarioRepository.remove(horarioFound);
+        // Extraer nombres de las relaciones antes de eliminar
+        const responseData = {
+            teacherName: horarioFound.teacher.name,
+            subjectName: horarioFound.subject.name,
+            cursoName: horarioFound.curso.name,
+            classroomName: horarioFound.room.name,
+            dayOfWeek: horarioFound.dayOfWeek,
+            period: {
+                name: horarioFound.period.name,
+                startTime: horarioFound.period.startTime,
+                endTime: horarioFound.period.endTime,
+            },
+        };
 
-        return [horarioDeleted, null];
+        // Eliminar el horario
+        await horarioRepository.remove(horarioFound);
+
+        return [responseData, null];
     } catch (error) {
         console.error("Error al eliminar el horario:", error);
         return [null, "Error interno del servidor"];
