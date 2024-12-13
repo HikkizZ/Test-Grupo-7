@@ -39,18 +39,18 @@ export const periodBodyValidation = Joi.object({
             "string.empty": "The name is required.",
         }),
     startTime: Joi.string()
-        .pattern(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/) // HH:mm:ss format
+        .pattern(/^([01]\d|2[0-3]):([0-5]\d)$/) 
         .required()
         .messages({
-            "string.base": "The startTime must be a string in HH:mm:ss format.",
+            "string.base": "The startTime must be a string in HH:mm format.",
             "string.pattern.base": "The startTime must be in the format HH:mm:ss.",
             "string.empty": "The startTime is required.",
         }),
     endTime: Joi.string()
-        .pattern(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/) // HH:mm:ss format
+        .pattern(/^([01]\d|2[0-3]):([0-5]\d)$/) 
         .required()
         .messages({
-            "string.base": "The endTime must be a string in HH:mm:ss format.",
+            "string.base": "The endTime must be a string in HH:mm format.",
             "string.pattern.base": "The endTime must be in the format HH:mm:ss.",
             "string.empty": "The endTime is required.",
         }),
