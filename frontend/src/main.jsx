@@ -7,7 +7,7 @@ import Register from '@pages/Register';
 import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import Resources from './pages/Resources';
-import Schedule from '@pages/Schedule';
+import Horario from '@pages/horario';
 //import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
 //import Hallam
@@ -36,8 +36,8 @@ const router = createBrowserRouter([
         ),
     },
     {
-      path: '/schedule',
-      element: <Schedule /> 
+      path: '/horario',
+      element: <Horario /> 
     },
     {
         path: '/resources',
