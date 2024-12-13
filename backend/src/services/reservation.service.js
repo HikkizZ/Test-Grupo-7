@@ -120,7 +120,7 @@ export async function getReservationService(query) {
 
         const reservationRepository = AppDataSource.getRepository(Reservation);
 
-        // Construimos las condiciones dinámicamente
+        // Construye las condiciones dinámicamente
         const conditions = {};
 
         if (idReservation) conditions.id = idReservation;
@@ -136,7 +136,7 @@ export async function getReservationService(query) {
             conditions.fechaHasta = parse(fechaHasta, "dd-MM-yyyy HH:mm", new Date());
         }
 
-        // Buscamos las reservaciones con las condiciones dinámicas
+        // Busca las reservaciones con las condiciones dinámicas
         const reservationsFound = await reservationRepository.find({
             where: conditions,
             relations: ["Encargado", "Reservante", "Recurso", "Sala"],
