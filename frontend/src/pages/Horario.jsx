@@ -6,6 +6,7 @@ import { useUpdateHorario } from "../hooks/horario/useUpdateHorario";
 import { useDeleteHorario } from "../hooks/horario/useDeleteHorario";
 import HorarioForm from "../components/Horario/HorarioForm";
 import HorarioTable from "../components/Horario/HorarioTable";
+import HorarioBox from "../components/Horario/HorarioBox";
 
 export default function Horarios() {
     const { horarios, fetchHorarios, loading: loadingHorarios } = useGetHorarios();
@@ -44,8 +45,14 @@ export default function Horarios() {
 
     return (
         <div>
+            <br>
+            </br>
+            <br>
+            </br>
             <h1>Horarios</h1>
 
+            {/* Tabla visual de horarios */}
+            <HorarioBox horarios={horarios} />
             {/* Crear horario */}
             <h3>Crear Horario</h3>
             <HorarioForm onCreate={handleCreate} loading={loadingCreate} />
