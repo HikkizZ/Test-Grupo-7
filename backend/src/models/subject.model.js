@@ -41,10 +41,10 @@ const SubjectSchema = new EntitySchema({
             type: "one-to-many",
             inverseSide: "subject",
         },
-        schedules: { // Relación con Schedule
-            target: "Schedule", 
+       horarios: { // Relación con Horarios
+            target: "Horario", 
             type: "one-to-many", 
-            inverseSide: "room", 
+            inverseSide: "subject", 
             onDelete: "CASCADE", 
         },
     }
