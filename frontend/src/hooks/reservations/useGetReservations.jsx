@@ -10,7 +10,7 @@ export function useGetReservations() {
         try {
             setLoading(true);
             const response = await getReservations();
-            // Ordenar las reservaciones por ID en caso de que el backend no lo haga
+            // Ordena las reservaciones por ID en caso de que el backend no lo haga
             const sortedReservations = response.sort((a, b) => a.id - b.id);
             setReservations(sortedReservations);
         } catch (err) {

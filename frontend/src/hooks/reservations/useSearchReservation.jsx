@@ -15,7 +15,7 @@ export function useSearchReservation(reservations) {
         const filterReservations = () => {
             let filteredResults = reservations;
 
-            // Aplicar filtros dinámicamente
+            // Aplica filtros dinámicamente
             if (searchFilters.id) {
                 filteredResults = filteredResults.filter((reservation) =>
                     reservation.id.toString().includes(searchFilters.id)
