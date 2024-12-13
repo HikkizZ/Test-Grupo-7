@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createResource } from "@services/resource.service";
-import { showSuccessAlert, showErrorAlert } from "../../utils/alerts"; // Importamos las alertas
+import { showSuccessAlert, showErrorAlert } from "../../utils/alerts"; 
 
 export function useCreateResource(fetchResources) {
     const [loading, setLoading] = useState(false);

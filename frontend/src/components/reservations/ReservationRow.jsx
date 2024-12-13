@@ -7,8 +7,8 @@ export default function ReservationRow({ reservation, onUpdate, onDelete, loadin
 
     const handleEditClick = () => {
         setIsEditing(true);
-        setEditState(reservation.estado); // Inicializamos con el estado actual
-        setEditDevuelto(reservation.devuelto); // Inicializamos con el devuelto actual
+        setEditState(reservation.estado); // Inicializa con el estado actual
+        setEditDevuelto(reservation.devuelto); // Inicializa con el devuelto actual
     };
 
     const handleCancelEdit = () => {

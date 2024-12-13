@@ -9,7 +9,7 @@ export function useDeleteResource({ setResources, setSearchResults }) {
         try {
             const result = await deleteDataAlert();
             if (result.isConfirmed) {
-                setLoading(true);
+                setLoading(true); // Activar el spinner de carga
 
                 // Llamar al servicio para eliminar el recurso
                 await deleteResource(id);
