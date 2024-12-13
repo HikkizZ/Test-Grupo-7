@@ -1,33 +1,38 @@
 import { useState } from "react";
 
-export default function ResourceRow({ resource, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
+export default function ReservationRow({ reservation, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
     const [isEditing, setIsEditing] = useState(false);
-    const [editName, setEditName] = useState(resource.name); // Inicializamos con el nombre actual
+    const [editState, setEditState] = useState(reservation.estado);
+    const [editDevuelto, setEditDevuelto] = useState(reservation.devuelto);
 
     const handleEditClick = () => {
         setIsEditing(true);
-        setEditName(resource.name); // Aseguramos que siempre se use el nombre actual
+        setEditState(reservation.estado); // Inicializa con el estado actual
+        setEditDevuelto(reservation.devuelto); // Inicializa con el devuelto actual
     };
 
     const handleCancelEdit = () => {
         setIsEditing(false);
-        setEditName(resource.name); // Reinicia el nombre al valor actual
+        setEditState(reservation.estado); // Reinicia al valor original
+        setEditDevuelto(reservation.devuelto);
     };
 
     const handleSaveEdit = () => {
-        onUpdate(resource.id, { name: editName });
+        onUpdate(reservation.id, { estado: editState, devuelto: editDevuelto });
         setIsEditing(false);
     };
 
     return (
         <tr>
-            <td>{resource.id}</td>
+            <td>{reservation.id}</td>
+            <td>{reservation.fechaDesde}</td>
+            <td>{reservation.fechaHasta}</td>
+            <td>{reservation.tipoReserva}</td>
             <td>
                 {isEditing ? (
-                    <input
-                        type="text"
-                        value={editName}
-                        onChange={(e) => setEditName(e.target.value)}
+                    <select
+                        value={editState}
+                        onChange={(e) => setEditState(e.target.value)}
                         disabled={loadingUpdate}
                         style={{
                             width: "100%",
@@ -35,10 +40,40 @@ export default function ResourceRow({ resource, onUpdate, onDelete, loadingUpdat
                             border: "1px solid #ccc",
                             borderRadius: "4px",
                         }}
-                    />
+                    >
+                        <option value="pendiente">Pendiente</option>
+                        <option value="aprobada">Aprobada</option>
+                        <option value="rechazada">Rechazada</option>
+                    </select>
                 ) : (
-                    resource.name
+                    reservation.estado
                 )}
+            </td>
+            <td>
+                {isEditing ? (
+                    <select
+                        value={editDevuelto ? "Sí" : "No"}
+                        onChange={(e) => setEditDevuelto(e.target.value === "Sí")}
+                        disabled={loadingUpdate}
+                        style={{
+                            width: "100%",
+                            padding: "5px",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                        }}
+                    >
+                        <option value="Sí">Sí</option>
+                        <option value="No">No</option>
+                    </select>
+                ) : (
+                    reservation.devuelto ? "Sí" : "No"
+                )}
+            </td>
+            <td>{reservation.Reservante?.nombre || "No disponible"}</td>
+            <td>
+                {reservation.tipoReserva === "sala"
+                    ? reservation.Sala?.nombre || "No disponible"
+                    : reservation.Recurso?.nombre || "No disponible"}
             </td>
             <td>
                 {isEditing ? (
@@ -91,7 +126,7 @@ export default function ResourceRow({ resource, onUpdate, onDelete, loadingUpdat
                             Modificar
                         </button>
                         <button
-                            onClick={() => onDelete(resource.id)}
+                            onClick={() => onDelete(reservation.id)}
                             disabled={loadingDelete}
                             style={{
                                 backgroundColor: "#d33",

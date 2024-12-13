@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createResource } from "@services/resource.service";
-import { showSuccessAlert } from "../../utils/alerts";
+import { showSuccessAlert, showErrorAlert } from "../../utils/alerts"; 
 
 export function useCreateResource(fetchResources) {
     const [loading, setLoading] = useState(false);
@@ -8,11 +8,14 @@ export function useCreateResource(fetchResources) {
     const handleCreate = async (data) => {
         try {
             setLoading(true);
-            await createResource(data); // Aquí se realiza la solicitud al backend
+            await createResource(data);
             showSuccessAlert("Recurso creado", "El recurso ha sido creado correctamente");
-            fetchResources(); // Vuelve a cargar los recursos
+            fetchResources();
         } catch (error) {
-            alert("Error al crear el recurso: " + error.message);
+            showErrorAlert(
+                "Error al crear el recurso",
+                error.response?.data?.message || "Hubo un problema al crear el recurso."
+            );
         } finally {
             setLoading(false);
         }
@@ -20,4 +23,3 @@ export function useCreateResource(fetchResources) {
 
     return { handleCreate, loading };
 }
-

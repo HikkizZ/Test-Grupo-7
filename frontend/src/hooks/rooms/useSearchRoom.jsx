@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 
-export function useSearchResource(resources) {
+export function useSearchRoom(rooms) {
     const [searchQuery, setSearchQuery] = useState("");
     const [searchFilter, setSearchFilter] = useState("");
-    const [searchResults, setSearchResults] = useState(resources || []);
+    const [searchResults, setSearchResults] = useState(rooms || []);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -17,19 +17,19 @@ export function useSearchResource(resources) {
                 let filteredResults = [];
 
                 if (!searchQuery) {
-                    filteredResults = resources;
+                    filteredResults = rooms;
                 } else {
                     if (searchFilter === "id") {
-                        filteredResults = resources.filter((resource) =>
-                            resource.id.toString().includes(searchQuery)
+                        filteredResults = rooms.filter((room) =>
+                            room.id.toString().includes(searchQuery)
                         );
                     } else if (searchFilter === "name") {
-                        filteredResults = resources.filter((resource) =>
-                            resource.name.toLowerCase().includes(searchQuery.toLowerCase())
+                        filteredResults = rooms.filter((room) =>
+                            room.name.toLowerCase().includes(searchQuery.toLowerCase())
                         );
                     } else {
-                        filteredResults = resources.filter((resource) =>
-                            `${resource.id} ${resource.name.toLowerCase()}`.includes(searchQuery.toLowerCase())
+                        filteredResults = rooms.filter((room) =>
+                            `${room.id} ${room.name.toLowerCase()}`.includes(searchQuery.toLowerCase())
                         );
                     }
                 }
@@ -37,14 +37,14 @@ export function useSearchResource(resources) {
                 setSearchResults(filteredResults);
             } catch (err) {
                 console.error("Error en búsqueda automática:", err);
-                setError("Error al buscar recursos.");
+                setError("Error al buscar salas.");
             } finally {
                 setLoading(false);
             }
         };
 
         performSearch();
-    }, [searchQuery, searchFilter, resources]);
+    }, [searchQuery, searchFilter, rooms]);
 
     const handleQueryChange = (query) => {
         if (searchFilter === "id" && !/^\d*$/.test(query)) {
@@ -78,7 +78,7 @@ export function useSearchResource(resources) {
 
     const resetSearch = () => {
         setSearchQuery("");
-        setSearchResults(resources);
+        setSearchResults(rooms);
         setSearchFilter("");
     };
 

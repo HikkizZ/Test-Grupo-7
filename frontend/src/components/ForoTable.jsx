@@ -1,12 +1,8 @@
 import React from 'react';
 
-export default function ForoTable({ foros, onDelete, loadingDelete, onUpdate }) {
-    if (foros.length === 0) {
-        return <p>No se encontraron foros que coincidan con la búsqueda.</p>;
-    }
-
+export default function ForoTable({ foros, onDelete, loadingDelete, onUpdate, loadingUpdate }) {
     return (
-        <table className="w-full">
+        <table>
             <thead>
                 <tr>
                     <th>ID</th>
@@ -20,15 +16,22 @@ export default function ForoTable({ foros, onDelete, loadingDelete, onUpdate }) 
             <tbody>
                 {foros.map((foro) => (
                     <tr key={foro.id}>
+                        {/* Muestra los datos correspondientes del foro */}
                         <td>{foro.id}</td>
                         <td>{foro.titulo}</td>
                         <td>{foro.nombreProfesor}</td>
                         <td>{foro.categoria}</td>
                         <td>{foro.fecha}</td>
                         <td>
-                            <button onClick={() => onUpdate(foro)} className="mr-2">
-                                Actualizar
+                            {/* Botón de actualización */}
+                            <button 
+                                onClick={() => onUpdate(foro)} 
+                                disabled={loadingUpdate}
+                            >
+                                {loadingUpdate ? 'Actualizando...' : 'Actualizar'}
                             </button>
+                            
+                            {/* Botón de eliminación */}
                             <button 
                                 onClick={() => onDelete(foro.id)} 
                                 disabled={loadingDelete}

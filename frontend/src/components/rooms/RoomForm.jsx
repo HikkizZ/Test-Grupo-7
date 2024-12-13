@@ -23,25 +23,25 @@ const modalStyles = {
     },
 };
 
-export default function ResourceForm({ onCreate, loading, onClose }) {
-    const [resourceName, setResourceName] = useState("");
+export default function RoomForm({ onCreate, loading, onClose }) {
+    const [roomName, setRoomName] = useState("");
 
     const handleCancel = () => {
-        setResourceName("");
+        setRoomName("");
         onClose();
     };
 
     const handleSubmit = () => {
-        if (!resourceName.trim()) return;
-        if (resourceName.trim().length < 3) {
+        if (!roomName.trim()) return;
+        if (roomName.trim().length < 3) {
             showErrorAlert(
                 "Nombre demasiado corto",
-                "El nombre del recurso debe tener al menos 3 caracteres."
+                "El nombre de la sala debe tener al menos 3 caracteres."
             );
             return;
         }
-        onCreate({ name: resourceName });
-        setResourceName("");
+        onCreate({ name: roomName });
+        setRoomName("");
         onClose();
     };
 
@@ -52,12 +52,12 @@ export default function ResourceForm({ onCreate, loading, onClose }) {
             style={modalStyles}
             ariaHideApp={false}
         >
-            <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Crear Recurso</h2>
+            <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Crear Sala</h2>
             <input
                 type="text"
-                value={resourceName}
-                onChange={(e) => setResourceName(e.target.value)}
-                placeholder="Nombre del recurso"
+                value={roomName}
+                onChange={(e) => setRoomName(e.target.value)}
+                placeholder="Nombre de la sala"
                 disabled={loading}
                 style={{
                     width: "100%",

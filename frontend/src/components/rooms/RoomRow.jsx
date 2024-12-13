@@ -1,27 +1,27 @@
 import { useState } from "react";
 
-export default function ResourceRow({ resource, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
+export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
     const [isEditing, setIsEditing] = useState(false);
-    const [editName, setEditName] = useState(resource.name); // Inicializamos con el nombre actual
+    const [editName, setEditName] = useState(room.name);
 
     const handleEditClick = () => {
         setIsEditing(true);
-        setEditName(resource.name); // Aseguramos que siempre se use el nombre actual
+        setEditName(room.name);
     };
 
     const handleCancelEdit = () => {
         setIsEditing(false);
-        setEditName(resource.name); // Reinicia el nombre al valor actual
+        setEditName(room.name);
     };
 
     const handleSaveEdit = () => {
-        onUpdate(resource.id, { name: editName });
+        onUpdate(room.id, { name: editName });
         setIsEditing(false);
     };
 
     return (
         <tr>
-            <td>{resource.id}</td>
+            <td>{room.id}</td>
             <td>
                 {isEditing ? (
                     <input
@@ -37,7 +37,7 @@ export default function ResourceRow({ resource, onUpdate, onDelete, loadingUpdat
                         }}
                     />
                 ) : (
-                    resource.name
+                    room.name
                 )}
             </td>
             <td>
@@ -91,7 +91,7 @@ export default function ResourceRow({ resource, onUpdate, onDelete, loadingUpdat
                             Modificar
                         </button>
                         <button
-                            onClick={() => onDelete(resource.id)}
+                            onClick={() => onDelete(room.id)}
                             disabled={loadingDelete}
                             style={{
                                 backgroundColor: "#d33",
