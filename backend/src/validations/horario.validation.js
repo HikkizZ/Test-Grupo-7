@@ -52,7 +52,6 @@ export const horarioQueryValidation = Joi.object({
         }),
     periodId: Joi.string()
         .pattern(/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/)
-        .required()
         .messages({
             "string.base": "The periodId must be a string.",
             "string.pattern.base": "The periodId must not contain special characters.",
