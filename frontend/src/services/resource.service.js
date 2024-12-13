@@ -14,7 +14,7 @@ export async function getResources() {
 // Crear un recurso
 export async function createResource(resourceData) {
     try {
-        const { data } = await axios.post('/resource/', resourceData); // Revisa que la ruta sea correcta
+        const { data } = await axios.post('/resource/', resourceData);
         return data; // Retornar toda la respuesta en caso de necesitar más propiedades
     } catch (error) {
         console.error('Error creating resource:', error.response?.data?.message || error.message);
