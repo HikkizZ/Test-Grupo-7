@@ -1,5 +1,6 @@
 "use strict";
 import { EntitySchema } from "typeorm";
+import { JoinAttribute } from "typeorm/query-builder/JoinAttribute.js";
 
 const UserSchema = new EntitySchema({
     name: "User",
@@ -71,6 +72,11 @@ const UserSchema = new EntitySchema({
                 },
             },
         },
+        notas: {
+            target: "UserNotas",
+            type: "one-to-many",
+            inverseSide: "student_id",
+        }
     },
     indices: [ //? Indexes of the table to optimize the search.
         {
