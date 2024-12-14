@@ -3,36 +3,65 @@ import { useState } from "react";
 export default function ReservationSearch({ onFilterUpdate, onReset, loading }) {
     const [areFiltersActive, setAreFiltersActive] = useState(false);
 
-    // Estado para los filtros
     const [filters, setFilters] = useState({
         id: "",
         devuelto: "",
         tipoReserva: "",
         estado: "",
-        fechaDesde: "",
-        fechaHasta: "",
+        fechaDesde: { date: "", time: "" },
+        fechaHasta: { date: "", time: "" },
     });
 
-    // Manejar cambios en los filtros
-    const handleFilterChange = (filter, value) => {
-        const updatedFilters = { ...filters, [filter]: value };
-        setFilters(updatedFilters);
-        onFilterUpdate(filter, value);
+    const formatDateTime = (date, time) => {
+        if (!date || !time) return "";
+        const [yyyy, MM, dd] = date.split("-");
+        return `${dd}-${MM}-${yyyy} ${time}`;
+    };
 
-        // Detectar si hay algún filtro activo
-        const hasActiveFilters = Object.values(updatedFilters).some((val) => val !== "");
+    const handleFilterChange = (filter, value) => {
+        let updatedFilters = { ...filters };
+
+        if (filter === "fechaDesde.date" || filter === "fechaDesde.time") {
+            const [field, subfield] = filter.split(".");
+            updatedFilters[field][subfield] = value;
+            updatedFilters.fechaDesdeFormatted = formatDateTime(
+                updatedFilters.fechaDesde.date,
+                updatedFilters.fechaDesde.time
+            );
+        } else if (filter === "fechaHasta.date" || filter === "fechaHasta.time") {
+            const [field, subfield] = filter.split(".");
+            updatedFilters[field][subfield] = value;
+            updatedFilters.fechaHastaFormatted = formatDateTime(
+                updatedFilters.fechaHasta.date,
+                updatedFilters.fechaHasta.time
+            );
+        } else {
+            updatedFilters[filter] = value;
+        }
+
+        setFilters(updatedFilters);
+
+        const filterValue =
+            filter.startsWith("fechaDesde") || filter.startsWith("fechaHasta")
+                ? updatedFilters[filter.split(".")[0] + "Formatted"]
+                : value;
+
+        onFilterUpdate(filter.split(".")[0], filterValue);
+
+        const hasActiveFilters = Object.values(updatedFilters).some((val) =>
+            typeof val === "string" ? val !== "" : val.date || val.time
+        );
         setAreFiltersActive(hasActiveFilters);
     };
 
-    // Manejar el reset de filtros
     const handleResetFilters = () => {
         setFilters({
             id: "",
             devuelto: "",
             tipoReserva: "",
             estado: "",
-            fechaDesde: "",
-            fechaHasta: "",
+            fechaDesde: { date: "", time: "" },
+            fechaHasta: { date: "", time: "" },
         });
         setAreFiltersActive(false);
         onReset();
@@ -42,7 +71,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
         <div>
             <h3>Buscar Reservación</h3>
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                {/* Filtro por ID */}
                 <input
                     type="text"
                     placeholder="Buscar por ID"
@@ -51,7 +79,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                     style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
                 />
 
-                {/* Filtro por devuelto */}
                 <select
                     value={filters.devuelto}
                     onChange={(e) => handleFilterChange("devuelto", e.target.value)}
@@ -62,7 +89,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                     <option value="false">No</option>
                 </select>
 
-                {/* Filtro por tipoReserva */}
                 <select
                     value={filters.tipoReserva}
                     onChange={(e) => handleFilterChange("tipoReserva", e.target.value)}
@@ -73,7 +99,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                     <option value="recurso">Recurso</option>
                 </select>
 
-                {/* Filtro por estado */}
                 <select
                     value={filters.estado}
                     onChange={(e) => handleFilterChange("estado", e.target.value)}
@@ -85,25 +110,38 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                     <option value="rechazada">Rechazada</option>
                 </select>
 
-                {/* Filtro por fechaDesde */}
-                <input
-                    type="text"
-                    placeholder="Fecha Desde (DD-MM-YYYY HH:mm)"
-                    value={filters.fechaDesde}
-                    onChange={(e) => handleFilterChange("fechaDesde", e.target.value)}
-                    style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
-                />
+                <div>
+                    <label>Fecha Desde</label>
+                    <input
+                        type="date"
+                        value={filters.fechaDesde.date}
+                        onChange={(e) => handleFilterChange("fechaDesde.date", e.target.value)}
+                        style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
+                    />
+                    <input
+                        type="time"
+                        value={filters.fechaDesde.time}
+                        onChange={(e) => handleFilterChange("fechaDesde.time", e.target.value)}
+                        style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
+                    />
+                </div>
 
-                {/* Filtro por fechaHasta */}
-                <input
-                    type="text"
-                    placeholder="Fecha Hasta (DD-MM-YYYY HH:mm)"
-                    value={filters.fechaHasta}
-                    onChange={(e) => handleFilterChange("fechaHasta", e.target.value)}
-                    style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
-                />
+                <div>
+                    <label>Fecha Hasta</label>
+                    <input
+                        type="date"
+                        value={filters.fechaHasta.date}
+                        onChange={(e) => handleFilterChange("fechaHasta.date", e.target.value)}
+                        style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
+                    />
+                    <input
+                        type="time"
+                        value={filters.fechaHasta.time}
+                        onChange={(e) => handleFilterChange("fechaHasta.time", e.target.value)}
+                        style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
+                    />
+                </div>
 
-                {/* Botón para resetear filtros y ver todas las reservaciones */}
                 {areFiltersActive && (
                     <button
                         onClick={handleResetFilters}
