@@ -65,6 +65,12 @@ const SubjectSchema = new EntitySchema({
                 },
             },
         },
+        calificaciones: { //? Relation with the Calificacion entity. A subject has many qualifications.
+            target: "Calificacion",
+            type: "one-to-many",
+            inverseSide: "subject",
+            onDelete: "CASCADE",
+        },
     },
     indices: [ //? Indexes of the table to optimize the search.
         {
