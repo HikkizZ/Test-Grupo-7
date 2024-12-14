@@ -13,6 +13,7 @@ import '@styles/styles.css';
 //import Hallam
 import Foro from '@pages/foro/Foro';
 import News from '@pages/News';
+import NewsId from '@pages/News.id'
 //? Import services Felipe
 import Cursos from './pages/Cursos';
 import Subjects from './pages/Subjects';
@@ -25,7 +26,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/home',
-        element: <Home/>
+        element: <News/>
+      },
+      {
+        path: '/news/:id', //Ruta para las Noticias por Id
+        element: <NewsId />
       },
       {
         path: '/users',
@@ -61,10 +66,7 @@ const router = createBrowserRouter([
         path: '/post/:id',
         element: <foroDetail/>,
       },
-      {
-        path: '/news',
-        element: <News/>
-      },
+      
       
     ]
   },

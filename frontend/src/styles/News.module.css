@@ -1,0 +1,224 @@
+/* Estilos para el contenedor principal de noticias */
+.newsContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Estilos para el título principal de la página de noticias */
+.newsTitle {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Estilos para el botón de crear nueva noticia */
+.newNewsButton {
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.newNewsButton:hover {
+  background-color: #0051a2;
+}
+
+/* Estilos para la cuadrícula de noticias */
+.newsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Estilos para cada tarjeta de noticia individual */
+.newsCard {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.newsCard:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para la imagen de la noticia */
+.newsImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Estilos para el contenido de la noticia */
+.newsContent {
+  padding: 15px;
+}
+
+/* Estilos para el título de cada noticia */
+.newsTitle {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+/* Estilos para el autor y la fecha de la noticia */
+.newsAuthor, .newsDate {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Estilos para el extracto de la noticia */
+.newsExcerpt {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #333;
+}
+
+/* Estilos para los botones de acción (editar y eliminar) */
+.newsActions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+}
+
+/* Estilos para los botones de editar y eliminar */
+.editButton, .deleteButton {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-left: 10px;
+}
+
+.editButton {
+  background-color: #4caf50;
+  color: white;
+}
+
+.deleteButton {
+  background-color: #f44336;
+  color: white;
+}
+
+/* Estilos para la página de detalle de noticia */
+.newsDetailContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+}
+
+.newsDetailTitle {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+
+.newsDetailMeta {
+  display: flex;
+  justify-content: space-between;
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.newsDetailDate {
+  font-style: italic;
+}
+
+.newsDetailImage {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.newsDetailContent {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 40px;
+}
+
+.newsDetailContact {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.newsDetailContact a {
+  color: #0070f3;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.newsDetailContact a:hover {
+  text-decoration: underline;
+}
+
+.backButton {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.backButton:hover {
+  background-color: #0051a2;
+}
+
+/* Estilos para los botones de acción (editar y eliminar) en la página de detalle */
+.newsActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.editButton, .deleteButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-left: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.editButton {
+  background-color: #4caf50;
+  color: white;
+}
+
+.editButton:hover {
+  background-color: #45a049;
+}
+
+.deleteButton {
+  background-color: #f44336;
+  color: white;
+}
+
+.deleteButton:hover {
+  background-color: #d32f2f;
+}
+

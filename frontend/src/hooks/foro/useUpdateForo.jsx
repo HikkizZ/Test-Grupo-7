@@ -8,20 +8,35 @@ export function useUpdateForo(fetchForos) {
     const handleUpdate = async (id, updatedData) => {
         try {
             setLoading(true);
-            console.log('Updating foro with id:', id, 'and data:', updatedData);
-            const updatedForo = await updateForo(id, updatedData);
-            console.log('Updated foro:', updatedForo);
+            console.log('Actualizando foro con id:', id, 'y datos:', updatedData);
+            
+            // Crear un FormData si no lo es ya
+            const formData = updatedData instanceof FormData ? updatedData : new FormData();
+            
+            // Si updatedData no es FormData, añadir cada campo al FormData
+            if (!(updatedData instanceof FormData)) {
+                Object.keys(updatedData).forEach(key => {
+                    if (key !== 'archivos') {
+                        formData.append(key, updatedData[key]);
+                    }
+                });
+            }
+
+            // Manejar archivos
+            if (updatedData.archivos) {
+                for (let i = 0; i < updatedData.archivos.length; i++) {
+                    formData.append('archivos', updatedData.archivos[i]);
+                }
+            }
+
+            const updatedForo = await updateForo(id, formData);
+            console.log('Foro actualizado:', updatedForo);
             if (updatedForo) {
                 showSuccessAlert(
                     "¡Foro modificado!",
                     `El foro con ID ${id} ha sido modificado correctamente.`
                 );
-                // Actualizar solo el foro modificado sin alterar la posición
-                fetchForos((prevForos) =>
-                    prevForos.map((foro) =>
-                        foro.id === id ? { ...foro, ...updatedData } : foro
-                    )
-                );
+                return updatedForo;
             } else {
                 throw new Error('No se recibió respuesta del servidor al actualizar');
             }
@@ -34,6 +49,7 @@ export function useUpdateForo(fetchForos) {
                 errorMessage += `: ${error.message}`;
             }
             showErrorAlert("Error", errorMessage);
+            throw error;
         } finally {
             setLoading(false);
         }

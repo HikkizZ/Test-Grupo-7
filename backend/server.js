@@ -10,6 +10,11 @@ import { connectDB } from './src/config/configDB.js'; //? Función para conectar
 import { cookieKey, PORT, HOST } from './src/config/configEnv.js'; //? Variables de entorno.
 import { passportJWTSetup } from './src/auth/passport.auth.js'; //? Configuración de la autenticación de usuarios.
 import { createUsers } from './src/utils/initialSetup.js'; //? Función para crear usuarios.
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 async function setupServer() { //* Función para configurar el servidor.
     try {
@@ -65,6 +70,10 @@ async function setupServer() { //* Función para configurar el servidor.
         app.use( //* Usar passport. Configurar la autenticación de usuarios.
             passport.session()
         );
+        app.use('/src/upload', express.static(path.join(__dirname, 'src', 'upload')) //Hallam lo agrega pake pueda gestionar imagenes con express
+
+        );
+        
 
         passportJWTSetup(); //* Configurar la autenticación de usuarios.
 

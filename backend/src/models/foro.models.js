@@ -1,11 +1,12 @@
+// Importaciones necesarias
 import { EntitySchema } from "typeorm";
-import { format } from "date-fns";
-import { es } from "date-fns/locale"; // Para el formato en español
 
+// Definición del esquema de la entidad Foro
 const ForoSchema = new EntitySchema({
     name: "Foro",
     tableName: "foros",
     columns: {
+        // Definición de las columnas
         id: {
             type: 'int',
             primary: true,
@@ -16,6 +17,7 @@ const ForoSchema = new EntitySchema({
             length: 255,
             nullable: false,
         },
+        
         nombreProfesor: {
             type: 'varchar',
             length: 255,
@@ -26,15 +28,41 @@ const ForoSchema = new EntitySchema({
             length: 50,
             nullable: false,
         },
+        contenido: {
+            type: 'varchar',
+            lenght: 10000,
+            nullable: false,
+        },
         fecha: {
-            type: 'timestamp with time zone',
+            type: 'date',
             nullable: false,
             transformer: {
-                to: (value) => value, // Lo dejamos tal cual al guardar en la base de datos
-                from: (value) => format(new Date(value), "dd-MM-yyyy", { locale: es }), // Convierte a formato latino al obtener
+                // Transformador para convertir la fecha al guardar en la base de datos
+                to: (value) => {
+                    if (value instanceof Date) {
+                        return value;
+                    }
+                    // Convierte la fecha de formato DD/MM/YYYY a objeto Date
+                    const [dia, mes, anio] = value.split('/');
+                    return new Date(anio, mes - 1, dia);
+                },
+                // Transformador para convertir la fecha al recuperar de la base de datos
+                from: (value) => {
+                    if (value instanceof Date) {
+                        // Convierte la fecha a formato ISO sin la parte de tiempo
+                        return value.toISOString().split('T')[0];
+                    }
+                    return value;
+                },
             },
         },
+        // archivos adjuntos
+        archivosAdjuntos: {
+            type: 'simple-json',
+            nullable: true,
+        },
     },
+    // Definición de índices
     indices: [
         {
             name: "IDX_FORO",

@@ -1,121 +1,183 @@
-import { useState } from 'react';
-import { createNews, updateNews } from '@services/news.service';
+import { useState, useEffect } from 'react';
+import { createNews, updateNews, getNewsById } from '@services/news.service';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-export default function FormNews({ initialData, onSubmit, onCancel }) {
-  const [formData, setFormData] = useState(initialData || {
+export default function FormNews({ id, onSubmit, onCancel }) {
+  const [formData, setFormData] = useState({
     tituloNews: '',
     nombreAutor: '',
     contenido: '',
-    fechaPublicacion: new Date().toISOString().split('T')[0]
+    imagenPortada: null
   });
+  const [loading, setLoading] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (id) {
+      fetchNews(id);
+    }
+  }, [id]);
+
+  const fetchNews = async (newsId) => {
     try {
-      if (initialData?.id) {
-        await updateNews(formData, initialData.id);
-      } else {
-        await createNews(formData);
-      }
-      onSubmit();
+      const data = await getNewsById(newsId);
+      setFormData({
+        tituloNews: data.tituloNews,
+        nombreAutor: data.nombreAutor,
+        contenido: data.contenido,
+        imagenPortada: null
+      });
+      setPreviewImage(data.imagenPortada);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error al obtener la noticia:', error);
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === 'imagenPortada' && files[0]) {
+      setFormData(prevState => ({
+        ...prevState,
+        [name]: files[0]
+      }));
+      setPreviewImage(URL.createObjectURL(files[0]));
+    } else {
+      setFormData(prevState => ({
+        ...prevState,
+        [name]: value
+      }));
+    }
+  };
+
+  const handleQuillChange = (content) => {
+    setFormData(prevState => ({ ...prevState, contenido: content }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const newsData = new FormData();
+      for (const key in formData) {
+        if (key === 'imagenPortada') {
+          if (formData[key] instanceof File) {
+            newsData.append(key, formData[key]);
+          }
+        } else {
+          newsData.append(key, formData[key]);
+        }
+      }
+
+      let result;
+      if (id) {
+        result = await updateNews(id, newsData);
+      } else {
+        result = await createNews(newsData);
+      }
+      onSubmit(result);
+    } catch (error) {
+      console.error('Error al enviar el formulario:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const modules = {
+    toolbar: [
+      [{ 'header': [1, 2, false] }],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+      ['link', 'image'],
+      ['clean']
+    ],
+  };
+
+  const formats = [
+    'header',
+    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'list', 'bullet', 'indent',
+    'link', 'image'
+  ];
+
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">
-        {initialData ? 'Editar Noticia' : 'Crear Nueva Noticia'}
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Título
-          </label>
-          <input
-            type="text"
-            value={formData.tituloNews}
-            onChange={(e) => setFormData({ ...formData, tituloNews: e.target.value })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            required
-            minLength={3}
-            maxLength={100}
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <h2 className="text-2xl font-bold">{id ? 'Editar Noticia' : 'Crear Nueva Noticia'}</h2>
+      <div>
+        <label htmlFor="tituloNews" className="block text-sm font-medium text-gray-700">Título</label>
+        <input
+          type="text"
+          id="tituloNews"
+          name="tituloNews"
+          value={formData.tituloNews}
+          onChange={handleChange}
+          required
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        />
+      </div>
+      <div>
+        <label htmlFor="nombreAutor" className="block text-sm font-medium text-gray-700">Autor</label>
+        <input
+          type="text"
+          id="nombreAutor"
+          name="nombreAutor"
+          value={formData.nombreAutor}
+          onChange={handleChange}
+          required
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        />
+      </div>
+      <div>
+        <label htmlFor="contenido" className="block text-sm font-medium text-gray-700">Contenido</label>
+        <ReactQuill
+          theme="snow"
+          value={formData.contenido}
+          onChange={handleQuillChange}
+          modules={modules}
+          formats={formats}
+          className="mt-1"
+        />
+      </div>
+      <div>
+        <label htmlFor="imagenPortada" className="block text-sm font-medium text-gray-700">Imagen de Portada</label>
+        <input
+          type="file"
+          id="imagenPortada"
+          name="imagenPortada"
+          onChange={handleChange}
+          accept="image/*"
+          className="mt-1 block w-full text-sm text-gray-500
+            file:mr-4 file:py-2 file:px-4
+            file:rounded-full file:border-0
+            file:text-sm file:font-semibold
+            file:bg-violet-50 file:text-violet-700
+            hover:file:bg-violet-100"
+        />
+        {previewImage && (
+          <img 
+            src={previewImage} 
+            alt="Vista previa" 
+            className="mt-4 max-w-xs rounded-lg shadow-md" 
           />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Autor
-          </label>
-          <input
-            type="text"
-            value={formData.nombreAutor}
-            onChange={(e) => setFormData({ ...formData, nombreAutor: e.target.value })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            required
-            minLength={3}
-            maxLength={60}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Contenido
-          </label>
-          <ReactQuill
-            value={formData.contenido}
-            onChange={(content) => setFormData({ ...formData, contenido: content })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            modules={{
-              toolbar: [
-                [{ 'header': [1, 2, false] }],
-                ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-                [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-                ['link', 'image'],
-                ['clean']
-              ],
-            }}
-            formats={[
-              'header',
-              'bold', 'italic', 'underline', 'strike', 'blockquote',
-              'list', 'bullet', 'indent',
-              'link', 'image'
-            ]}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Fecha de Publicación
-          </label>
-          <input
-            type="date"
-            value={formData.fechaPublicacion}
-            onChange={(e) => setFormData({ ...formData, fechaPublicacion: e.target.value })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            required
-          />
-        </div>
-
-        <div className="flex gap-2">
-          <button
-            type="submit"
-            className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            {initialData ? 'Actualizar' : 'Crear'}
-          </button>
-          <button
-            type="button"
-            onClick={onCancel}
-            className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </div>
+        )}
+      </div>
+      <div className="flex justify-end space-x-2">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+        >
+          {loading ? 'Guardando...' : 'Guardar'}
+        </button>
+      </div>
+    </form>
   );
 }
+

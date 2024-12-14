@@ -1,23 +1,50 @@
 import React from 'react';
+import { downloadFile } from '@services/foro.service';
 
-export default function ForoView({ foro, onClose }) {
-    if (!foro) return null;
+const Foro = ({ foro }) => {
+  const fecha = new Date(foro.fecha).toLocaleDateString();
 
-    return (
-        <div className="w-full max-w-md mx-auto mt-4 border rounded-lg p-4 bg-white shadow">
-            <h2 className="text-xl font-bold mb-2">{foro.titulo}</h2>
-            <div className="mb-4">
-                <p><strong>Profesor:</strong> {foro.nombreProfesor}</p>
-                <p><strong>Categoría:</strong> {foro.categoria}</p>
-                <p><strong>Fecha:</strong> {foro.fecha}</p>
-            </div>
-            <button 
-                onClick={onClose} 
-                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-            >
-                Cerrar
-            </button>
+  const handleDownload = async (fileName) => {
+    try {
+      await downloadFile(foro.id, fileName);
+    } catch (error) {
+      console.error('Error al descargar el archivo:', error);
+      // Aquí puedes manejar el error, por ejemplo, mostrando un mensaje al usuario
+    }
+  };
+
+  return (
+    <div className="p-4 bg-white rounded-lg shadow-md">
+      <h2 className="text-xl font-bold mb-2">{foro.titulo}</h2>
+      <div className="text-gray-700 mb-2">
+        <p>Profesor: {foro.nombreProfesor}</p>
+        <p>Categoría: {foro.categoria}</p>
+        <p>Fecha: {fecha}</p>
+      </div>
+      <div className="mb-4">
+        <h3 className="font-bold">Contenido:</h3>
+        <p>{foro.contenido || 'Sin contenido'}</p>
+      </div>
+      {foro.archivosAdjuntos && foro.archivosAdjuntos.length > 0 && (
+        <div>
+          <h3 className="font-bold">Archivos adjuntos:</h3>
+          <ul>
+            {foro.archivosAdjuntos.map((archivo, index) => (
+              <li key={index}>
+                <button 
+                  onClick={() => handleDownload(archivo.nombre)}
+                  className="text-blue-500 hover:underline"
+                >
+                  {archivo.nombre}
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
-    );
-}
+      )}
+    </div>
+  );
+};
+
+export default Foro;
 

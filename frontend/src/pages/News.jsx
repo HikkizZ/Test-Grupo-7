@@ -1,38 +1,39 @@
 import { useState } from 'react';
-import FormNews from '../components/News/formNews';
 import ListNews from '../components/News/listNews';
+import FormNews from '../components/News/formNews';
+import styles from '../styles/News.module.css';
 
 export default function News() {
+  // Estado para controlar si se está creando/editando una noticia
   const [isCreating, setIsCreating] = useState(false);
+  // Estado para almacenar la noticia que se está editando
   const [editingNews, setEditingNews] = useState(null);
 
+  // Manejador para cuando se completa la creación/edición de una noticia
   const handleSubmit = () => {
     setIsCreating(false);
     setEditingNews(null);
   };
 
+  // Manejador para iniciar la edición de una noticiaz
   const handleEdit = (news) => {
     setEditingNews(news);
     setIsCreating(true);
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Gestión de Noticias</h1>
-        {!isCreating && (
-          <button
-            onClick={() => setIsCreating(true)}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
-          >
-            Nueva Noticia
-          </button>
-        )}
-      </div>
-
+    <div className={styles.newsContainer}>
+      <h1 className={styles.newsTitle}>Noticias</h1>
+      {/* Botón para crear una nueva noticia */}
+      {!isCreating && (
+        <button onClick={() => setIsCreating(true)} className={styles.newNewsButton}>
+          Nueva Noticia
+        </button>
+      )}
+      {/* Renderizado condicional del formulario o la lista de noticias */}
       {isCreating ? (
         <FormNews
-          initialData={editingNews}
+          id={editingNews?.id}
           onSubmit={handleSubmit}
           onCancel={() => {
             setIsCreating(false);

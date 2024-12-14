@@ -1,39 +1,58 @@
 import { handleSuccess, handleErrorClient, handleErrorServer } from "../handlers/responseHandlers.js";
 import { newsValidation } from "../validations/news.validation.js";
 import { createNewsService, getNewsService, getNewService, updateNewService, deleteNewService } from "../services/news.service.js";
+import { upload } from "../middlewares/uploadArchive.middleware.js";
+import multer from 'multer';
 
-// Crear una nueva noticia
+// Controlador para crear una nueva noticia
 export async function createNews(req, res) {
-    try {
-      const { tituloNews, nombreAutor, contenido } = req.body;
+    upload.single('imagenPortada')(req, res, async function(err) {
+        if (err) {
+            return handleErrorClient(res, 400, `Error en la subida de imagen: ${err.message}`);
+        }
 
-      const { error } = newsValidation.validate({
-        tituloNews,
-        nombreAutor,
-        contenido,
-      });
+        try {
+            const { tituloNews, nombreAutor, contenido } = req.body;
+            let imagenPortada = null;
 
-      if (error) {
-        return handleErrorClient(res, 400, error.message);
-      }
+            if (req.file) {
+                // Convertir la ruta del archivo a una URL relativa
+                imagenPortada = `src/upload/images/${req.file.filename}`;
+            }
 
-      const [news, errorService] = await createNewsService({
-        tituloNews,
-        nombreAutor,
-        contenido,
-      });
+            // Valida los datos de la noticia
+            const { error } = newsValidation.validate({
+                tituloNews,
+                nombreAutor,
+                contenido,
+                imagenPortada,
+            });
 
-      if (errorService) {
-        return handleErrorServer(res, 500, "Error al crear la noticia.", errorService);
-      }
+            if (error) {
+                return handleErrorClient(res, 400, error.message);
+            }
 
-      handleSuccess(res, 201, "Noticia creada con éxito", news);
-    } catch (error) {
-      console.error("Error en el controlador al crear la noticia:", error);
-      handleErrorServer(res, 500, "Error interno del servidor.", error.message);
-    }
+            // Llama al servicio para crear la noticia
+            const [news, errorService] = await createNewsService({
+                tituloNews,
+                nombreAutor,
+                contenido,
+                imagenPortada,
+            });
+
+            if (errorService) {
+                return handleErrorServer(res, 500, "Error al crear la noticia.", errorService);
+            }
+
+            handleSuccess(res, 201, "Noticia creada con éxito", news);
+        } catch (error) {
+            console.error("Error en el controlador al crear la noticia:", error);
+            handleErrorServer(res, 500, "Error interno del servidor.", error.message);
+        }
+    });
 }
-// Obtener todas las noticias
+
+// Controlador para obtener todas las noticias
 export async function getNews(req, res) {
     try {
         const [news, error] = await getNewsService();
@@ -49,7 +68,7 @@ export async function getNews(req, res) {
     }
 }
 
-// Obtener una noticia por ID
+// Controlador para obtener una noticia específica por ID
 export async function getNewsId(req, res) {
     try {
         const { id } = req.params;
@@ -62,41 +81,48 @@ export async function getNewsId(req, res) {
         handleErrorServer(res, 500, "Error interno del servidor.", error.message);
     }
 }
-
-// Actualizar una noticia
+// Controlador para actualizar una noticia existente
 export async function updateNews(req, res) {
-    try {
-      const { id } = req.params;
-      const { tituloNews, nombreAutor, contenido } = req.body;
+  try {
+      upload.single('imagenPortada')(req, res, async function(err) {
+          if (err) {
+              return handleErrorClient(res, 400, err.message);
+          }
 
-      const { error } = newsValidation.validate({
-        tituloNews,
-        nombreAutor,
-        contenido,
+          const { id } = req.params;
+          const { tituloNews, nombreAutor, contenido } = req.body;
+          const imagenPortada = req.file ? req.file.path : undefined;
+
+          const { error } = newsValidation.validate({
+              tituloNews,
+              nombreAutor,
+              contenido,
+              imagenPortada,
+          });
+
+          if (error) {
+              return handleErrorClient(res, 400, error.message);
+          }
+
+          const [newsActualizada, errorService] = await updateNewService(id, {
+              tituloNews,
+              nombreAutor,
+              contenido,
+              imagenPortada,
+          });
+
+          if (errorService) {
+              return handleErrorServer(res, 400, errorService);
+          }
+
+          handleSuccess(res, 200, "Noticia actualizada correctamente", newsActualizada);
       });
-
-      if (error) {
-        return handleErrorClient(res, 400, error.message); 
-      }
-
-      const [newsActualizada, errorService] = await updateNewService(id, {
-        tituloNews,
-        nombreAutor,
-        contenido,
-      });
-
-      if (errorService) {
-        return handleErrorServer(res, 400, errorService);
-      }
-
-      handleSuccess(res, 200, "Noticia actualizada correctamente", newsActualizada);
-    } catch (error) {
+  } catch (error) {
       console.error("Error al actualizar la noticia:", error);
       handleErrorServer(res, 500, "Error interno del servidor.", error.message);
-    }
+  }
 }
-
-// Eliminar una noticia
+// Controlador para eliminar una noticia
 export async function deleteNews(req, res) {
     try {
         const { id } = req.params;
@@ -109,3 +135,4 @@ export async function deleteNews(req, res) {
         handleErrorServer(res, 500, "Error interno del servidor.", error.message);
     }
 }
+

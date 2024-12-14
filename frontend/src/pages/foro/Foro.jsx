@@ -3,6 +3,7 @@ import { useCreateForo } from "@hooks/foro/useCreateForo";
 import { useDeleteForo } from "@hooks/foro/useDeleteForo";
 import { useGetForos } from "@hooks/foro/useGetForos";
 import { useSearchForo } from "@hooks/foro/useSearchForo";
+import { useUpdateForo } from "@hooks/foro/useUpdateForo";
 import ForoForm from "@components/Foro/ForoForm";
 import ForoTable from "@components/Foro/ForoTable";
 import ForoView from "@components/Foro/ForoView";
@@ -13,6 +14,7 @@ export default function Foros() {
     const { foros, fetchForos, loading: loadingForos } = useGetForos();
     const { handleCreate, loading: loadingCreate } = useCreateForo(fetchForos);
     const { handleDelete, loading: loadingDelete } = useDeleteForo(fetchForos);
+    const { handleUpdate, loading: loadingUpdate } = useUpdateForo(fetchForos);
     const { 
         searchQuery, 
         setSearchQuery, 
@@ -34,7 +36,7 @@ export default function Foros() {
         setIsUpdating(false);
     };
 
-    const handleUpdate = (foro) => {
+    const handleUpdateClick = (foro) => {
         setSelectedForo(foro);
         setIsUpdating(true);
     };
@@ -44,17 +46,17 @@ export default function Foros() {
         setIsUpdating(false);
     };
 
-    const handleUpdateSubmit = (id, updatedData) => {
-        // Implement the update logic here
-        console.log("Updating foro:", id, updatedData);
-        // After updating, refresh the foros list
+    const handleUpdateSubmit = async (id, updatedData) => {
+        await handleUpdate(id, updatedData);
+        setIsUpdating(false);
+        setSelectedForo(null);
         fetchForos();
-        handleCloseView();
     };
 
-    const handleCreateSubmit = (foroData) => {
-        handleCreate(foroData);
+    const handleCreateSubmit = async (foroData) => {
+        await handleCreate(foroData);
         setIsCreating(false);
+        fetchForos();
     };
     
     return (
@@ -98,7 +100,7 @@ export default function Foros() {
                         onDelete={handleDelete}
                         loadingDelete={loadingDelete}
                         onView={handleView}
-                        onUpdate={handleUpdate}
+                        onUpdate={handleUpdateClick}
                     />
                 )}
             </section>
@@ -112,9 +114,9 @@ export default function Foros() {
                     foro={selectedForo} 
                     onUpdate={handleUpdateSubmit} 
                     onCancel={handleCloseView}
+                    loading={loadingUpdate}
                 />
             )}
         </div>
     );
 }
-

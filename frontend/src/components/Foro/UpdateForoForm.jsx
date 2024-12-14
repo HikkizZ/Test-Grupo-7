@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
 function UpdateForoForm({ foro, onUpdate, onCancel, loading }) {
+    console.log('Initial foro data:', foro);
     const [titulo, setTitulo] = useState(foro.titulo);
     const [nombreProfesor, setNombreProfesor] = useState(foro.nombreProfesor);
     const [categoria, setCategoria] = useState(foro.categoria);
     const [fecha, setFecha] = useState(foro.fecha);
+    const [archivos, setArchivos] = useState([]);
 
     useEffect(() => {
         setTitulo(foro.titulo);
@@ -13,14 +15,26 @@ function UpdateForoForm({ foro, onUpdate, onCancel, loading }) {
         setFecha(foro.fecha);
     }, [foro]);
 
+    const handleFileChange = (e) => {
+        setArchivos(Array.from(e.target.files));
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        onUpdate(foro.id, { 
-            titulo, 
-            nombreProfesor, 
-            categoria,
-            fecha // Include the original fecha
-        });
+        const formData = new FormData();
+        formData.append('titulo', titulo);
+        formData.append('nombreProfesor', nombreProfesor);
+        formData.append('categoria', categoria);
+        formData.append('fecha', fecha);
+
+        if (archivos.length > 0) {
+            archivos.forEach(archivo => {
+                formData.append('archivos', archivo);
+            });
+        }
+
+        console.log('Form data being sent:', Object.fromEntries(formData));
+        onUpdate(foro.id, formData);
     };
 
     return (
@@ -66,10 +80,21 @@ function UpdateForoForm({ foro, onUpdate, onCancel, loading }) {
                 <label htmlFor="fecha" className="block text-sm font-medium text-gray-700">Fecha:</label>
                 <input
                     id="fecha"
-                    type="text"
+                    type="date"
                     value={fecha}
-                    disabled
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-100"
+                    onChange={(e) => setFecha(e.target.value)}
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                />
+            </div>
+            <div>
+                <label htmlFor="archivos" className="block text-sm font-medium text-gray-700">Archivos adjuntos:</label>
+                <input
+                    id="archivos"
+                    type="file"
+                    onChange={handleFileChange}
+                    multiple
+                    className="mt-1 block w-full"
                 />
             </div>
             <div className="flex justify-end space-x-2">
@@ -93,4 +118,3 @@ function UpdateForoForm({ foro, onUpdate, onCancel, loading }) {
 }
 
 export default UpdateForoForm;
-

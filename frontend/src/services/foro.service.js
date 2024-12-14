@@ -1,11 +1,14 @@
 import axios from './root.service.js';
 
-export async function createForo(data) {
+export const createForo = async (foroData) => {
     try {
-        const response = await axios.post('/posts', data);
-        return response.data.data;
+        const response = await axios.post('/posts', foroData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
     } catch (error) {
-        console.error('Error al crear el post:', error);
         throw error;
     }
 }
@@ -30,28 +33,27 @@ export async function getForo(id) {
     }
 }
 
-export async function updateForo(id, data) {
+export const updateForo = async (id, foroData) => {
     try {
-        console.log(`Attempting to update foro with id: ${id}`, data);
-        const response = await axios.patch(`/posts/${id}`, data);
-        console.log('Update response:', response);
-        return response.data.data;
+        console.log('Sending update request for foro ID:', id);
+        console.log('Update data:', Object.fromEntries(foroData));
+        const response = await axios.patch(`/posts/${id}`, foroData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        console.log('Update response:', response.data);
+        return response.data;
     } catch (error) {
-        console.error('Error al actualizar el post:', error);
+        console.error("Error en la solicitud de actualización:", error);
         if (error.response) {
-            console.error('Error data:', error.response.data);
-            console.error('Error status:', error.response.status);
-            console.error('Error headers:', error.response.headers);
-        } else if (error.request) {
-            console.error('Error request:', error.request);
-        } else {
-            console.error('Error message:', error.message);
+            console.error("Response data:", error.response.data);
+            console.error("Response status:", error.response.status);
+            console.error("Response headers:", error.response.headers);
         }
         throw error;
     }
-}
-
-
+};
 
 export async function deleteForo(id) {
     try {
@@ -62,4 +64,20 @@ export async function deleteForo(id) {
         throw error;
     }
 }
-
+export const downloadFile = async (foroId, fileName) => {
+    try {
+      const response = await axios.get(`/foro/${foroId}/download/${fileName}`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Error al descargar el archivo:', error);
+      throw error;
+    }
+  };
