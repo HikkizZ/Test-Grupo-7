@@ -12,39 +12,35 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
         fechaHasta: { date: "", hour: "00", minute: "00" },
     });
 
-    const formatDateTime = (date, hour, minute) => {
+    const formatDateTimeForBackend = ({ date, hour, minute }) => {
         if (!date || hour === "" || minute === "") return "";
         const [yyyy, MM, dd] = date.split("-");
         return `${dd}-${MM}-${yyyy} ${hour}:${minute}`;
     };
 
     const handleFilterChange = (filter, value) => {
-        let updatedFilters = { ...filters };
+        const [field, subfield] = filter.split(".");
+        const updatedFilters = { ...filters };
 
-        if (filter.startsWith("fechaDesde") || filter.startsWith("fechaHasta")) {
-            const [field, subfield] = filter.split(".");
+        if (subfield) {
             updatedFilters[field][subfield] = value;
-
-            updatedFilters[`${field}Formatted`] = formatDateTime(
-                updatedFilters[field].date,
-                updatedFilters[field].hour,
-                updatedFilters[field].minute
-            );
         } else {
             updatedFilters[filter] = value;
         }
 
+        // Formatear fecha y hora para el backend
+        if (field === "fechaDesde" || field === "fechaHasta") {
+            updatedFilters[field].formatted = formatDateTimeForBackend(updatedFilters[field]);
+            onFilterUpdate(field, updatedFilters[field].formatted);
+        } else {
+            onFilterUpdate(filter, value);
+        }
+
         setFilters(updatedFilters);
 
-        const filterValue =
-            filter.startsWith("fechaDesde") || filter.startsWith("fechaHasta")
-                ? updatedFilters[filter.split(".")[0] + "Formatted"]
-                : value;
-
-        onFilterUpdate(filter.split(".")[0], filterValue);
-
-        const hasActiveFilters = Object.values(updatedFilters).some((val) =>
-            typeof val === "string" ? val !== "" : val.date || val.hour !== "00" || val.minute !== "00"
+        const hasActiveFilters = Object.values(updatedFilters).some(
+            (val) =>
+                typeof val === "string" ? val !== "" : val.date || val.hour !== "00" || val.minute !== "00"
         );
         setAreFiltersActive(hasActiveFilters);
     };
@@ -105,70 +101,84 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                     <option value="rechazada">Rechazada</option>
                 </select>
 
+                {/* Campo de Fecha Desde */}
                 <div>
                     <label>Fecha Desde</label>
-                    <input
-                        type="date"
-                        value={filters.fechaDesde.date}
-                        onChange={(e) => handleFilterChange("fechaDesde.date", e.target.value)}
-                        style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
-                    />
-                    <select
-                        value={filters.fechaDesde.hour}
-                        onChange={(e) => handleFilterChange("fechaDesde.hour", e.target.value)}
-                        style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
-                    >
-                        {Array.from({ length: 24 }).map((_, i) => (
-                            <option key={i} value={i.toString().padStart(2, "0")}>
-                                {i.toString().padStart(2, "0")}
-                            </option>
-                        ))}
-                    </select>
-                    :
-                    <select
-                        value={filters.fechaDesde.minute}
-                        onChange={(e) => handleFilterChange("fechaDesde.minute", e.target.value)}
-                        style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
-                    >
-                        {Array.from({ length: 60 }).map((_, i) => (
-                            <option key={i} value={i.toString().padStart(2, "0")}>
-                                {i.toString().padStart(2, "0")}
-                            </option>
-                        ))}
-                    </select>
+                    <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                        <input
+                            type="date"
+                            value={filters.fechaDesde.date}
+                            onChange={(e) => handleFilterChange("fechaDesde.date", e.target.value)}
+                            style={{
+                                padding: "5px",
+                                borderRadius: "5px",
+                                border: "1px solid #ccc",
+                            }}
+                        />
+                        <select
+                            value={filters.fechaDesde.hour}
+                            onChange={(e) => handleFilterChange("fechaDesde.hour", e.target.value)}
+                            style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
+                        >
+                            {Array.from({ length: 24 }).map((_, i) => (
+                                <option key={i} value={i.toString().padStart(2, "0")}>
+                                    {i.toString().padStart(2, "0")}
+                                </option>
+                            ))}
+                        </select>
+                        :
+                        <select
+                            value={filters.fechaDesde.minute}
+                            onChange={(e) => handleFilterChange("fechaDesde.minute", e.target.value)}
+                            style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
+                        >
+                            {Array.from({ length: 60 }).map((_, i) => (
+                                <option key={i} value={i.toString().padStart(2, "0")}>
+                                    {i.toString().padStart(2, "0")}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
 
+                {/* Campo de Fecha Hasta */}
                 <div>
                     <label>Fecha Hasta</label>
-                    <input
-                        type="date"
-                        value={filters.fechaHasta.date}
-                        onChange={(e) => handleFilterChange("fechaHasta.date", e.target.value)}
-                        style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
-                    />
-                    <select
-                        value={filters.fechaHasta.hour}
-                        onChange={(e) => handleFilterChange("fechaHasta.hour", e.target.value)}
-                        style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
-                    >
-                        {Array.from({ length: 24 }).map((_, i) => (
-                            <option key={i} value={i.toString().padStart(2, "0")}>
-                                {i.toString().padStart(2, "0")}
-                            </option>
-                        ))}
-                    </select>
-                    :
-                    <select
-                        value={filters.fechaHasta.minute}
-                        onChange={(e) => handleFilterChange("fechaHasta.minute", e.target.value)}
-                        style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
-                    >
-                        {Array.from({ length: 60 }).map((_, i) => (
-                            <option key={i} value={i.toString().padStart(2, "0")}>
-                                {i.toString().padStart(2, "0")}
-                            </option>
-                        ))}
-                    </select>
+                    <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                        <input
+                            type="date"
+                            value={filters.fechaHasta.date}
+                            onChange={(e) => handleFilterChange("fechaHasta.date", e.target.value)}
+                            style={{
+                                padding: "5px",
+                                borderRadius: "5px",
+                                border: "1px solid #ccc",
+                            }}
+                        />
+                        <select
+                            value={filters.fechaHasta.hour}
+                            onChange={(e) => handleFilterChange("fechaHasta.hour", e.target.value)}
+                            style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
+                        >
+                            {Array.from({ length: 24 }).map((_, i) => (
+                                <option key={i} value={i.toString().padStart(2, "0")}>
+                                    {i.toString().padStart(2, "0")}
+                                </option>
+                            ))}
+                        </select>
+                        :
+                        <select
+                            value={filters.fechaHasta.minute}
+                            onChange={(e) => handleFilterChange("fechaHasta.minute", e.target.value)}
+                            style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
+                        >
+                            {Array.from({ length: 60 }).map((_, i) => (
+                                <option key={i} value={i.toString().padStart(2, "0")}>
+                                    {i.toString().padStart(2, "0")}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
 
                 {areFiltersActive && (
