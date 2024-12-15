@@ -52,9 +52,9 @@ export default function HorarioBox({ horarios }) {
                     );
                     row[day] = horario
                         ? `<div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                               <strong>Curso: ${horario.curso}</strong> 
+                               <span>Curso: ${horario.curso}</span> 
                                <span>Asignatura: ${horario.subject}</span>
-                               <em>Profesor: ${horario.teacher.name} <br/>Rut: ${horario.teacher.rut}</em>
+                               <em>Profesor: ${horario.teacher.name} <br/></em>
                                <span>Sala: ${horario.classroom}</span>
                            </div>`
                         : ""; // Si no hay horario para este día/período, deja vacío
