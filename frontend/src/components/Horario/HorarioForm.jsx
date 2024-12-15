@@ -1,33 +1,81 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getPeriods } from "@services/period.service"; // Servicio para obtener períodos
+import { getCursos } from "@services/curso.service"; // Servicio para obtener cursos
+import { getRooms } from "@services/room.service"; // Servicio para obtener Salas
+import { getSubjects } from "@services/subject.service"; // Servicio para obtener Asignaturas
 
 export default function HorarioForm({ onCreate, loading }) {
     const [showForm, setShowForm] = useState(false);
     const [horarioData, setHorarioData] = useState({
-        curso: "",
-        teacher: "",
-        classroom: "",
-        subject: "",
-        period: "",
+        cursoId: "",
+        teacherId: "",
+        classroomId: "",
+        subjectId: "",
+        periodId: "",
         dayOfWeek: "",
     });
+    const [periods, setPeriods] = useState([]);
+    const [cursos, setCursos] = useState([]);
+    const [rooms, setRooms] = useState([]);
+    const [subjects, setSubjects] = useState([]);
+
+    useEffect(() => {
+        // Carga los valores que se encuentran en la base de datos
+        const fetchData = async () => {
+            try {
+                const [periodsData, cursosData, roomsData, subjectsData] = await Promise.all([
+                    getPeriods(),
+                    getCursos(),
+                    getRooms(),
+                    getSubjects(),
+                ]);
+                setPeriods(periodsData || []);
+                setCursos(cursosData || []);
+                setRooms(roomsData || []);
+                setSubjects(subjectsData || []);
+            } catch (error) {
+                console.error("Error al cargar datos:", error.message);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const handleCancel = () => {
-        setHorarioData({
-            curso: "",
-            teacher: "",
-            classroom: "",
-            subject: "",
-            period: "",
-            dayOfWeek: "",
-        });
-        setShowForm(false);
+        setShowForm(false); // Solo oculta el formulario, no reinicia `horarioData`
     };
 
     const handleSubmit = () => {
-        const { curso, teacher, classroom, subject, period, dayOfWeek } = horarioData;
-        if (!curso || !teacher || !classroom || !subject || !period || !dayOfWeek) return;
+        const { cursoId, teacherId, classroomId, subjectId, periodId, dayOfWeek } = horarioData;
+
+        if (!cursoId) return alert("El campo 'Curso' es obligatorio.");
+        if (!teacherId) return alert("El campo 'Rut del Profesor' es obligatorio.");
+        if (!classroomId) return alert("El campo 'Sala' es obligatorio.");
+        if (!subjectId) return alert("El campo 'Asignatura' es obligatorio.");
+        if (!periodId) return alert("El campo 'Periodo' es obligatorio.");
+        if (!dayOfWeek) return alert("El campo 'Día' es obligatorio.");
+
         onCreate(horarioData);
-        handleCancel();
+        setShowForm(false); // Cierra el formulario después de enviar los datos
+    };
+
+    const formatRUT = (value) => {
+        const cleaned = value.replace(/[^0-9kK]/g, "");
+        if (cleaned.length <= 1) return cleaned;
+
+        const verifier = cleaned.slice(-1);
+        const number = cleaned.slice(0, -1);
+
+        return number
+            .split("")
+            .reverse()
+            .reduce((acc, digit, index) => (index % 3 === 0 ? `${digit}.${acc}` : `${digit}${acc}`), "")
+            .slice(0, -1) + `-${verifier}`;
+    };
+
+    const handleRUTChange = (e) => {
+        const formatted = formatRUT(e.target.value);
+        setHorarioData({ ...horarioData, teacherId: formatted });
     };
 
     return (
@@ -36,64 +84,119 @@ export default function HorarioForm({ onCreate, loading }) {
                 <button onClick={() => setShowForm(true)}>Crear Horario</button>
             ) : (
                 <div>
+                    {/* Campo de Curso */}
                     <input
                         type="text"
-                        value={horarioData.curso}
-                        onChange={(e) => setHorarioData({ ...horarioData, curso: e.target.value })}
+                        list="cursos"
+                        value={horarioData.cursoId}
+                        onChange={(e) => setHorarioData({ ...horarioData, cursoId: e.target.value })}
                         placeholder="Curso"
                         disabled={loading}
                     />
-                    <input
-                        type="text"
-                        value={horarioData.teacher}
-                        onChange={(e) =>
-                            setHorarioData({ ...horarioData, teacher: e.target.value })
-                        }
-                        placeholder="Rut del Profesor"
-                        disabled={loading}
-                    />
-                    <input
-                        type="text"
-                        value={horarioData.classroom}
-                        onChange={(e) =>
-                            setHorarioData({ ...horarioData, classroom: e.target.value })
-                        }
-                        placeholder="Sala"
-                        disabled={loading}
-                    />
-                    <input
-                        type="text"
-                        value={horarioData.subject}
-                        onChange={(e) =>
-                            setHorarioData({ ...horarioData, subject: e.target.value })
-                        }
-                        placeholder="Asignatura"
-                        disabled={loading}
-                    />
-                    <input
-                        type="text"
-                        value={horarioData.period}
-                        onChange={(e) =>
-                            setHorarioData({ ...horarioData, period: e.target.value })
-                        }
-                        placeholder="Periodo"
-                        disabled={loading}
-                    />
-                    <input
-                        type="text"
-                        value={horarioData.dayOfWeek}
-                        onChange={(e) =>
-                            setHorarioData({ ...horarioData, dayOfWeek: e.target.value })
-                        }
-                        placeholder="Día"
-                        disabled={loading}
-                    />
-                    <button onClick={handleSubmit} disabled={loading}>
-                        Guardar
-                    </button>
-                    <button onClick={handleCancel} disabled={loading}>
-                        Cancelar
-                    </button>
+                    <datalist id="cursos">
+                        {cursos.map((curso) => (
+                            <option key={curso.id} value={curso.code} />
+                        ))}
+                    </datalist>
+
+                    {/* Campo de RUT */}
+                    <div>
+                        <input
+                            type="text"
+                            value={horarioData.teacherId}
+                            onChange={handleRUTChange}
+                            placeholder="Rut del Profesor"
+                            disabled={loading}
+                        />
+                    </div>
+
+                    {/* Campo de Sala */}
+                    <div>
+                        <input
+                            type="text"
+                            value={horarioData.classroomId}
+                            onChange={(e) =>
+                                setHorarioData({ ...horarioData, classroomId: e.target.value })
+                            }
+                            placeholder="Sala"
+                            disabled={loading}
+                            list="rooms"
+                        />
+                        <datalist id="rooms">
+                            {rooms.map((room) => (
+                                <option key={room.id} value={room.name}>
+                                    {room.name}
+                                </option>
+                            ))}
+                        </datalist>
+                    </div>
+
+                    {/* Campo de Asignatura */}
+                    <div>
+                        <input
+                            type="text"
+                            value={horarioData.subjectId}
+                            onChange={(e) =>
+                                setHorarioData({ ...horarioData, subjectId: e.target.value })
+                            }
+                            placeholder="Asignatura"
+                            disabled={loading}
+                            list="subjects"
+                        />
+                        <datalist id="subjects">
+                            {subjects.map((subject) => (
+                                <option key={subject.id} value={subject.name}>
+                                    {subject.name}
+                                </option>
+                            ))}
+                        </datalist>
+                    </div>
+
+                    {/* Campo de Período */}
+                    <div>
+                        <select
+                            value={horarioData.periodId}
+                            onChange={(e) =>
+                                setHorarioData({ ...horarioData, periodId: e.target.value })
+                            }
+                            disabled={loading}
+                        >
+                            <option value="">Selecciona un período</option>
+                            {periods.map((period) => (
+                                <option key={period.id} value={period.name}>
+                                    {period.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Campo de Día */}
+                    <div>
+                        <select
+                            value={horarioData.dayOfWeek}
+                            onChange={(e) =>
+                                setHorarioData({ ...horarioData, dayOfWeek: e.target.value })
+                            }
+                            disabled={loading}
+                        >
+                            <option value="">Selecciona un día</option>
+                            <option value="Lunes">Lunes</option>
+                            <option value="Martes">Martes</option>
+                            <option value="Miércoles">Miércoles</option>
+                            <option value="Jueves">Jueves</option>
+                            <option value="Viernes">Viernes</option>
+                        </select>
+                    </div>
+
+                    {/* Botones */}
+                    <div>
+                        <button onClick={handleSubmit} disabled={loading}>
+                            Guardar
+                        </button>
+                        <button onClick={handleCancel} disabled={loading}>
+                            Cancelar
+                        </button>
+                    </div>
                 </div>
             )}
         </div>
