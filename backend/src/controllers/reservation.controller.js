@@ -53,6 +53,8 @@ export async function getReservationController(req, res) {
     try {
         const { id, devuelto, tipoReserva, estado, fechaDesde, fechaHasta } = req.query;
 
+        console.log("Query Params Received:", { id, devuelto, tipoReserva, estado, fechaDesde, fechaHasta }); // Log de parámetros
+
         const { error } = reservationQueryValidation.validate({ id, devuelto, tipoReserva, estado, fechaDesde, fechaHasta });
 
         if (error) return handleErrorClient(res, 400, "Validation Error", error.message);
@@ -71,6 +73,7 @@ export async function getReservationController(req, res) {
         handleSuccess(res, 200, "Reservation found", reservation);
 
     } catch (error) {
+        console.error("Error en el controlador getReservationController:", error);
         handleErrorServer(res, 500, "Internal Server Error", error);
     }
 }

@@ -1,20 +1,22 @@
 "use strict";
 
 import Joi from 'joi';
-import { parse, isValid } from 'date-fns'; // Importa las funciones de parse y isValid de date-fns
+import { parse, isValid, startOfDay, endOfDay } from 'date-fns';
 
 // Función para convertir y validar fechas
-function parseDate(value) {
-    const parsedDate = parse(value, "dd-MM-yyyy HH:mm", new Date());
-    if (!isValid(parsedDate)) {
-        throw new Error("Fecha inválida. El formato debe ser DD-MM-YYYY HH:mm, por ejemplo: '15-12-2024 10:00'.");
-    }
-    return parsedDate;
-}
+function parseDateFlexible(value) {
+    try {
+        const parsedDateWithTime = parse(value, "dd-MM-yyyy HH:mm", new Date());
+        if (isValid(parsedDateWithTime)) return parsedDateWithTime;
 
-// Función para truncar la fecha actual a nivel de minutos
-function truncateDateToMinutes(date) {
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes());
+        const parsedDateWithoutTime = parse(value, "dd-MM-yyyy", new Date());
+        if (isValid(parsedDateWithoutTime)) return parsedDateWithoutTime;
+
+        throw new Error("Fecha inválida. Debe seguir el formato 'DD-MM-YYYY' o 'DD-MM-YYYY HH:mm'.");
+    } catch (error) {
+        console.error("Error al analizar fecha: ", value, error);
+        throw error;
+    }
 }
 
 export const reservationQueryValidation = Joi.object({
@@ -43,14 +45,28 @@ export const reservationQueryValidation = Joi.object({
             "string.valid": "The reservation status must be either 'pendiente', 'aprobada', or 'rechazada'.",
         }),
     fechaDesde: Joi.string()
-        .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/) // Validación para el formato de fecha
+        .custom((value, helpers) => {
+            try {
+                parseDateFlexible(value); // Intenta analizar la fecha con ambos formatos
+                return value;
+            } catch (error) {
+                return helpers.error("any.invalid", { message: error.message });
+            }
+        })
         .messages({
-            "string.pattern.base": "El campo 'fechaDesde' debe seguir el formato DD-MM-YYYY HH:mm, por ejemplo: '15-12-2024 10:00'.",
+            "any.invalid": "El campo 'fechaDesde' debe seguir el formato 'DD-MM-YYYY' o 'DD-MM-YYYY HH:mm'.",
         }),
     fechaHasta: Joi.string()
-        .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/) // Validación para el formato de fecha
+        .custom((value, helpers) => {
+            try {
+                parseDateFlexible(value); // Intenta analizar la fecha con ambos formatos
+                return value;
+            } catch (error) {
+                return helpers.error("any.invalid", { message: error.message });
+            }
+        })
         .messages({
-            "string.pattern.base": "El campo 'fechaHasta' debe seguir el formato DD-MM-YYYY HH:mm, por ejemplo: '15-12-2024 10:00'.",
+            "any.invalid": "El campo 'fechaHasta' debe seguir el formato 'DD-MM-YYYY' o 'DD-MM-YYYY HH:mm'.",
         }),
 })
 .or("id", "devuelto", "tipoReserva", "estado", "fechaDesde", "fechaHasta") // Al menos un filtro es obligatorio
@@ -64,7 +80,7 @@ export const reservationBodyValidation = Joi.object({
         .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/) // Formato DD-MM-YYYY HH:mm
         .required()
         .messages({
-            "string.pattern.base": "El campo 'fechaDesde' debe seguir el formato DD-MM-YYYY HH:mm, por ejemplo: '15-12-2024 10:00'.",
+            "string.pattern.base": "El campo 'fechaDesde' debe seguir el formato DD-MM-YYYY HH:mm, por ejemplo: '30-12-2024 10:00'.",
             "any.required": "El campo 'fechaDesde' es obligatorio.",
         })
         .custom((value, helpers) => {
@@ -81,7 +97,7 @@ export const reservationBodyValidation = Joi.object({
         .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/) // Formato DD-MM-YYYY HH:mm
         .required()
         .messages({
-            "string.pattern.base": "El campo 'fechaHasta' debe seguir el formato DD-MM-YYYY HH:mm, por ejemplo: '15-12-2024 10:00'.",
+            "string.pattern.base": "El campo 'fechaHasta' debe seguir el formato DD-MM-YYYY HH:mm, por ejemplo: '30-12-2024 10:00'.",
             "any.required": "El campo 'fechaHasta' es obligatorio.",
         })
         .custom((value, helpers) => {

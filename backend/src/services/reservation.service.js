@@ -1,9 +1,10 @@
 "use strict";
 
-import Reservation from '../models/reservation.model.js';
-import { AppDataSource } from '../config/configDB.js';
-import { parse } from 'date-fns';
-import { formatToLocalTime } from '../utils/formatDate.js'
+import Reservation from "../models/reservation.model.js";
+import { AppDataSource } from "../config/configDB.js";
+import { parse, isValid, startOfDay, endOfDay } from "date-fns";
+import { formatToLocalTime } from "../utils/formatDate.js";
+import { Brackets } from "typeorm";
 
 export async function createReservationService(req) {
     try {
@@ -116,31 +117,91 @@ export async function getReservationsService() {
 
 export async function getReservationService(query) {
     try {
-        const { idReservation, devueltoReservation, TipoReservaReservation, estadoReservation, fechaDesde, fechaHasta } = query;
+        const {
+            idReservation,
+            devueltoReservation,
+            TipoReservaReservation,
+            estadoReservation,
+            fechaDesde,
+            fechaHasta,
+        } = query;
 
         const reservationRepository = AppDataSource.getRepository(Reservation);
 
-        // Construye las condiciones dinámicamente
-        const conditions = {};
+        // Inicializamos el QueryBuilder
+        const queryBuilder = reservationRepository.createQueryBuilder("Reservation");
 
-        if (idReservation) conditions.id = idReservation;
-        if (devueltoReservation) conditions.devuelto = devueltoReservation;
-        if (TipoReservaReservation) conditions.tipoReserva = TipoReservaReservation;
-        if (estadoReservation) conditions.estado = estadoReservation;
-
-        // Parsear las fechas si están presentes en el query
-        if (fechaDesde) {
-            conditions.fechaDesde = parse(fechaDesde, "dd-MM-yyyy HH:mm", new Date());
-        }
-        if (fechaHasta) {
-            conditions.fechaHasta = parse(fechaHasta, "dd-MM-yyyy HH:mm", new Date());
+        // Filtrar por ID si existe
+        if (idReservation) {
+            queryBuilder.andWhere("Reservation.id = :id", { id: idReservation });
         }
 
-        // Busca las reservaciones con las condiciones dinámicas
-        const reservationsFound = await reservationRepository.find({
-            where: conditions,
-            relations: ["Encargado", "Reservante", "Recurso", "Sala"],
-        });
+        // Filtrar por devuelto si existe
+        if (devueltoReservation) {
+            queryBuilder.andWhere("Reservation.devuelto = :devuelto", { devuelto: devueltoReservation });
+        }
+
+        // Filtrar por tipoReserva si existe
+        if (TipoReservaReservation) {
+            queryBuilder.andWhere("Reservation.tipoReserva = :tipoReserva", { tipoReserva: TipoReservaReservation });
+        }
+
+        // Filtrar por estado si existe
+        if (estadoReservation) {
+            queryBuilder.andWhere("Reservation.estado = :estado", { estado: estadoReservation });
+        }
+
+        // Filtrar por fechaDesde y fechaHasta de forma independiente
+        if (fechaDesde || fechaHasta) {
+            queryBuilder.andWhere(
+                new Brackets((qb) => {
+                    if (fechaDesde) {
+                        const parsedFechaDesde = isValid(parse(fechaDesde, "dd-MM-yyyy HH:mm", new Date()))
+                            ? parse(fechaDesde, "dd-MM-yyyy HH:mm", new Date())
+                            : null;
+
+                        if (parsedFechaDesde) {
+                            qb.orWhere("Reservation.fechaDesde = :fechaDesdeExact", { fechaDesdeExact: parsedFechaDesde });
+                        } else {
+                            const parsedFechaDesdeStart = startOfDay(parse(fechaDesde, "dd-MM-yyyy", new Date()));
+                            const parsedFechaDesdeEnd = endOfDay(parse(fechaDesde, "dd-MM-yyyy", new Date()));
+
+                            qb.orWhere("Reservation.fechaDesde BETWEEN :fechaDesdeStart AND :fechaDesdeEnd", {
+                                fechaDesdeStart: parsedFechaDesdeStart,
+                                fechaDesdeEnd: parsedFechaDesdeEnd,
+                            });
+                        }
+                    }
+
+                    if (fechaHasta) {
+                        const parsedFechaHasta = isValid(parse(fechaHasta, "dd-MM-yyyy HH:mm", new Date()))
+                            ? parse(fechaHasta, "dd-MM-yyyy HH:mm", new Date())
+                            : null;
+
+                        if (parsedFechaHasta) {
+                            qb.orWhere("Reservation.fechaHasta = :fechaHastaExact", { fechaHastaExact: parsedFechaHasta });
+                        } else {
+                            const parsedFechaHastaStart = startOfDay(parse(fechaHasta, "dd-MM-yyyy", new Date()));
+                            const parsedFechaHastaEnd = endOfDay(parse(fechaHasta, "dd-MM-yyyy", new Date()));
+
+                            qb.orWhere("Reservation.fechaHasta BETWEEN :fechaHastaStart AND :endOfDay", {
+                                fechaHastaStart: parsedFechaHastaStart,
+                                endOfDay: parsedFechaHastaEnd,
+                            });
+                        }
+                    }
+                })
+            );
+        }
+
+        // Ejecutar la consulta y relaciones necesarias
+        const reservationsFound = await queryBuilder
+            .leftJoinAndSelect("Reservation.Encargado", "Encargado")
+            .leftJoinAndSelect("Reservation.Reservante", "Reservante")
+            .leftJoinAndSelect("Reservation.Recurso", "Recurso")
+            .leftJoinAndSelect("Reservation.Sala", "Sala")
+            .orderBy("Reservation.id", "ASC")
+            .getMany();
 
         if (!reservationsFound || reservationsFound.length === 0) {
             return [null, "Reservation not found."];
@@ -168,6 +229,7 @@ export async function getReservationService(query) {
 
         return [formattedReservations, null];
     } catch (error) {
+        console.error("Error en el servicio getReservationService:", error);
         return [null, "Internal Server Error", error.message];
     }
 }
