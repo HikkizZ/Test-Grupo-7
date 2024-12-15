@@ -22,14 +22,14 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <Root/>,
-    errorElement: <Error404/>,
+    errorElement: <Error404 />,
     children: [
       {
         path: '/home',
         element: <News/>
       },
       {
-        path: '/news/:id', //Ruta para las Noticias por Id
+        path: '/home/news/:id', //Ruta para las Noticias por Id
         element: <NewsId />
       },
       {

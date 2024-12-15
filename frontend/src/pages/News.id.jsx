@@ -38,6 +38,7 @@ export default function NewsId() {
   // Función para manejar la actualización de la noticia
   const handleUpdate = async (updatedNews) => {
     try {
+      setLoading(true);
       const result = await updateNews(id, updatedNews);
       if (result) {
         setNews(result);
@@ -49,6 +50,8 @@ export default function NewsId() {
     } catch (error) {
       console.error('Error al actualizar la noticia:', error);
       Swal.fire('Error', 'No se pudo actualizar la noticia. Por favor, intente de nuevo.', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,6 +71,7 @@ export default function NewsId() {
 
     if (result.isConfirmed) {
       try {
+        setLoading(true);
         // Eliminar la noticia
         await deleteNews(id);
         // Mostrar mensaje de éxito
@@ -86,6 +90,8 @@ export default function NewsId() {
           'No se pudo eliminar la noticia. Por favor, intente de nuevo.',
           'error'
         );
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -119,9 +125,6 @@ export default function NewsId() {
         className={styles.newsDetailContent} 
         dangerouslySetInnerHTML={{ __html: news.contenido }} 
       />
-      <div className={styles.newsDetailContact}>
-        <p>Contact us: <a href="mailto:sendinquiry@news.id">sendinquiry@news.id</a></p>
-      </div>
       <div className={styles.newsActions}>
         <button 
           onClick={handleEdit}

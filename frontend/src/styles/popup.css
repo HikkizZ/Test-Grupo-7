@@ -83,3 +83,50 @@
         top: 47.5%;
     }
 }
+
+/*de hallam, no tocar NADA por favor.
+
+/* Estilos adicionales para mejorar la apariencia del formulario */
+.popup .form input[type="text"],
+.popup .form input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.popup .form .submit-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.popup .form .submit-button:hover {
+    background-color: #45a049;
+}
+
+.popup .form .submit-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Estilos para el editor ReactQuill */
+.popup .form .quill {
+    margin-bottom: 20px;
+}
+
+.popup .form .ql-container {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.popup .form .ql-toolbar {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+

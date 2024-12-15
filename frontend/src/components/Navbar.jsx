@@ -42,6 +42,15 @@ const Navbar = () => {
         });
     };
 
+    // Array de rutas adicionales //agrega el resto de pages dps
+    const additionalRoutes = [
+        { path: '/schedule', name: 'Horario' },
+        { path: '/resources', name: 'Recursos' },
+        { path: '/cursos', name: 'Cursos' },
+        { path: '/subjects', name: 'Asignaturas' },
+        { path: '/posts', name: 'Foro' },
+    ];
+
     return (
         <nav className="navbar">
             <div className={`nav-menu ${menuOpen ? 'activado' : ''}`}>
@@ -72,6 +81,21 @@ const Navbar = () => {
                         </NavLink>
                     </li>
                     )}
+                    {/* Nuevos botones de navegación , FALTAN!!!*/}
+                    {additionalRoutes.map((route) => (
+                        <li key={route.path}>
+                            <NavLink 
+                                to={route.path}
+                                onClick={() => { 
+                                    setMenuOpen(false); 
+                                    addActiveClass();
+                                }} 
+                                activeClassName="active"
+                            >
+                                {route.name}
+                            </NavLink>
+                        </li>
+                    ))}
                     <li>
                         <NavLink 
                             to="/auth" 

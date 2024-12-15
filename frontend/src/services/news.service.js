@@ -33,11 +33,13 @@ export const getNewsById = async (id) => {
     throw error;
   }
 };
-
 export const updateNews = async (id, newsData) => {
   try {
+    // Asegurarse de que estamos enviando el FormData con el Content-Type correcto
     const response = await axios.patch(`/news/${id}`, newsData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
     });
     return response.data.data;
   } catch (error) {
@@ -45,6 +47,8 @@ export const updateNews = async (id, newsData) => {
     throw error;
   }
 };
+
+
 
 export const deleteNews = async (id) => {
   try {

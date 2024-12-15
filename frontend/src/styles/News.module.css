@@ -52,7 +52,7 @@
 .newsImage {
   width: 100%;
   height: 200px;
-  object-fit: cover;
+  object-fit: flex;
 }
 
 /* Estilos para el contenido de la noticia */
@@ -64,6 +64,11 @@
 .newsTitle {
   font-size: 1.2rem;
   margin-bottom: 10px;
+}
+/* Estilos para el título de la pagina */
+.newsTitlePage {
+  font-size: 4.2rem;
+  margin-bottom: 10px 30;
 }
 
 /* Estilos para el autor y la fecha de la noticia */
@@ -220,5 +225,23 @@
 
 .deleteButton:hover {
   background-color: #d32f2f;
+}
+
+/* para achicar la caja de texto de la busqueda y otros
+
+/* Contenedor del campo de búsqueda */
+.searchContainer {
+  max-width: 400px;
+  margin: 20px 0;
+}
+
+/* Estilo del campo de entrada de búsqueda */
+.searchInput {
+  width: 300px;
+  max-width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 20px;
 }
 

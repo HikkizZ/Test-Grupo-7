@@ -1,28 +1,37 @@
-import { useState, useEffect } from 'react';
-import { createNews, updateNews, getNewsById } from '@services/news.service';
+import { useState, useEffect, useRef } from 'react';
+import { getNewsById } from '@services/news.service';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import '@styles/popup.css';
 import CloseIcon from '@assets/XIcon.svg';
 
 export default function PopupNews({ show, setShow, id, onSubmit }) {
+  // Referencia para el editor de texto enriquecido
+  const quillRef = useRef(null);
+
+  // Estado para almacenar los datos del formulario
   const [formData, setFormData] = useState({
     tituloNews: '',
     nombreAutor: '',
     contenido: '',
     imagenPortada: null
   });
-  const [loading, setLoading] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null);
 
+  // Estado para controlar si se está cargando algo
+  const [loading, setLoading] = useState(false);
+
+  // Efecto que se ejecuta cuando cambia el estado de 'show' o 'id'
   useEffect(() => {
     if (show && id && id !== 'new') {
+      // Si se está mostrando el popup y hay un id válido, obtener los datos de la noticia
       fetchNews(id);
     } else if (show && id === 'new') {
+      // Si se está creando una nueva noticia, reiniciar el formulario
       resetForm();
     }
   }, [show, id]);
 
+  // Función para reiniciar el formulario
   const resetForm = () => {
     setFormData({
       tituloNews: '',
@@ -30,8 +39,9 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
       contenido: '',
       imagenPortada: null
     });
-    setPreviewImage(null);
   };
+
+  // Función para obtener los datos de una noticia existente
   const fetchNews = async (newsId) => {
     try {
       const data = await getNewsById(newsId);
@@ -41,21 +51,22 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
         contenido: data.contenido,
         imagenPortada: null
       });
-      setPreviewImage(data.imagenPortada);
     } catch (error) {
       console.error('Error al obtener la noticia:', error);
     }
   };
 
+  // Manejador de cambios en los campos del formulario
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === 'imagenPortada' && files[0]) {
+      // Si se selecciona una imagen, actualizar el estado
       setFormData(prevState => ({
         ...prevState,
         [name]: files[0]
       }));
-      setPreviewImage(URL.createObjectURL(files[0]));
     } else {
+      // Para otros campos, simplemente actualizar el estado
       setFormData(prevState => ({
         ...prevState,
         [name]: value
@@ -63,33 +74,29 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
     }
   };
 
+  // Manejador de cambios en el editor de texto enriquecido
   const handleQuillChange = (content) => {
     setFormData(prevState => ({ ...prevState, contenido: content }));
   };
 
+  // Manejador del envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
+      // Crear un objeto FormData para enviar los datos, incluyendo la imagen
       const newsData = new FormData();
-      for (const key in formData) {
-        if (key === 'imagenPortada') {
-          if (formData[key] instanceof File) {
-            newsData.append(key, formData[key]);
-          }
-        } else {
-          newsData.append(key, formData[key]);
-        }
+      newsData.append('tituloNews', formData.tituloNews);
+      newsData.append('nombreAutor', formData.nombreAutor);
+      newsData.append('contenido', formData.contenido);
+      
+      // Solo agregar la imagen si se ha seleccionado una nueva
+      if (formData.imagenPortada instanceof File) {
+        newsData.append('imagenPortada', formData.imagenPortada);
       }
 
-      let result;
-      if (id && id !== 'new') {
-        result = await updateNews(id, newsData);
-      } else {
-        result = await createNews(newsData);
-      }
-      onSubmit(result);
-      setShow(false);
+      // Llamar a la función onSubmit pasada como prop
+      await onSubmit(newsData);
     } catch (error) {
       console.error('Error al enviar el formulario:', error);
     } finally {
@@ -97,6 +104,7 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
     }
   };
 
+  // Configuración de la barra de herramientas del editor de texto enriquecido
   const modules = {
     toolbar: [
       [{ 'header': [1, 2, false] }],
@@ -107,18 +115,23 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
     ],
   };
 
+  // Si no se debe mostrar el popup, no renderizar nada
   if (!show) return null;
 
+  // Renderizado del componente
   return (
     <div className="bg">
       <div className="popup">
+        {/* Botón para cerrar el popup */}
         <button className="close" onClick={() => setShow(false)}>
           <img src={CloseIcon} alt="Cerrar" />
         </button>
-        <form onSubmit={handleSubmit} className="form-container">
-          <h2 className="popup-title">{id && id !== 'new' ? 'Editar Noticia' : 'Nueva Noticia'}</h2>
+        <form onSubmit={handleSubmit} className="form">
+          {/* Título del formulario */}
+          <h2 className="title">{id && id !== 'new' ? 'Editar Noticia' : 'Nueva Noticia'}</h2>
           
-          <div className="form-group">
+          {/* Campo para el título de la noticia */}
+          <div className="container_inputs">
             <label htmlFor="tituloNews">Título de la noticia</label>
             <div className="input-container">
               <input
@@ -133,7 +146,8 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
             </div>
           </div>
 
-          <div className="form-group">
+          {/* Campo para el nombre del autor */}
+          <div className="container_inputs">
             <label htmlFor="nombreAutor">Autor</label>
             <div className="input-container">
               <input
@@ -148,9 +162,11 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
             </div>
           </div>
 
-          <div className="form-group">
+          {/* Editor de texto enriquecido para el contenido */}
+          <div className="container_inputs">
             <label htmlFor="contenido">Contenido</label>
             <ReactQuill
+              ref={quillRef}
               theme="snow"
               value={formData.contenido}
               onChange={handleQuillChange}
@@ -159,7 +175,8 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
             />
           </div>
 
-          <div className="form-group">
+          {/* Campo para subir la imagen de portada */}
+          <div className="container_inputs">
             <label htmlFor="imagenPortada">Imagen de Portada</label>
             <div className="input-container">
               <input
@@ -170,16 +187,9 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
                 accept="image/*"
               />
             </div>
-            {previewImage && (
-              <div className="image-preview">
-                <img 
-                  src={previewImage} 
-                  alt="Vista previa" 
-                />
-              </div>
-            )}
           </div>
 
+          {/* Botón para enviar el formulario */}
           <button
             type="submit"
             className="submit-button"

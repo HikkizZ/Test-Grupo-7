@@ -1,43 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { getNews, ensureFullImageUrl } from '@services/news.service';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ensureFullImageUrl } from '@services/news.service';
 import styles from '@styles/News.module.css';
 
-export default function ListNews() {
-  const [news, setNews] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+export default function ListNews({ searchResults, onEdit, loading, error }) {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchNews();
-  }, []);
-
-  const fetchNews = async () => {
-    try {
-      const data = await getNews();
-      // Ordenar las noticias por fecha de publicación (más reciente primero)
-      data.sort((a, b) => new Date(b.fechaPublicacion) - new Date(a.fechaPublicacion));
-      setNews(data);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error al obtener las noticias:', error);
-      setError('No se pudieron cargar las noticias. Por favor, intente de nuevo más tarde.');
-      setLoading(false);
-    }
-  };
-
+  // Función para manejar el clic en una noticia
   const handleNewsClick = (id) => {
-    navigate(`/news/${id}`);
+    navigate(`/home/news/${id}`);
   };
 
+  // Renderizado condicional basado en el estado de carga y error
   if (loading) return <div className="text-center py-4">Cargando...</div>;
   if (error) return <div className="text-center py-4 text-red-500">{error}</div>;
-  if (news.length === 0) return <div className="text-center py-4">No hay noticias disponibles.</div>;
+  if (searchResults.length === 0) return <div className="text-center py-4">No hay noticias disponibles.</div>;
 
   return (
     <div className={styles.newsGrid}>
-      {news.map((item) => (
+      {searchResults.sort((a, b) => new Date(b.fechaPublicacion) - new Date(a.fechaPublicacion))
+      .map((item) => (
         <article key={item.id} className={styles.newsCard} onClick={() => handleNewsClick(item.id)}>
           <div className={styles.newsImage}>
             {item.imagenPortada ? (
@@ -63,7 +45,7 @@ export default function ListNews() {
             <p className={styles.newsDate}>
               Publicado el {new Date(item.fechaPublicacion).toLocaleDateString()}
             </p>
-            <div className={styles.newsExcerpt} dangerouslySetInnerHTML={{ __html: item.contenido.substring(0, 150) + '...' }} />
+            <div className={styles.newsExcerpt} dangerouslySetInnerHTML={{ __html: item.contenido.substring(0, 150) + '...' }} />          
           </div>
         </article>
       ))}
