@@ -5,7 +5,6 @@ export default function ReservationTable({ reservations, onUpdate, onDelete, loa
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Fecha Desde</th>
                     <th>Fecha Hasta</th>
                     <th>Tipo Reserva</th>
@@ -30,7 +29,7 @@ export default function ReservationTable({ reservations, onUpdate, onDelete, loa
                     ))
                 ) : (
                     <tr>
-                        <td colSpan="9" style={{ textAlign: "center" }}>No se encontraron reservaciones.</td>
+                        <td colSpan="8" style={{ textAlign: "center" }}>No se encontraron reservaciones.</td>
                     </tr>
                 )}
             </tbody>

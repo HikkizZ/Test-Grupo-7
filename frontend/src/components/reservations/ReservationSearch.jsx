@@ -4,7 +4,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
     const [areFiltersActive, setAreFiltersActive] = useState(false);
 
     const [filters, setFilters] = useState({
-        id: "",
         devuelto: "",
         tipoReserva: "",
         estado: "",
@@ -48,7 +47,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
 
     const handleResetFilters = () => {
         setFilters({
-            id: "",
             devuelto: "",
             tipoReserva: "",
             estado: "",
@@ -65,14 +63,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
         <div>
             <h3>Buscar Reservación</h3>
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                <input
-                    type="text"
-                    placeholder="Buscar por ID"
-                    value={filters.id}
-                    onChange={(e) => handleFilterChange("id", e.target.value)}
-                    style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
-                />
-
                 <select
                     value={filters.devuelto}
                     onChange={(e) => handleFilterChange("devuelto", e.target.value)}
