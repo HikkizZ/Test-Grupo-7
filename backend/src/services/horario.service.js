@@ -108,9 +108,11 @@ export async function createHorarioService(body) {
 
         const conflictingHorario = await horarioRepository.findOne({
             where: {
-                teacher: { id: teacher.id },
+                //teacher: { id: teacher.id },
+                room: {id: room.id},
                 dayOfWeek: body.dayOfWeek,
                 period: { id: period.id },
+
             },
         });
         if (conflictingHorario) {
