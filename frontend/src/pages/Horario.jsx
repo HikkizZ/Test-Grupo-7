@@ -51,12 +51,14 @@ export default function Horarios() {
             </br>
             <h1>Horarios</h1>
 
-            {/* Tabla visual de horarios */}
-            <HorarioBox horarios={horarios} />
+            
             {/* Crear horario */}
             <h3>Crear Horario</h3>
             <HorarioForm onCreate={handleCreate} loading={loadingCreate} />
 
+            {/* Tabla visual de horarios */}
+            <HorarioBox horarios={horarios} />
+            
             {/* Buscar horario */}
             <h3>Buscar Horario</h3>
             <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
