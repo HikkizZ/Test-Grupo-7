@@ -9,14 +9,15 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
         tipoReserva: "",
         estado: "",
         fechaDesde: "",
-        horaDesde: "00:00",
+        horaDesde: "",
         fechaHasta: "",
-        horaHasta: "00:00",
+        horaHasta: "",
     });
 
     const formatDateTime = (date, time) => {
-        if (!date || !time) return "";
+        if (!date) return ""; // Si no hay fecha, retornamos cadena vacía
         const [year, month, day] = date.split("-");
+        if (!time) return `${day}-${month}-${year}`; // Si no hay hora, solo retornamos la fecha
         const [hour, minute] = time.split(":");
         return `${day}-${month}-${year} ${hour}:${minute}`; // Formato DD-MM-YYYY HH:mm
     };
@@ -52,9 +53,9 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
             tipoReserva: "",
             estado: "",
             fechaDesde: "",
-            horaDesde: "00:00",
+            horaDesde: "",
             fechaHasta: "",
-            horaHasta: "00:00",
+            horaHasta: "",
         });
         setAreFiltersActive(false);
         onReset();

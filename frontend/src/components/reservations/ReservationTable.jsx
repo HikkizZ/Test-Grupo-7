@@ -17,16 +17,22 @@ export default function ReservationTable({ reservations, onUpdate, onDelete, loa
                 </tr>
             </thead>
             <tbody>
-                {reservations.map((reservation) => (
-                    <ReservationRow
-                        key={reservation.id}
-                        reservation={reservation}
-                        onUpdate={onUpdate}
-                        onDelete={onDelete}
-                        loadingUpdate={loadingUpdate}
-                        loadingDelete={loadingDelete}
-                    />
-                ))}
+                {reservations.length > 0 ? (
+                    reservations.map((reservation) => (
+                        <ReservationRow
+                            key={reservation.id}
+                            reservation={reservation}
+                            onUpdate={onUpdate}
+                            onDelete={onDelete}
+                            loadingUpdate={loadingUpdate}
+                            loadingDelete={loadingDelete}
+                        />
+                    ))
+                ) : (
+                    <tr>
+                        <td colSpan="9" style={{ textAlign: "center" }}>No se encontraron reservaciones.</td>
+                    </tr>
+                )}
             </tbody>
         </table>
     );
