@@ -8,8 +8,10 @@ import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import Resources from './pages/Resources';
 import Horario from '@pages/horario';
+import Period from '@pages/period';
 import Rooms from '@pages/Rooms';
 import Reservations from '@pages/Reservations';
+
 //import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
 //import Hallam
@@ -40,6 +42,10 @@ const router = createBrowserRouter([
     {
       path: '/horario',
       element: <Horario /> 
+    },
+    {
+      path: '/period',
+      element: <Period /> 
     },
     {
         path: '/resources',
