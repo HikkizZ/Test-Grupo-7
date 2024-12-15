@@ -33,23 +33,6 @@ export async function getReservation(queryParams) {
     }
 }
 
-// Buscar reservaciones con fechas y horas opcionales
-export async function searchReservations(filters) {
-    try {
-        const formattedFilters = {
-            ...filters,
-            fechaDesde: filters.fechaDesde || undefined,
-            fechaHasta: filters.fechaHasta || undefined,
-        };
-
-        const { data } = await axios.get('/reservation/search', { params: formattedFilters });
-        return data.data;
-    } catch (error) {
-        console.error('Error searching reservations:', error.response?.data?.message || error.message);
-        throw error.response?.data?.message || 'Error desconocido al buscar las reservaciones.';
-    }
-}
-
 // Actualizar una reservación
 export async function updateReservation(id, updateData) {
     try {
