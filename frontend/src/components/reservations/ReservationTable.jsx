@@ -1,6 +1,23 @@
 import ReservationRow from "./ReservationRow";
+import { parse } from "date-fns";
 
 export default function ReservationTable({ reservations, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
+    // Función para convertir fechaDesde en objeto Date
+    const parseFechaDesde = (fecha) => {
+        console.log("Fecha a parsear:", fecha); // Log temporal para depurar
+        return parse(fecha, "dd-MM-yyyy HH:mm", new Date());
+    };    
+
+    // Ordenar reservaciones por fechaDesde (ascendente)
+    const sortedReservations = [...reservations].sort((a, b) => {
+        const dateA = a.fechaDesde ? parseFechaDesde(a.fechaDesde, "dd-MM-yyyy HH:mm", new Date()) : new Date(0);
+        const dateB = b.fechaDesde ? parseFechaDesde(b.fechaDesde, "dd-MM-yyyy HH:mm", new Date()) : new Date(0);
+    
+        return dateA - dateB; // Orden ascendente
+    });    
+
+    console.log("Reservaciones:", reservations);
+
     return (
         <table>
             <thead>
@@ -16,8 +33,8 @@ export default function ReservationTable({ reservations, onUpdate, onDelete, loa
                 </tr>
             </thead>
             <tbody>
-                {reservations.length > 0 ? (
-                    reservations.map((reservation) => (
+                {sortedReservations.length > 0 ? (
+                    sortedReservations.map((reservation) => (
                         <ReservationRow
                             key={reservation.id}
                             reservation={reservation}
@@ -36,3 +53,4 @@ export default function ReservationTable({ reservations, onUpdate, onDelete, loa
         </table>
     );
 }
+
