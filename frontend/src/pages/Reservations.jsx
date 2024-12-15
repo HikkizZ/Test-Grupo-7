@@ -8,6 +8,9 @@ import ReservationTable from "../components/reservations/ReservationTable";
 import ReservationForm from "../components/reservations/ReservationForm";
 import ReservationSearch from "../components/reservations/ReservationSearch";
 
+// Importa el nuevo CSS
+import "../styles/Reservations.css";
+
 export default function Reservations() {
     const { reservations, fetchReservations, loading: loadingReservations } = useGetReservations();
     const { handleCreate, loading: loadingCreate } = useCreateReservation(fetchReservations);
@@ -18,7 +21,6 @@ export default function Reservations() {
     });
 
     const {
-        //searchFilters,
         updateFilter,
         resetFilters,
         searchResults: filteredResults,
@@ -35,7 +37,9 @@ export default function Reservations() {
     const noSearchResults = filteredResults.length === 0 && !noReservations;
 
     return (
-        <div>
+        <div className="reservations-container">
+            <br />
+            <br />
             <br />
             <br />
             <h1>Reservaciones</h1>
@@ -51,15 +55,8 @@ export default function Reservations() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px" }}>
                 <h3>Lista de Reservaciones</h3>
                 <button
+                    className="create-button"
                     onClick={() => setShowCreateModal(true)}
-                    style={{
-                        backgroundColor: "#007bff",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: "5px",
-                        padding: "5px 10px",
-                        cursor: "pointer",
-                    }}
                 >
                     Crear Reservación
                 </button>
