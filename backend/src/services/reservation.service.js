@@ -259,6 +259,11 @@ export async function updateReservationService(query, body) {
         if (estado !== undefined) {
             reservationFound.estado = estado;
 
+            // Si el estado se establece como "pendiente", automáticamente establecer devuelto = false
+            if (estado === "pendiente") {
+                reservationFound.devuelto = false;
+            }
+
             // Si el estado se establece como "rechazada", automáticamente establecer devuelto = true
             if (estado === "rechazada") {
                 reservationFound.devuelto = true;
