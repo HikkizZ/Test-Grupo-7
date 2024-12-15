@@ -252,17 +252,10 @@ export async function updateReservationService(query, body) {
 
         const { devuelto, estado } = body;
 
-        // Validación: No permitir modificar "devuelto" si el estado actual es "pendiente"
-        if (devuelto !== undefined && reservationFound.estado === "pendiente") {
-            return [null, "No se puede modificar 'devuelto' mientras la reservación está en estado 'pendiente'."];
-        }
-
-        // Actualizar devuelto si se cumple la validación
         if (devuelto !== undefined) {
             reservationFound.devuelto = devuelto;
         }
 
-        // Actualizar estado
         if (estado !== undefined) {
             reservationFound.estado = estado;
 
