@@ -3,21 +3,26 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
     const navigate = useNavigate();
 
-    const handleRedirect = () => {
+    const handleRedirectToSchedules = () => {
         navigate("/horario");
+    };
+
+    const handleRedirectToPeriods = () => {
+        navigate("/period");
     };
 
     return (
         <>
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-            <button onClick={handleRedirect}>Horarios</button>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <button onClick={handleRedirectToSchedules}>Horarios</button>
+            <button onClick={handleRedirectToPeriods}>Períodos</button>
         </>
     );
 };
