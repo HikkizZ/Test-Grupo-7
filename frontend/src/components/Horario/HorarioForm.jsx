@@ -79,11 +79,12 @@ export default function HorarioForm({ onCreate, loading }) {
     };
 
     return (
-        <div>
+        <div6>
             {!showForm ? (
                 <button onClick={() => setShowForm(true)}>Crear Horario</button>
             ) : (
                 <div>
+                    <div>
                     {/* Campo de Curso */}
                     <input
                         type="text"
@@ -98,7 +99,7 @@ export default function HorarioForm({ onCreate, loading }) {
                             <option key={curso.id} value={curso.code} />
                         ))}
                     </datalist>
-
+                    </div>
                     {/* Campo de RUT */}
                     <div>
                         <input
@@ -198,7 +199,8 @@ export default function HorarioForm({ onCreate, loading }) {
                         </button>
                     </div>
                 </div>
+                
             )}
-        </div>
+        </div6>
     );
 }
