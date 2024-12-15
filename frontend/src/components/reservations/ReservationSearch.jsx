@@ -3,28 +3,48 @@ import { useState } from "react";
 export default function ReservationSearch({ onFilterUpdate, onReset, loading }) {
     const [areFiltersActive, setAreFiltersActive] = useState(false);
 
-    // Estado para los filtros
     const [filters, setFilters] = useState({
         id: "",
         devuelto: "",
         tipoReserva: "",
         estado: "",
         fechaDesde: "",
+        horaDesde: "00:00",
         fechaHasta: "",
+        horaHasta: "00:00",
     });
 
-    // Manejar cambios en los filtros
+    const formatDateTime = (date, time) => {
+        if (!date || !time) return "";
+        const [year, month, day] = date.split("-");
+        const [hour, minute] = time.split(":");
+        return `${day}-${month}-${year} ${hour}:${minute}`; // Formato DD-MM-YYYY HH:mm
+    };
+
     const handleFilterChange = (filter, value) => {
         const updatedFilters = { ...filters, [filter]: value };
         setFilters(updatedFilters);
-        onFilterUpdate(filter, value);
 
-        // Detectar si hay algún filtro activo
+        if (filter === "fechaDesde" || filter === "horaDesde") {
+            const fechaHoraDesde = formatDateTime(
+                updatedFilters.fechaDesde,
+                updatedFilters.horaDesde
+            );
+            onFilterUpdate("fechaDesde", fechaHoraDesde.trim());
+        } else if (filter === "fechaHasta" || filter === "horaHasta") {
+            const fechaHoraHasta = formatDateTime(
+                updatedFilters.fechaHasta,
+                updatedFilters.horaHasta
+            );
+            onFilterUpdate("fechaHasta", fechaHoraHasta.trim());
+        } else {
+            onFilterUpdate(filter, value);
+        }
+
         const hasActiveFilters = Object.values(updatedFilters).some((val) => val !== "");
         setAreFiltersActive(hasActiveFilters);
     };
 
-    // Manejar el reset de filtros
     const handleResetFilters = () => {
         setFilters({
             id: "",
@@ -32,7 +52,9 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
             tipoReserva: "",
             estado: "",
             fechaDesde: "",
+            horaDesde: "00:00",
             fechaHasta: "",
+            horaHasta: "00:00",
         });
         setAreFiltersActive(false);
         onReset();
@@ -42,7 +64,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
         <div>
             <h3>Buscar Reservación</h3>
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                {/* Filtro por ID */}
                 <input
                     type="text"
                     placeholder="Buscar por ID"
@@ -51,7 +72,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                     style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
                 />
 
-                {/* Filtro por devuelto */}
                 <select
                     value={filters.devuelto}
                     onChange={(e) => handleFilterChange("devuelto", e.target.value)}
@@ -62,7 +82,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                     <option value="false">No</option>
                 </select>
 
-                {/* Filtro por tipoReserva */}
                 <select
                     value={filters.tipoReserva}
                     onChange={(e) => handleFilterChange("tipoReserva", e.target.value)}
@@ -73,7 +92,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                     <option value="recurso">Recurso</option>
                 </select>
 
-                {/* Filtro por estado */}
                 <select
                     value={filters.estado}
                     onChange={(e) => handleFilterChange("estado", e.target.value)}
@@ -85,25 +103,62 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                     <option value="rechazada">Rechazada</option>
                 </select>
 
-                {/* Filtro por fechaDesde */}
-                <input
-                    type="text"
-                    placeholder="Fecha Desde (DD-MM-YYYY HH:mm)"
-                    value={filters.fechaDesde}
-                    onChange={(e) => handleFilterChange("fechaDesde", e.target.value)}
-                    style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
-                />
+                {/* Fecha Desde */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                    <label>Fecha Desde</label>
+                    <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
+                        <input
+                            type="date"
+                            value={filters.fechaDesde}
+                            onChange={(e) => handleFilterChange("fechaDesde", e.target.value)}
+                            style={{
+                                padding: "5px",
+                                borderRadius: "5px",
+                                border: "1px solid #ccc",
+                            }}
+                        />
+                        <input
+                            type="time"
+                            value={filters.horaDesde}
+                            onChange={(e) => handleFilterChange("horaDesde", e.target.value)}
+                            step="60" // Incremento de un minuto
+                            style={{
+                                padding: "5px",
+                                borderRadius: "5px",
+                                border: "1px solid #ccc",
+                            }}
+                        />
+                    </div>
+                </div>
 
-                {/* Filtro por fechaHasta */}
-                <input
-                    type="text"
-                    placeholder="Fecha Hasta (DD-MM-YYYY HH:mm)"
-                    value={filters.fechaHasta}
-                    onChange={(e) => handleFilterChange("fechaHasta", e.target.value)}
-                    style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
-                />
+                {/* Fecha Hasta */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                    <label>Fecha Hasta</label>
+                    <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
+                        <input
+                            type="date"
+                            value={filters.fechaHasta}
+                            onChange={(e) => handleFilterChange("fechaHasta", e.target.value)}
+                            style={{
+                                padding: "5px",
+                                borderRadius: "5px",
+                                border: "1px solid #ccc",
+                            }}
+                        />
+                        <input
+                            type="time"
+                            value={filters.horaHasta}
+                            onChange={(e) => handleFilterChange("horaHasta", e.target.value)}
+                            step="60" // Incremento de un minuto
+                            style={{
+                                padding: "5px",
+                                borderRadius: "5px",
+                                border: "1px solid #ccc",
+                            }}
+                        />
+                    </div>
+                </div>
 
-                {/* Botón para resetear filtros y ver todas las reservaciones */}
                 {areFiltersActive && (
                     <button
                         onClick={handleResetFilters}
