@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig({
   plugins: [react()],
-  preview: { port: 443, host: true },
+  preview: {port:443, host:true},
   resolve: {
     alias: {
       '@components': path.resolve(__dirname, './src/components'),
@@ -20,12 +20,5 @@ export default defineConfig({
       '@assets': path.resolve(__dirname, './src/assets'),
       '@helpers': path.resolve(__dirname, './src/helpers')
     }
-  },
-  define: {
-    global: 'window', // Asegura compatibilidad con librerías antiguas
-  },
-  optimizeDeps: {
-    include: ['jquery', 'bootstrap'], // Optimiza jQuery y Bootstrap
-    exclude: ['clockpicker'], // Excluye ClockPicker de la optimización
   }
 });
