@@ -1,5 +1,5 @@
 /* Estilos para la página de Foros */
-.foro-container {
+body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f9;
     margin: 0;
@@ -7,7 +7,7 @@
 }
 
 /* Contenedor principal */
-.foro-container div {
+div {
     max-width: 90%;
     margin: 0 auto;
     padding: 20px;
@@ -17,7 +17,7 @@
 }
 
 /* Encabezado */
-.foro-container h1 {
+h1 {
     font-size: 2rem;
     color: #333;
     text-align: center;
@@ -25,13 +25,13 @@
 }
 
 /* Títulos de secciones */
-.foro-container h3 {
+h3 {
     color: #555;
     margin-top: 20px;
 }
 
 /* Formulario de creación */
-.foro-container form {
+form {
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -39,9 +39,7 @@
 }
 
 /* Campos del formulario */
-.foro-container input[type="text"], 
-.foro-container input[type="date"], 
-.foro-container select {
+input[type="text"], input[type="date"], select {
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ddd;
@@ -50,7 +48,7 @@
 }
 
 /* Botón de creación */
-.foro-container button[type="submit"] {
+button[type="submit"] {
     padding: 10px 15px;
     border: none;
     background-color: #4CAF50;
@@ -61,33 +59,33 @@
     transition: background-color 0.3s;
 }
 
-.foro-container button[type="submit"]:hover {
+button[type="submit"]:hover {
     background-color: #45a049;
 }
 
 /* Tabla de foros */
-.foro-container table {
+table {
     width: 100%;
     margin-top: 20px;
     border-collapse: collapse;
 }
 
-.foro-container th, .foro-container td {
+th, td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
 
-.foro-container th {
+th {
     background-color: #f2f2f2;
 }
 
-.foro-container tr:hover {
+tr:hover {
     background-color: #f9f9f9;
 }
 
 /* Botones de acciones */
-.foro-container button {
+button {
     padding: 6px 12px;
     border-radius: 5px;
     border: 1px solid #ddd;
@@ -97,17 +95,17 @@
     transition: background-color 0.3s;
 }
 
-.foro-container button:hover {
+button:hover {
     background-color: #0056b3;
 }
 
-.foro-container button:disabled {
+button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
 }
 
 /* Mensaje de carga */
-.foro-container p {
+p {
     text-align: center;
     font-size: 1.2rem;
     color: #555;
