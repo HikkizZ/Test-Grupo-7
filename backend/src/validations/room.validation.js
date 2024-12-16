@@ -53,30 +53,28 @@ export const roomBodyValidation = Joi.object({
         .max(70)
         .optional()
         .messages({
-            "string.empty": "The name is required.",
-            "any.required": "The name is required.",
+            "string.empty": "The name cannot be empty.",
             "string.base": "The name must be a string.",
             "string.min": "The name must be at least 3 characters long.",
             "string.max": "The name must be at most 70 characters long.",
         }),
     size: Joi.number()
         .positive()
-        .required()
+        .optional()
         .messages({
             "number.base": "The size must be a number.",
             "number.positive": "The size must be a positive number.",
-            "any.required": "The size is required.",
         }),
     roomType: Joi.string()
         .valid("laboratorio", "computacion", "clases")
-        .required()
+        .optional()
         .messages({
             "string.base": "The roomType must be a string.",
             "any.only": "The roomType must be one of: laboratorio, computacion, clases.",
-            "any.required": "The roomType is required.",
         }),
 })
+.or("name", "size", "roomType")
 .messages({
-    "object.missing": "At least one of the following is required: name, size, or roomType.",
+    "object.missing": "At least one of the fields (name, size, roomType) must be provided.",
     "object.unknown": "Don't send more properties than the ones required.",
 });

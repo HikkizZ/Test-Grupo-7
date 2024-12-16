@@ -17,11 +17,19 @@ export async function createRoomService(req) {
         // Crear una nueva sala
         const newRoom = roomRepository.create({
             name: req.body.name,
+            size: req.body.size,
+            roomType: req.body.roomType,
         });
 
         await roomRepository.save(newRoom);
 
-        return [newRoom, null];
+        // Formatear la respuesta para mostrar el size en m²
+        const formattedRoomCreate = {
+            ...newRoom,
+            size: `${newRoom.size} m²`,
+        };
+
+        return [formattedRoomCreate, null];
     } catch (error) {
         return [null, "Internal Server Error", error.message];
     }
@@ -42,7 +50,13 @@ export async function getRoomsService() {
             return [null, "No se encontraron salas."];
         }
 
-        return [rooms, null];
+        // Formatear el tamaño (size) para agregar "m²"
+        const formattedRoomsAll = rooms.map((room) => ({
+            ...room,
+            size: `${room.size} m²`,
+        }));
+
+        return [formattedRoomsAll, null];
     } catch (error) {
         return [null, "Internal Server Error", error.message];
     }
@@ -55,7 +69,7 @@ export async function getRoomService(query) {
         const roomRepository = AppDataSource.getRepository(Room);
 
         // Buscar una sala por ID o nombre
-        const roomFound = await roomRepository.findOne({ 
+        const roomFound = await roomRepository.findOne({
             where: [{ id: idRoom }, { name: nameRoom }],
         });
 
@@ -63,7 +77,13 @@ export async function getRoomService(query) {
             return [null, "Sala no encontrada."];
         }
 
-        return [roomFound, null];
+        // Formatear el tamaño (size) para agregar "m²"
+        const formattedRoomGet = {
+            ...roomFound,
+            size: `${roomFound.size} m²`,
+        };
+
+        return [formattedRoomGet, null];
     } catch (error) {
         return [null, "Internal Server Error", error.message];
     }
@@ -71,36 +91,51 @@ export async function getRoomService(query) {
 
 export async function updateRoomService(query, body) {
     try {
-        const { idRoom, nameRoom } = query;
+        const { id, name } = query;
 
         const roomRepository = AppDataSource.getRepository(Room);
 
-        const roomFound = await roomRepository.findOne({ where: [{ id: idRoom }, { name: nameRoom }] });
+        const roomFound = await roomRepository.findOne({ where: [{ id }, { name }] });
 
         if (!roomFound) return [null, "Sala no encontrada."];
 
-        const updatedRoom = await roomRepository.update(roomFound.id, body);
+        const updatedRoom = await roomRepository.save({
+            ...roomFound,
+            ...body,
+        });
 
-        return [updatedRoom, null];
+        // Formatear la respuesta para mostrar el size en m²
+        const formattedRoomUpdate = {
+            ...updatedRoom,
+            size: `${updatedRoom.size} m²`,
+        };
+
+        return [formattedRoomUpdate, null];
     } catch (error) {
         return [null, "Internal Server Error", error.message];
     }
-};
+}
 
 export async function deleteRoomService(query) {
     try {
-        const { idRoom, nameRoom } = query;
+        const { id, name } = query;
 
         const roomRepository = AppDataSource.getRepository(Room);
 
-        const roomFound = await roomRepository.findOne({ where: [{ id: idRoom }, { name: nameRoom }] });
+        const roomFound = await roomRepository.findOne({ where: [{ id }, { name }] });
 
         if (!roomFound) return [null, "Sala no encontrada."];
 
         await roomRepository.remove(roomFound);
 
-        return [roomFound, null];
+        // Formatear la respuesta para mostrar el size en m²
+        const formattedRoomDelete = {
+            ...roomFound,
+            size: `${roomFound.size} m²`,
+        };
+
+        return [formattedRoomDelete, null];
     } catch (error) {
         return [null, "Internal Server Error", error.message];
     }
-};
+}

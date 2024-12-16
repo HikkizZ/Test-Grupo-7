@@ -5,21 +5,21 @@ import {
     getRoomsService,
     getRoomService,
     updateRoomService,
-    deleteRoomService
+    deleteRoomService,
 } from "../services/room.service.js";
 
 import {
     handleErrorClient,
     handleSuccess,
-    handleErrorServer
-} from "../handlers/responseHandlers.js"
+    handleErrorServer,
+} from "../handlers/responseHandlers.js";
 
 import {
     roomBodyValidation,
-    roomQueryValidation
+    roomQueryValidation,
 } from "../validations/room.validation.js";
 
-// Crear una nueva aula
+// Crear una nueva sala
 export async function createRoom(req, res) {
     try {
         const { error } = roomBodyValidation.validate(req.body);
@@ -34,31 +34,33 @@ export async function createRoom(req, res) {
     } catch (error) {
         handleErrorServer(res, 500, "Internal Server Error", error.message);
     }
-};
+}
 
-// Listar todas las aulas (opcionalmente podrían ser solo las disponibles)
+// Listar todas las salas
 export async function getRooms(req, res) {
     try {
         const [rooms, roomsError] = await getRoomsService(req);
 
         if (roomsError) return handleErrorClient(res, 404, roomsError);
 
-        rooms.length === 0 ? handleSuccess(res, 204, "No rooms found") : handleSuccess(res, 200, "Rooms found", rooms);
+        rooms.length === 0
+            ? handleSuccess(res, 204, "No rooms found")
+            : handleSuccess(res, 200, "Rooms found", rooms);
     } catch (error) {
         handleErrorServer(res, 500, "Internal Server Error", error.message);
     }
-};
+}
 
-// Mostrar información de un aula en particular
+// Mostrar información de una sala en particular
 export async function getRoom(req, res) {
     try {
-        const { id, name } = req.query;
+        const { id, name, size, roomType } = req.query;
 
-        const { error } = roomQueryValidation.validate({ id, name });
+        const { error } = roomQueryValidation.validate({ id, name, size, roomType });
 
         if (error) return handleErrorClient(res, 400, "Validation Error", error.message);
 
-        const [room, roomError] = await getRoomService({ idRoom: id, nameRoom: name });
+        const [room, roomError] = await getRoomService({ id, name, size, roomType });
 
         if (roomError) return handleErrorClient(res, 404, roomError);
 
@@ -66,9 +68,9 @@ export async function getRoom(req, res) {
     } catch (error) {
         handleErrorServer(res, 500, "Internal Server Error", error.message);
     }
-};
+}
 
-// Actualizar información de un aula
+// Actualizar información de una sala
 export async function updateRoom(req, res) {
     try {
         const { id, name } = req.query;
@@ -83,7 +85,7 @@ export async function updateRoom(req, res) {
 
         if (bodyError) return handleErrorClient(res, 400, "Validation Error", bodyError.message);
 
-        const [roomUpdated, roomError] = await updateRoomService({ idRoom: id, nameRoom: name }, body);
+        const [roomUpdated, roomError] = await updateRoomService({ id, name }, body);
 
         if (roomError) return handleErrorClient(res, 400, roomError);
 
@@ -91,9 +93,9 @@ export async function updateRoom(req, res) {
     } catch (error) {
         handleErrorServer(res, 500, "Internal Server Error", error.message);
     }
-};
+}
 
-// Eliminar un aula
+// Eliminar una sala
 export async function deleteRoom(req, res) {
     try {
         const { id, name } = req.query;
@@ -102,7 +104,7 @@ export async function deleteRoom(req, res) {
 
         if (error) return handleErrorClient(res, 400, "Validation Error", error.message);
 
-        const [roomDeleted, roomError] = await deleteRoomService({ idRoom: id, nameRoom: name });
+        const [roomDeleted, roomError] = await deleteRoomService({ id, name });
 
         if (roomError) return handleErrorClient(res, 400, roomError);
 
@@ -110,4 +112,4 @@ export async function deleteRoom(req, res) {
     } catch (error) {
         handleErrorServer(res, 500, "Internal Server Error", error.message);
     }
-};
+}
