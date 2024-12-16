@@ -271,16 +271,23 @@ export async function updateReservationService(query, body) {
 
             // Si se aprueba, rechazar automáticamente otras reservas conflictivas
             if (estado === "aprobada") {
-                await reservationRepository
-                    .createQueryBuilder()
+                const queryBuilder = reservationRepository.createQueryBuilder()
                     .update(Reservation)
                     .set({ estado: "rechazada", devuelto: true })
                     .where("id != :id", { id: reservationFound.id }) // Excluir la reserva actual
                     .andWhere("tipoReserva = :tipoReserva", { tipoReserva: reservationFound.tipoReserva })
                     .andWhere("fechaDesde = :fechaDesde", { fechaDesde: reservationFound.fechaDesde })
                     .andWhere("fechaHasta = :fechaHasta", { fechaHasta: reservationFound.fechaHasta })
-                    .andWhere("estado = :estado", { estado: "pendiente" }) // Solo reservas pendientes
-                    .execute();
+                    .andWhere("estado = :estado", { estado: "pendiente" }); // Solo reservas pendientes
+
+                // Validar conflicto basado en Sala o Recurso
+                if (reservationFound.tipoReserva === "sala") {
+                    queryBuilder.andWhere("sala_id = :salaId", { salaId: reservationFound.Sala?.id });
+                } else if (reservationFound.tipoReserva === "recurso") {
+                    queryBuilder.andWhere("recurso_id = :recursoId", { recursoId: reservationFound.Recurso?.id });
+                }
+
+                await queryBuilder.execute();
             }
         }
 
