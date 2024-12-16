@@ -109,12 +109,13 @@ export default function Resources() {
                     onClick={() => setShowCreateModal(true)}
                     style={{
                         height: "38px",
-                        backgroundColor: "#28a745",
-                        color: "#fff",
+                        backgroundColor: "#28a745", // Color verde
+                        color: "#fff", // Texto blanco
                         border: "none",
                         borderRadius: "5px",
-                        padding: "5px 10px",
+                        padding: "10px 15px",
                         cursor: "pointer",
+                        fontSize: "14px",
                     }}
                 >
                     Crear Recurso

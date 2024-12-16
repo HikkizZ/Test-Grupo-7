@@ -4,10 +4,16 @@ import RoomTable from "../components/rooms/RoomTable";
 import RoomForm from "../components/rooms/RoomForm";
 import { useCreateRoom } from "../hooks/rooms/useCreateRoom";
 import { useGetRooms } from "../hooks/rooms/useGetRooms";
+import { useUpdateRoom } from "../hooks/rooms/useUpdateRoom";
+import { useDeleteRoom } from "../hooks/rooms/useDeleteRoom";
 
 export default function Rooms() {
     const { rooms, fetchRooms, loading: loadingRooms } = useGetRooms();
     const { handleCreate, loading: loadingCreate } = useCreateRoom(fetchRooms);
+    const { handleUpdate, loading: loadingUpdate } = useUpdateRoom(fetchRooms);
+    const { handleDelete, loading: loadingDelete } = useDeleteRoom({
+        setRooms: fetchRooms,
+    });
 
     const [filteredRooms, setFilteredRooms] = useState([]);
     const [filters, setFilters] = useState({});
@@ -18,7 +24,6 @@ export default function Rooms() {
     }, [fetchRooms]);
 
     useEffect(() => {
-        // Filtrar salas basadas en filtros activos
         let results = rooms;
 
         if (filters.id) {
@@ -39,19 +44,6 @@ export default function Rooms() {
         setFilteredRooms(results);
     }, [filters, rooms]);
 
-    const handleSearchGeneral = (query) => {
-        if (!query) {
-            setFilteredRooms(rooms);
-        } else {
-            const results = rooms.filter((room) =>
-                `${room.id} ${room.name.toLowerCase()} ${room.size} ${room.roomType.toLowerCase()}`.includes(
-                    query.toLowerCase()
-                )
-            );
-            setFilteredRooms(results);
-        }
-    };
-
     const handleFilterUpdate = (filter, value) => {
         setFilters((prev) => ({
             ...prev,
@@ -61,39 +53,34 @@ export default function Rooms() {
 
     const handleResetFilters = () => {
         setFilters({});
-        setFilteredRooms(rooms); // Restablecer todas las salas
-    };    
+        setFilteredRooms(rooms);
+    };
 
     return (
         <div>
-            {/* Título Principal */}
-            <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Salas</h1>
+            <h1 style={{ textAlign: "center" }}>Salas</h1>
 
             {/* Buscar Sala */}
             <h3>Buscar Sala</h3>
             <RoomSearch
-                onSearch={handleSearchGeneral}
+                onSearch={(query) => setFilteredRooms(rooms.filter((room) =>
+                    `${room.id} ${room.name.toLowerCase()} ${room.size} ${room.roomType.toLowerCase()}`.includes(
+                        query.toLowerCase()
+                    )))}
                 onFilterUpdate={handleFilterUpdate}
                 onReset={handleResetFilters}
                 loading={loadingRooms}
             />
 
-            {/* Lista de Salas y Botón Crear */}
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginTop: "20px",
-                    marginBottom: "10px",
-                }}
-            >
+            {/* Lista de Salas */}
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
                 <h3>Lista de Salas</h3>
                 <button
                     onClick={() => setShowCreateModal(true)} // Mostrar el modal
                     style={{
-                        backgroundColor: "#28a745",
-                        color: "#fff",
+                        height: "38px",
+                        backgroundColor: "#28a745", // Color verde
+                        color: "#fff", // Texto blanco
                         border: "none",
                         borderRadius: "5px",
                         padding: "10px 15px",
@@ -105,15 +92,20 @@ export default function Rooms() {
                 </button>
             </div>
 
-            {/* Tabla de Salas */}
-            <RoomTable rooms={filteredRooms} />
+            <RoomTable
+                rooms={filteredRooms}
+                onUpdate={handleUpdate}
+                onDelete={handleDelete}
+                loadingUpdate={loadingUpdate}
+                loadingDelete={loadingDelete}
+            />
 
             {/* Modal Crear Sala */}
             {showCreateModal && (
                 <RoomForm
-                    onCreate={handleCreate} // Lógica para crear la sala
+                    onCreate={handleCreate}
                     loading={loadingCreate}
-                    onClose={() => setShowCreateModal(false)} // Cerrar modal
+                    onClose={() => setShowCreateModal(false)}
                 />
             )}
         </div>

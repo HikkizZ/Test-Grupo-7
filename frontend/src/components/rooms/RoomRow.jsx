@@ -2,9 +2,19 @@ import { useState } from "react";
 
 export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
     const [isEditing, setIsEditing] = useState(false);
-    const [editName, setEditName] = useState(room.name);
-    const [editSize, setEditSize] = useState(room.size.replace(" m²", ""));
-    const [editRoomType, setEditRoomType] = useState(room.roomType);
+    const [editData, setEditData] = useState({
+        name: room.name,
+        size: room.size.replace(" m²", ""), // Remover "m²" para la edición
+        roomType: room.roomType,
+    });
+
+    // Manejar cambios en los inputs
+    const handleChange = (field, value) => {
+        setEditData((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
 
     const handleEditClick = () => {
         setIsEditing(true);
@@ -12,16 +22,17 @@ export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadi
 
     const handleCancelEdit = () => {
         setIsEditing(false);
-        setEditName(room.name);
-        setEditSize(room.size.replace(" m²", ""));
-        setEditRoomType(room.roomType);
+        setEditData({
+            name: room.name,
+            size: room.size.replace(" m²", ""),
+            roomType: room.roomType,
+        });
     };
 
     const handleSaveEdit = () => {
         onUpdate(room.id, {
-            name: editName,
-            size: parseFloat(editSize),
-            roomType: editRoomType,
+            ...editData,
+            size: parseFloat(editData.size), // Asegurar que el tamaño es un número válido
         });
         setIsEditing(false);
     };
@@ -33,9 +44,10 @@ export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadi
                 {isEditing ? (
                     <input
                         type="text"
-                        value={editName}
-                        onChange={(e) => setEditName(e.target.value)}
+                        value={editData.name}
+                        onChange={(e) => handleChange("name", e.target.value)}
                         disabled={loadingUpdate}
+                        placeholder="Nombre"
                         style={{
                             width: "100%",
                             padding: "5px",
@@ -51,9 +63,10 @@ export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadi
                 {isEditing ? (
                     <input
                         type="number"
-                        value={editSize}
-                        onChange={(e) => setEditSize(e.target.value)}
+                        value={editData.size}
+                        onChange={(e) => handleChange("size", e.target.value)}
                         disabled={loadingUpdate}
+                        placeholder="Tamaño"
                         style={{
                             width: "100%",
                             padding: "5px",
@@ -68,8 +81,8 @@ export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadi
             <td>
                 {isEditing ? (
                     <select
-                        value={editRoomType}
-                        onChange={(e) => setEditRoomType(e.target.value)}
+                        value={editData.roomType}
+                        onChange={(e) => handleChange("roomType", e.target.value)}
                         disabled={loadingUpdate}
                         style={{
                             width: "100%",
@@ -79,7 +92,7 @@ export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadi
                         }}
                     >
                         <option value="laboratorio">Laboratorio</option>
-                        <option value="computacion">Computacion</option>
+                        <option value="computacion">Computación</option>
                         <option value="clases">Clases</option>
                     </select>
                 ) : (
