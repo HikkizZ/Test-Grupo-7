@@ -8,13 +8,20 @@ export function useCreateRoom(fetchRooms) {
     const handleCreate = async (data) => {
         try {
             setLoading(true);
+
+            // Validar que los datos necesarios están presentes
+            if (!data.name || !data.size || !data.roomType) {
+                throw new Error("Todos los campos son obligatorios (name, size, roomType).");
+            }
+
             await createRoom(data);
+
             showSuccessAlert("Sala creada", "La sala ha sido creada correctamente");
             fetchRooms();
         } catch (error) {
             showErrorAlert(
                 "Error al crear la sala",
-                error.response?.data?.message || "Hubo un problema al crear la sala."
+                error.response?.data?.message || error.message || "Hubo un problema al crear la sala."
             );
         } finally {
             setLoading(false);

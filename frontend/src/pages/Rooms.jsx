@@ -12,8 +12,8 @@ export default function Rooms() {
     const { handleCreate, loading: loadingCreate } = useCreateRoom(fetchRooms);
     const { handleUpdate, loading: loadingUpdate } = useUpdateRoom(fetchRooms);
 
-    const [searchResults, setSearchResults] = useState(rooms); // Estado de resultados de búsqueda
-    const [showCreateModal, setShowCreateModal] = useState(false); // Control de visibilidad del modal
+    const [searchResults, setSearchResults] = useState(rooms);
+    const [showCreateModal, setShowCreateModal] = useState(false);
 
     const {
         searchQuery,
@@ -64,6 +64,8 @@ export default function Rooms() {
                             ? "Buscar por ID"
                             : searchFilter === "name"
                             ? "Buscar por Nombre"
+                            : searchFilter === "roomType"
+                            ? "Buscar por Tipo de Sala"
                             : "Buscar sala"
                     }
                     style={{ flex: "1" }}
@@ -83,6 +85,7 @@ export default function Rooms() {
                     <option value="">--Seleccionar filtro--</option>
                     <option value="id">Buscar sala por ID</option>
                     <option value="name">Buscar sala por Nombre</option>
+                    <option value="roomType">Buscar sala por Tipo</option>
                 </select>
                 {searchQuery && (
                     <button
@@ -144,7 +147,7 @@ export default function Rooms() {
                 <RoomForm
                     onCreate={handleCreate}
                     loading={loadingCreate}
-                    onClose={() => setShowCreateModal(false)} // Manejo del cierre del modal
+                    onClose={() => setShowCreateModal(false)}
                 />
             )}
         </div>

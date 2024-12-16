@@ -1,12 +1,6 @@
 import RoomRow from "./RoomRow";
 
-export default function RoomTable({
-    rooms,
-    onUpdate,
-    onDelete,
-    loadingUpdate,
-    loadingDelete,
-}) {
+export default function RoomTable({ rooms, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
     const sortedRooms = [...rooms].sort((a, b) => a.id - b.id);
 
     return (
@@ -15,6 +9,8 @@ export default function RoomTable({
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
+                    <th>Tamaño (m²)</th>
+                    <th>Tipo de Sala</th>
                     <th>Acciones</th>
                 </tr>
             </thead>

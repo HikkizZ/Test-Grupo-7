@@ -10,13 +10,20 @@ export function useGetRooms() {
         try {
             setLoading(true);
             const response = await getRooms();
-            setRooms(response);
+
+            // Formatear las salas para asegurar que "size" incluye "m²"
+            const formattedRooms = response.map((room) => ({
+                ...room,
+                size: room.size.endsWith("m²") ? room.size : `${room.size} m²`,
+            }));
+
+            setRooms(formattedRooms);
             setLoading(false);
         } catch (err) {
             setLoading(false);
             setError(err.message || "Error al obtener las salas");
         }
-    }, []); // useCallback asegura que la referencia de la función no cambie
+    }, []);
 
     return { rooms, fetchRooms, loading, error };
 }

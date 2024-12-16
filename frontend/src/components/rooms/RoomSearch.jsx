@@ -21,9 +21,11 @@ export default function RoomSearch({ onSearch, onReset, loading }) {
                 <label>
                     Selecciona un filtro:
                     <select value={filter} onChange={handleFilterChange}>
-                        <option value="">Buscar por ID y Nombre</option>
+                        <option value="">Buscar por ID, Nombre, Tamaño o Tipo</option>
                         <option value="id">Buscar por ID</option>
                         <option value="name">Buscar por Nombre</option>
+                        <option value="size">Buscar por Tamaño</option>
+                        <option value="roomType">Buscar por Tipo</option>
                     </select>
                 </label>
             </div>
@@ -34,11 +36,16 @@ export default function RoomSearch({ onSearch, onReset, loading }) {
                 onChange={handleSearch}
                 placeholder={
                     filter === "id"
-                        ? "Ingresa el ID de la sala"
+                        ? "Buscar por ID"
                         : filter === "name"
-                        ? "Ingresa el Nombre de la sala"
-                        : "Buscar por ID y Nombre"
+                        ? "Buscar por Nombre"
+                        : filter === "size"
+                        ? "Buscar por Tamaño (m²)"
+                        : filter === "roomType"
+                        ? "Buscar por Tipo (laboratorio, computacion, clases)"
+                        : "Buscar por ID, Nombre, Tamaño o Tipo"
                 }
+                style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
             />
             {query && (
                 <button onClick={onReset} style={{ marginLeft: "10px" }}>

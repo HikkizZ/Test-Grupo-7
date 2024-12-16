@@ -3,19 +3,26 @@ import { useState } from "react";
 export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
     const [isEditing, setIsEditing] = useState(false);
     const [editName, setEditName] = useState(room.name);
+    const [editSize, setEditSize] = useState(room.size.replace(" m²", ""));
+    const [editRoomType, setEditRoomType] = useState(room.roomType);
 
     const handleEditClick = () => {
         setIsEditing(true);
-        setEditName(room.name);
     };
 
     const handleCancelEdit = () => {
         setIsEditing(false);
         setEditName(room.name);
+        setEditSize(room.size.replace(" m²", ""));
+        setEditRoomType(room.roomType);
     };
 
     const handleSaveEdit = () => {
-        onUpdate(room.id, { name: editName });
+        onUpdate(room.id, {
+            name: editName,
+            size: parseFloat(editSize),
+            roomType: editRoomType,
+        });
         setIsEditing(false);
     };
 
@@ -38,6 +45,45 @@ export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadi
                     />
                 ) : (
                     room.name
+                )}
+            </td>
+            <td>
+                {isEditing ? (
+                    <input
+                        type="number"
+                        value={editSize}
+                        onChange={(e) => setEditSize(e.target.value)}
+                        disabled={loadingUpdate}
+                        style={{
+                            width: "100%",
+                            padding: "5px",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                        }}
+                    />
+                ) : (
+                    room.size
+                )}
+            </td>
+            <td>
+                {isEditing ? (
+                    <select
+                        value={editRoomType}
+                        onChange={(e) => setEditRoomType(e.target.value)}
+                        disabled={loadingUpdate}
+                        style={{
+                            width: "100%",
+                            padding: "5px",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                        }}
+                    >
+                        <option value="laboratorio">Laboratorio</option>
+                        <option value="computacion">Computacion</option>
+                        <option value="clases">Clases</option>
+                    </select>
+                ) : (
+                    room.roomType
                 )}
             </td>
             <td>

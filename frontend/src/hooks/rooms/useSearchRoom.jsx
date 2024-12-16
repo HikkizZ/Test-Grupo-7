@@ -19,18 +19,34 @@ export function useSearchRoom(rooms) {
                 if (!searchQuery) {
                     filteredResults = rooms;
                 } else {
-                    if (searchFilter === "id") {
-                        filteredResults = rooms.filter((room) =>
-                            room.id.toString().includes(searchQuery)
-                        );
-                    } else if (searchFilter === "name") {
-                        filteredResults = rooms.filter((room) =>
-                            room.name.toLowerCase().includes(searchQuery.toLowerCase())
-                        );
-                    } else {
-                        filteredResults = rooms.filter((room) =>
-                            `${room.id} ${room.name.toLowerCase()}`.includes(searchQuery.toLowerCase())
-                        );
+                    switch (searchFilter) {
+                        case "id":
+                            filteredResults = rooms.filter((room) =>
+                                room.id.toString().includes(searchQuery)
+                            );
+                            break;
+                        case "name":
+                            filteredResults = rooms.filter((room) =>
+                                room.name.toLowerCase().includes(searchQuery.toLowerCase())
+                            );
+                            break;
+                        case "size":
+                            filteredResults = rooms.filter((room) =>
+                                room.size.includes(searchQuery)
+                            );
+                            break;
+                        case "roomType":
+                            filteredResults = rooms.filter((room) =>
+                                room.roomType.toLowerCase().includes(searchQuery.toLowerCase())
+                            );
+                            break;
+                        default:
+                            filteredResults = rooms.filter((room) =>
+                                `${room.id} ${room.name.toLowerCase()} ${room.size} ${room.roomType.toLowerCase()}`.includes(
+                                    searchQuery.toLowerCase()
+                                )
+                            );
+                            break;
                     }
                 }
 
