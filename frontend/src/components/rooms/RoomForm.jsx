@@ -43,6 +43,14 @@ export default function RoomForm({ onCreate, loading, onClose }) {
             return;
         }
 
+        if (roomName.trim().length < 3) {
+            showErrorAlert(
+                "Nombre demasiado corto",
+                "El nombre de la sala debe tener al menos 3 caracteres."
+            );
+            return;
+        }
+
         if (parseFloat(roomSize) <= 0) {
             showErrorAlert(
                 "Tamaño inválido",
