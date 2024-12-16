@@ -64,21 +64,41 @@ export async function getRoomsService() {
 
 export async function getRoomService(query) {
     try {
+        const { id, name, size, roomType } = query;
+
         const roomRepository = AppDataSource.getRepository(Room);
 
-        const filters = [];
-        if (query.id) filters.push({ id: query.id });
-        if (query.name) filters.push({ name: query.name });
-        if (query.size) filters.push({ size: query.size });
-        if (query.roomType) filters.push({ roomType: query.roomType });
+        // Crear un QueryBuilder para construir condiciones dinámicas
+        const queryBuilder = roomRepository.createQueryBuilder("room");
 
-        const roomFound = await roomRepository.findOne({ where: filters });
+        // Agregar condiciones dinámicas
+        if (id !== undefined) {
+            queryBuilder.andWhere("room.id = :id", { id });
+        }
+        if (name) {
+            queryBuilder.andWhere("room.name = :name", { name });
+        }
+        if (size !== undefined) {
+            queryBuilder.andWhere("room.size = :size", { size });
+        }
+        if (roomType) {
+            queryBuilder.andWhere("room.roomType = :roomType", { roomType });
+        }
 
-        if (!roomFound) return [null, "Sala no encontrada."];
+        // Ejecutar la consulta
+        const roomsFound = await queryBuilder.getMany();
 
-        const formattedRoom = { ...roomFound, size: `${roomFound.size} m²` };
+        if (!roomsFound || roomsFound.length === 0) {
+            return [null, "No se encontraron salas con los criterios especificados."];
+        }
 
-        return [formattedRoom, null];
+        // Formatear el tamaño (size) para agregar "m²"
+        const formattedRooms = roomsFound.map((room) => ({
+            ...room,
+            size: `${room.size} m²`,
+        }));
+
+        return [formattedRooms, null];
     } catch (error) {
         return [null, "Internal Server Error", error.message];
     }
