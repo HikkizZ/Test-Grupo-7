@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import Swal from "sweetalert2";
 
 export function useSearchRoom(rooms) {
     const [searchQuery, setSearchQuery] = useState("");
-    const [searchFilter, setSearchFilter] = useState("");
+    const [searchFilter, setSearchFilter] = useState(""); // Filtro activo
     const [searchResults, setSearchResults] = useState(rooms || []);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -14,17 +13,10 @@ export function useSearchRoom(rooms) {
             setError(null);
 
             try {
-                let filteredResults = [];
+                let filteredResults = rooms;
 
-                if (!searchQuery) {
-                    filteredResults = rooms;
-                } else {
+                if (searchQuery) {
                     switch (searchFilter) {
-                        case "id":
-                            filteredResults = rooms.filter((room) =>
-                                room.id.toString().includes(searchQuery)
-                            );
-                            break;
                         case "name":
                             filteredResults = rooms.filter((room) =>
                                 room.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -32,7 +24,7 @@ export function useSearchRoom(rooms) {
                             break;
                         case "size":
                             filteredResults = rooms.filter((room) =>
-                                room.size.includes(searchQuery)
+                                room.size.replace(" m²", "").includes(searchQuery)
                             );
                             break;
                         case "roomType":
@@ -41,10 +33,10 @@ export function useSearchRoom(rooms) {
                             );
                             break;
                         default:
+                            // Búsqueda general si no se selecciona un filtro específico
                             filteredResults = rooms.filter((room) =>
-                                `${room.id} ${room.name.toLowerCase()} ${room.size} ${room.roomType.toLowerCase()}`.includes(
-                                    searchQuery.toLowerCase()
-                                )
+                                `${room.name.toLowerCase()} ${room.size} ${room.roomType.toLowerCase()}`
+                                    .includes(searchQuery.toLowerCase())
                             );
                             break;
                     }
@@ -52,8 +44,8 @@ export function useSearchRoom(rooms) {
 
                 setSearchResults(filteredResults);
             } catch (err) {
-                console.error("Error en búsqueda automática:", err);
-                setError("Error al buscar salas.");
+                console.error("Error en la búsqueda:", err);
+                setError("Hubo un problema al realizar la búsqueda.");
             } finally {
                 setLoading(false);
             }
@@ -62,36 +54,17 @@ export function useSearchRoom(rooms) {
         performSearch();
     }, [searchQuery, searchFilter, rooms]);
 
+    // Actualizar la consulta de búsqueda
     const handleQueryChange = (query) => {
-        if (searchFilter === "id" && !/^\d*$/.test(query)) {
-            Swal.fire({
-                icon: "error",
-                title: "Error de búsqueda",
-                text: "El ID debe contener solo números.",
-            }).then(() => {
-                const inputElement = document.querySelector('input[type="text"]');
-                if (inputElement) {
-                    inputElement.focus();
-                    inputElement.setSelectionRange(searchQuery.length, searchQuery.length);
-                }
-            });
-            return;
-        }
         setSearchQuery(query);
     };
 
+    // Actualizar el filtro activo
     const handleFilterChange = (filter) => {
-        if (filter === "id" && /\D/.test(searchQuery)) {
-            Swal.fire({
-                icon: "info",
-                title: "Búsqueda restablecida",
-                text: "El buscador ha sido limpiado porque el filtro 'ID' acepta solo números.",
-            });
-            setSearchQuery(""); // Limpia el buscador si contiene letras
-        }
         setSearchFilter(filter);
     };
 
+    // Reiniciar la búsqueda
     const resetSearch = () => {
         setSearchQuery("");
         setSearchResults(rooms);

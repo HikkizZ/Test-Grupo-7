@@ -5,7 +5,7 @@ import { showSuccessAlert, showErrorAlert } from "../../utils/alerts";
 export function useUpdateRoom(fetchRooms) {
     const [loading, setLoading] = useState(false);
 
-    const handleUpdate = async (id, updatedData) => {
+    const handleUpdate = async (name, updatedData) => {
         try {
             setLoading(true);
 
@@ -14,16 +14,16 @@ export function useUpdateRoom(fetchRooms) {
                 throw new Error("Debe proporcionar al menos un campo para actualizar.");
             }
 
-            const updatedRoom = await updateRoom(id, updatedData);
+            const updatedRoom = await updateRoom(name, updatedData);
 
             if (updatedRoom) {
                 showSuccessAlert(
                     "¡Sala modificada!",
-                    `La sala con ID ${id} ha sido modificada correctamente.`
+                    `La sala "${name}" ha sido modificada correctamente.`
                 );
                 fetchRooms((prevRooms) =>
                     prevRooms.map((room) =>
-                        room.id === id ? { ...room, ...updatedData } : room
+                        room.name === name ? { ...room, ...updatedData } : room
                     )
                 );
             }

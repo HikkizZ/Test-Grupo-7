@@ -3,14 +3,12 @@ import { useState } from "react";
 export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading }) {
     const [query, setQuery] = useState("");
     const [filters, setFilters] = useState({
-        id: "",
         name: "",
         size: "",
         roomType: "",
     });
 
     const [filterEnabled, setFilterEnabled] = useState({
-        id: false,
         name: false,
         size: false,
         roomType: false,
@@ -46,8 +44,8 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
 
     // Resetear filtros
     const resetFilters = () => {
-        setFilters({ id: "", name: "", size: "", roomType: "" });
-        setFilterEnabled({ id: false, name: false, size: false, roomType: false });
+        setFilters({ name: "", size: "", roomType: "" });
+        setFilterEnabled({ name: false, size: false, roomType: false });
         setQuery("");
         onReset(); // Llama a la función para restablecer desde el padre
     };
@@ -63,7 +61,7 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
                     type="text"
                     value={query}
                     onChange={handleSearch}
-                    placeholder="Buscar por ID, Nombre, Tamaño o Tipo"
+                    placeholder="Buscar por Nombre, Tamaño o Tipo"
                     style={{
                         width: "100%",
                         padding: "10px",
@@ -83,24 +81,6 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
                     gap: "10px",
                 }}
             >
-                {/* ID */}
-                <div>
-                    <input
-                        type="checkbox"
-                        checked={filterEnabled.id}
-                        onChange={() => handleCheckboxChange("id")}
-                    />
-                    <label>ID</label>
-                    <input
-                        type="text"
-                        value={filters.id}
-                        onChange={(e) => handleFilterChange("id", e.target.value)}
-                        disabled={!filterEnabled.id}
-                        placeholder="ID"
-                        style={{ marginLeft: "5px", width: "120px" }}
-                    />
-                </div>
-
                 {/* Nombre */}
                 <div>
                     <input

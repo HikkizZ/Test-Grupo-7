@@ -11,7 +11,7 @@ export function useCreateRoom(fetchRooms) {
 
             // Validar que los datos necesarios están presentes
             if (!data.name || !data.size || !data.roomType) {
-                throw new Error("Todos los campos son obligatorios (name, size, roomType).");
+                throw new Error("Todos los campos son obligatorios (Nombre, Tamaño, Tipo de Sala).");
             }
 
             await createRoom(data);

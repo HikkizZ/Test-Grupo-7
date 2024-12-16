@@ -26,16 +26,15 @@ export default function Rooms() {
     useEffect(() => {
         let results = rooms;
 
-        if (filters.id) {
-            results = results.filter((room) => room.id.toString() === filters.id);
-        }
         if (filters.name) {
             results = results.filter((room) =>
                 room.name.toLowerCase().includes(filters.name.toLowerCase())
             );
         }
         if (filters.size) {
-            results = results.filter((room) => room.size.replace(" m²", "") === filters.size);
+            results = results.filter((room) =>
+                room.size.replace(" m²", "") === filters.size
+            );
         }
         if (filters.roomType) {
             results = results.filter((room) => room.roomType === filters.roomType);
@@ -66,10 +65,15 @@ export default function Rooms() {
             {/* Buscar Sala */}
             <h3>Buscar Sala</h3>
             <RoomSearch
-                onSearch={(query) => setFilteredRooms(rooms.filter((room) =>
-                    `${room.id} ${room.name.toLowerCase()} ${room.size} ${room.roomType.toLowerCase()}`.includes(
-                        query.toLowerCase()
-                    )))}
+                onSearch={(query) =>
+                    setFilteredRooms(
+                        rooms.filter((room) =>
+                            `${room.name.toLowerCase()} ${room.size} ${room.roomType.toLowerCase()}`.includes(
+                                query.toLowerCase()
+                            )
+                        )
+                    )
+                }
                 onFilterUpdate={handleFilterUpdate}
                 onReset={handleResetFilters}
                 loading={loadingRooms}
