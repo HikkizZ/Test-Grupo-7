@@ -5,6 +5,7 @@ import { useSearchRoom } from "../hooks/rooms/useSearchRoom";
 import { useUpdateRoom } from "../hooks/rooms/useUpdateRoom";
 import { useDeleteRoom } from "../hooks/rooms/useDeleteRoom";
 import RoomTable from "../components/rooms/RoomTable";
+import RoomSearch from "../components/rooms/RoomSearch";
 import RoomForm from "../components/rooms/RoomForm";
 
 export default function Rooms() {
@@ -12,23 +13,9 @@ export default function Rooms() {
     const { handleCreate, loading: loadingCreate } = useCreateRoom(fetchRooms);
     const { handleUpdate, loading: loadingUpdate } = useUpdateRoom(fetchRooms);
 
-    const [searchResults, setSearchResults] = useState(rooms);
+    const [searchResults, setSearchResults] = useState([]);
+    const [filters, setFilters] = useState({});
     const [showCreateModal, setShowCreateModal] = useState(false);
-
-    const {
-        searchQuery,
-        setSearchQuery,
-        searchFilter,
-        setSearchFilter,
-        searchResults: filteredResults,
-        resetSearch,
-        loading: loadingSearch,
-        error: errorSearch,
-    } = useSearchRoom(rooms);
-
-    useEffect(() => {
-        setSearchResults(filteredResults);
-    }, [filteredResults]);
 
     const { handleDelete, loading: loadingDelete } = useDeleteRoom({
         rooms,
@@ -41,69 +28,39 @@ export default function Rooms() {
         fetchRooms();
     }, [fetchRooms]);
 
+    useEffect(() => {
+        if (Object.keys(filters).length > 0) {
+            const filteredRooms = rooms.filter((room) => {
+                return Object.keys(filters).every((key) =>
+                    room[key]?.toString().toLowerCase().includes(filters[key]?.toString().toLowerCase())
+                );
+            });
+            setSearchResults(filteredRooms);
+        } else {
+            setSearchResults(rooms);
+        }
+    }, [filters, rooms]);
+
+    const handleSearch = (newFilters) => {
+        setFilters(newFilters);
+    };
+
+    const handleReset = () => {
+        setFilters({});
+        setSearchResults(rooms);
+    };
+
     const noRooms = rooms.length === 0;
     const noSearchResults = searchResults.length === 0 && !noRooms;
-
-    const placeholderText = {
-        id: "Buscar por ID",
-        name: "Buscar por Nombre",
-        size: "Buscar por Tamaño (m²)",
-        roomType: "Buscar por Tipo (laboratorio, computacion, clases)",
-    };
 
     return (
         <div>
             <br />
             <br />
-            <br />
-            <br />
             <h1>Salas</h1>
 
             {/* Buscar sala */}
-            <h3>Buscar Sala</h3>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
-                <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={placeholderText[searchFilter] || "Buscar sala"}
-                    style={{ flex: "1" }}
-                />
-                <select
-                    value={searchFilter}
-                    onChange={(e) => setSearchFilter(e.target.value)}
-                    style={{
-                        maxWidth: "200px",
-                        minWidth: "150px",
-                        height: "38px",
-                        borderRadius: "5px",
-                        border: "1px solid #ccc",
-                        padding: "5px",
-                    }}
-                >
-                    <option value="">--Seleccionar filtro--</option>
-                    <option value="id">Buscar sala por ID</option>
-                    <option value="name">Buscar sala por Nombre</option>
-                    <option value="size">Buscar sala por Tamaño</option>
-                    <option value="roomType">Buscar sala por Tipo</option>
-                </select>
-                {searchQuery && (
-                    <button
-                        onClick={resetSearch}
-                        style={{
-                            height: "38px",
-                            backgroundColor: "#007bff",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: "5px",
-                            padding: "5px 10px",
-                            cursor: "pointer",
-                        }}
-                    >
-                        Ver Todas las Salas
-                    </button>
-                )}
-            </div>
+            <RoomSearch onSearch={handleSearch} onReset={handleReset} loading={loadingRooms} />
 
             {/* Lista de salas y botón Crear */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px" }}>
@@ -124,14 +81,12 @@ export default function Rooms() {
                 </button>
             </div>
 
-            {loadingSearch || loadingRooms ? (
+            {loadingRooms ? (
                 <p>Cargando salas...</p>
-            ) : errorSearch ? (
-                <p style={{ color: "red" }}>{errorSearch}</p>
             ) : noRooms ? (
                 <p>No hay salas registradas.</p>
             ) : noSearchResults ? (
-                <p>No se encontraron salas que coincidan con tu búsqueda.</p>
+                <p>No se encontraron salas que coincidan con los filtros aplicados.</p>
             ) : (
                 <RoomTable
                     rooms={searchResults}

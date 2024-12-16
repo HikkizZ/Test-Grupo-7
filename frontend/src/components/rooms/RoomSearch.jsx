@@ -1,58 +1,96 @@
 import { useState } from "react";
 
 export default function RoomSearch({ onSearch, onReset, loading }) {
-    const [query, setQuery] = useState("");
-    const [filter, setFilter] = useState("");
+    const [filters, setFilters] = useState({
+        id: "",
+        name: "",
+        size: "",
+        roomType: "",
+    });
 
-    const handleSearch = (e) => {
-        setQuery(e.target.value);
-        onSearch(e.target.value, filter); // Llamar al callback con query y filtro
+    const [filterEnabled, setFilterEnabled] = useState({
+        id: false,
+        name: false,
+        size: false,
+        roomType: false,
+    });
+
+    const handleFilterChange = (filter, value) => {
+        setFilters((prev) => ({ ...prev, [filter]: value }));
+        onSearch({ ...filters, [filter]: value });
     };
 
-    const handleFilterChange = (e) => {
-        setFilter(e.target.value);
-        onSearch(query, e.target.value); // Llamar al callback con query y nuevo filtro
+    const handleCheckboxChange = (filter) => {
+        setFilterEnabled((prev) => ({ ...prev, [filter]: !prev[filter] }));
+        if (filterEnabled[filter]) {
+            handleFilterChange(filter, "");
+        }
     };
+
+    const resetFilters = () => {
+        setFilters({ id: "", name: "", size: "", roomType: "" });
+        setFilterEnabled({ id: false, name: false, size: false, roomType: false });
+        onReset();
+    };
+
+    const filtersActive = Object.values(filterEnabled).some((enabled) => enabled);
 
     return (
         <div>
-            <h3>Buscar Sala</h3>
-            <div>
-                <label>
-                    Selecciona un filtro:
-                    <select value={filter} onChange={handleFilterChange}>
-                        <option value="">Buscar por ID, Nombre, Tamaño o Tipo</option>
-                        <option value="id">Buscar por ID</option>
-                        <option value="name">Buscar por Nombre</option>
-                        <option value="size">Buscar por Tamaño</option>
-                        <option value="roomType">Buscar por Tipo</option>
-                    </select>
-                </label>
+            <h3>Filtros de Búsqueda</h3>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+                {["id", "name", "size", "roomType"].map((filter) => (
+                    <div key={filter}>
+                        <input
+                            type="checkbox"
+                            checked={filterEnabled[filter]}
+                            onChange={() => handleCheckboxChange(filter)}
+                        />
+                        <label style={{ marginLeft: "5px" }}>
+                            {filter === "id" ? "ID" : filter === "name" ? "Nombre" : filter === "size" ? "Tamaño (m²)" : "Tipo"}
+                        </label>
+                        <input
+                            type={filter === "size" ? "number" : "text"}
+                            value={filters[filter]}
+                            onChange={(e) => handleFilterChange(filter, e.target.value)}
+                            disabled={!filterEnabled[filter]}
+                            placeholder={
+                                filter === "id"
+                                    ? "Ingrese ID"
+                                    : filter === "name"
+                                    ? "Ingrese Nombre"
+                                    : filter === "size"
+                                    ? "Ingrese Tamaño"
+                                    : "Ingrese Tipo (laboratorio, computacion, clases)"
+                            }
+                            style={{
+                                marginTop: "5px",
+                                width: "100%",
+                                padding: "5px",
+                                backgroundColor: filterEnabled[filter] ? "#fff" : "#e0e0e0",
+                            }}
+                        />
+                    </div>
+                ))}
             </div>
-            <br />
-            <input
-                type="text"
-                value={query}
-                onChange={handleSearch}
-                placeholder={
-                    filter === "id"
-                        ? "Buscar por ID"
-                        : filter === "name"
-                        ? "Buscar por Nombre"
-                        : filter === "size"
-                        ? "Buscar por Tamaño (m²)"
-                        : filter === "roomType"
-                        ? "Buscar por Tipo (laboratorio, computacion, clases)"
-                        : "Buscar por ID, Nombre, Tamaño o Tipo"
-                }
-                style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
-            />
-            {query && (
-                <button onClick={onReset} style={{ marginLeft: "10px" }}>
-                    Ver Todas las Salas
-                </button>
+            {filtersActive && (
+                <div style={{ marginTop: "20px" }}>
+                    <button
+                        onClick={resetFilters}
+                        style={{
+                            backgroundColor: "#007bff",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "5px",
+                            padding: "10px 20px",
+                            cursor: "pointer",
+                        }}
+                    >
+                        Resetear Filtros
+                    </button>
+                </div>
             )}
-            {loading && <p>Cargando salas...</p>}
+            {loading && <p>Cargando...</p>}
         </div>
     );
 }
