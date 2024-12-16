@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export default function ReservationSearch({ onFilterUpdate, onReset, loading }) {
-    const [ setAreFiltersActive] = useState(false);
+    const [setAreFiltersActive] = useState(false);
 
     const [filters, setFilters] = useState({
         devuelto: "",
@@ -92,139 +92,145 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
     return (
         <div>
             <h3>Buscar Reservación</h3>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
-                {/* Devuelto */}
-                <div>
-                    <input
-                        type="checkbox"
-                        checked={filterEnabled.devuelto}
-                        onChange={() => handleCheckboxChange("devuelto")}
-                    />
-                    <label style={{ marginLeft: "5px" }}>Devuelto</label>
-                    <select
-                        value={filters.devuelto}
-                        onChange={(e) => handleFilterChange("devuelto", e.target.value)}
-                        disabled={!filterEnabled.devuelto}
-                        style={{
-                            backgroundColor: filterEnabled.devuelto ? "#fff" : "#e0e0e0",
-                        }}
-                    >
-                        <option value="">Seleccione</option>
-                        <option value="true">Sí</option>
-                        <option value="false">No</option>
-                    </select>
-                </div>
-
-                {/* Tipo de Reserva */}
-                <div>
-                    <input
-                        type="checkbox"
-                        checked={filterEnabled.tipoReserva}
-                        onChange={() => handleCheckboxChange("tipoReserva")}
-                    />
-                    <label style={{ marginLeft: "5px" }}>Tipo de Reserva</label>
-                    <select
-                        value={filters.tipoReserva}
-                        onChange={(e) => handleFilterChange("tipoReserva", e.target.value)}
-                        disabled={!filterEnabled.tipoReserva}
-                        style={{
-                            backgroundColor: filterEnabled.tipoReserva ? "#fff" : "#e0e0e0",
-                        }}
-                    >
-                        <option value="">Seleccione</option>
-                        <option value="sala">Sala</option>
-                        <option value="recurso">Recurso</option>
-                    </select>
-                </div>
-
-                {/* Estado */}
-                <div>
-                    <input
-                        type="checkbox"
-                        checked={filterEnabled.estado}
-                        onChange={() => handleCheckboxChange("estado")}
-                    />
-                    <label style={{ marginLeft: "5px" }}>Estado</label>
-                    <select
-                        value={filters.estado}
-                        onChange={(e) => handleFilterChange("estado", e.target.value)}
-                        disabled={!filterEnabled.estado}
-                        style={{
-                            backgroundColor: filterEnabled.estado ? "#fff" : "#e0e0e0",
-                        }}
-                    >
-                        <option value="">Seleccione</option>
-                        <option value="pendiente">Pendiente</option>
-                        <option value="aprobada">Aprobada</option>
-                        <option value="rechazada">Rechazada</option>
-                    </select>
-                </div>
-
-                {/* Fecha Desde */}
-                <div>
-                    <input
-                        type="checkbox"
-                        checked={filterEnabled.fechaDesde}
-                        onChange={() => handleCheckboxChange("fechaDesde")}
-                    />
-                    <label style={{ marginLeft: "5px" }}>Fecha Desde</label>
-                    <div style={{ display: "flex", gap: "5px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                {/* Fila 1: Devuelto, Tipo de Reserva, Estado */}
+                <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+                    {/* Devuelto */}
+                    <div>
                         <input
-                            type="date"
-                            value={filters.fechaDesde}
-                            onChange={(e) => handleFilterChange("fechaDesde", e.target.value)}
-                            disabled={!filterEnabled.fechaDesde}
-                            style={{
-                                backgroundColor: filterEnabled.fechaDesde ? "#fff" : "#e0e0e0",
-                            }}
+                            type="checkbox"
+                            checked={filterEnabled.devuelto}
+                            onChange={() => handleCheckboxChange("devuelto")}
                         />
+                        <label style={{ marginLeft: "5px" }}>Devuelto</label>
+                        <select
+                            value={filters.devuelto}
+                            onChange={(e) => handleFilterChange("devuelto", e.target.value)}
+                            disabled={!filterEnabled.devuelto}
+                            style={{
+                                backgroundColor: filterEnabled.devuelto ? "#fff" : "#e0e0e0",
+                            }}
+                        >
+                            <option value="">Seleccione</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+
+                    {/* Tipo de Reserva */}
+                    <div>
                         <input
-                            type="time"
-                            value={filters.horaDesde}
-                            onChange={(e) => handleFilterChange("horaDesde", e.target.value)}
-                            disabled={!filterEnabled.fechaDesde}
-                            style={{
-                                backgroundColor: filterEnabled.fechaDesde ? "#fff" : "#e0e0e0",
-                                textAlign: "center",
-                                lineHeight: "1.2", // Alinea verticalmente
-                                height: "36px",    // Ajusta la altura
-                                padding: "0 5px",  // Espaciado uniforme
-                            }}
+                            type="checkbox"
+                            checked={filterEnabled.tipoReserva}
+                            onChange={() => handleCheckboxChange("tipoReserva")}
                         />
+                        <label style={{ marginLeft: "5px" }}>Tipo de Reserva</label>
+                        <select
+                            value={filters.tipoReserva}
+                            onChange={(e) => handleFilterChange("tipoReserva", e.target.value)}
+                            disabled={!filterEnabled.tipoReserva}
+                            style={{
+                                backgroundColor: filterEnabled.tipoReserva ? "#fff" : "#e0e0e0",
+                            }}
+                        >
+                            <option value="">Seleccione</option>
+                            <option value="sala">Sala</option>
+                            <option value="recurso">Recurso</option>
+                        </select>
+                    </div>
+
+                    {/* Estado */}
+                    <div>
+                        <input
+                            type="checkbox"
+                            checked={filterEnabled.estado}
+                            onChange={() => handleCheckboxChange("estado")}
+                        />
+                        <label style={{ marginLeft: "5px" }}>Estado</label>
+                        <select
+                            value={filters.estado}
+                            onChange={(e) => handleFilterChange("estado", e.target.value)}
+                            disabled={!filterEnabled.estado}
+                            style={{
+                                backgroundColor: filterEnabled.estado ? "#fff" : "#e0e0e0",
+                            }}
+                        >
+                            <option value="">Seleccione</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="aprobada">Aprobada</option>
+                            <option value="rechazada">Rechazada</option>
+                        </select>
                     </div>
                 </div>
 
-                {/* Fecha Hasta */}
-                <div>
-                    <input
-                        type="checkbox"
-                        checked={filterEnabled.fechaHasta}
-                        onChange={() => handleCheckboxChange("fechaHasta")}
-                    />
-                    <label style={{ marginLeft: "5px" }}>Fecha Hasta</label>
-                    <div style={{ display: "flex", gap: "5px" }}>
+                {/* Fila 2: Fecha Desde, Fecha Hasta */}
+                <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+                    {/* Fecha Desde */}
+                    <div>
                         <input
-                            type="date"
-                            value={filters.fechaHasta}
-                            onChange={(e) => handleFilterChange("fechaHasta", e.target.value)}
-                            disabled={!filterEnabled.fechaHasta}
-                            style={{
-                                backgroundColor: filterEnabled.fechaHasta ? "#fff" : "#e0e0e0",
-                            }}
+                            type="checkbox"
+                            checked={filterEnabled.fechaDesde}
+                            onChange={() => handleCheckboxChange("fechaDesde")}
                         />
+                        <label style={{ marginLeft: "5px" }}>Fecha Desde</label>
+                        <div style={{ display: "flex", gap: "5px" }}>
+                            <input
+                                type="date"
+                                value={filters.fechaDesde}
+                                onChange={(e) => handleFilterChange("fechaDesde", e.target.value)}
+                                disabled={!filterEnabled.fechaDesde}
+                                style={{
+                                    backgroundColor: filterEnabled.fechaDesde ? "#fff" : "#e0e0e0",
+                                }}
+                            />
+                            <input
+                                type="time"
+                                value={filters.horaDesde}
+                                onChange={(e) => handleFilterChange("horaDesde", e.target.value)}
+                                disabled={!filterEnabled.fechaDesde}
+                                style={{
+                                    backgroundColor: filterEnabled.fechaDesde ? "#fff" : "#e0e0e0",
+                                    textAlign: "center",
+                                    lineHeight: "1.2", // Alinea verticalmente
+                                    height: "36px",    // Ajusta la altura
+                                    padding: "0 5px",  // Espaciado uniforme
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Fecha Hasta */}
+                    <div>
                         <input
-                            type="time"
-                            value={filters.horaHasta}
-                            onChange={(e) => handleFilterChange("horaHasta", e.target.value)}
-                            disabled={!filterEnabled.fechaHasta}
-                            style={{
-                                backgroundColor: filterEnabled.fechaHasta ? "#fff" : "#e0e0e0",
-                                textAlign: "center",
-                                lineHeight: "1.2",
-                                height: "36px",
-                                padding: "0 5px",
-                            }}
+                            type="checkbox"
+                            checked={filterEnabled.fechaHasta}
+                            onChange={() => handleCheckboxChange("fechaHasta")}
                         />
+                        <label style={{ marginLeft: "5px" }}>Fecha Hasta</label>
+                        <div style={{ display: "flex", gap: "5px" }}>
+                            <input
+                                type="date"
+                                value={filters.fechaHasta}
+                                onChange={(e) => handleFilterChange("fechaHasta", e.target.value)}
+                                disabled={!filterEnabled.fechaHasta}
+                                style={{
+                                    backgroundColor: filterEnabled.fechaHasta ? "#fff" : "#e0e0e0",
+                                }}
+                            />
+                            <input
+                                type="time"
+                                value={filters.horaHasta}
+                                onChange={(e) => handleFilterChange("horaHasta", e.target.value)}
+                                disabled={!filterEnabled.fechaHasta}
+                                style={{
+                                    backgroundColor: filterEnabled.fechaHasta ? "#fff" : "#e0e0e0",
+                                    textAlign: "center",
+                                    lineHeight: "1.2",
+                                    height: "36px",
+                                    padding: "0 5px",
+                                }}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
