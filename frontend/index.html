@@ -3,21 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/rocket.svg" />
-    <link href="https://unpkg.com/tabulator-tables@4.9.1/dist/css/tabulator.min.css" rel="stylesheet">
+    <link
+      href="https://unpkg.com/tabulator-tables@4.9.1/dist/css/tabulator.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <!-- ClockPicker CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.css"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ingeniería de Software</title>
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- ClockPicker JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.js"></script>
+
     <script type="module" src="/src/main.jsx"></script>
     <script>
-      document.addEventListener('visibilitychange', function() {
-          if (document.hidden) {
-              document.title = '¿Todo bien por allá? 👀';
-          } else {
-              document.title = 'Ingeniería de Software';
-          }
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden) {
+          document.title = "¿Todo bien por allá? 👀";
+        } else {
+          document.title = "Ingeniería de Software";
+        }
       });
-  </script>
+    </script>
   </body>
 </html>
