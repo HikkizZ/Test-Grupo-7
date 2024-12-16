@@ -1,8 +1,6 @@
 import { useState } from "react";
 
 export default function ReservationSearch({ onFilterUpdate, onReset, loading }) {
-    const [areFiltersActive, setAreFiltersActive] = useState(false);
-
     const [filters, setFilters] = useState({
         devuelto: "",
         tipoReserva: "",
@@ -13,12 +11,33 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
         horaHasta: "",
     });
 
+    const [filterEnabled, setFilterEnabled] = useState({
+        devuelto: false,
+        tipoReserva: false,
+        estado: false,
+        fechaDesde: false,
+        fechaHasta: false,
+    });
+
     const formatDateTime = (date, time) => {
-        if (!date) return ""; // Si no hay fecha, retornamos cadena vacía
+        if (!date) return "";
         const [year, month, day] = date.split("-");
-        if (!time) return `${day}-${month}-${year}`; // Si no hay hora, solo retornamos la fecha
+        if (!time) return `${day}-${month}-${year}`;
         const [hour, minute] = time.split(":");
-        return `${day}-${month}-${year} ${hour}:${minute}`; // Formato DD-MM-YYYY HH:mm
+        return `${day}-${month}-${year} ${hour}:${minute}`;
+    };
+
+    const handleCheckboxChange = (filter) => {
+        setFilterEnabled((prev) => ({
+            ...prev,
+            [filter]: !prev[filter],
+        }));
+
+        if (!filterEnabled[filter]) {
+            handleFilterChange(filter, "");
+            if (filter === "fechaDesde") handleFilterChange("horaDesde", "");
+            if (filter === "fechaHasta") handleFilterChange("horaHasta", "");
+        }
     };
 
     const handleFilterChange = (filter, value) => {
@@ -40,9 +59,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
         } else {
             onFilterUpdate(filter, value);
         }
-
-        const hasActiveFilters = Object.values(updatedFilters).some((val) => val !== "");
-        setAreFiltersActive(hasActiveFilters);
     };
 
     const handleResetFilters = () => {
@@ -55,102 +71,92 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
             fechaHasta: "",
             horaHasta: "",
         });
-        setAreFiltersActive(false);
+
+        setFilterEnabled({
+            devuelto: false,
+            tipoReserva: false,
+            estado: false,
+            fechaDesde: false,
+            fechaHasta: false,
+        });
+
         onReset();
     };
+
+    const filtersActive = Object.values(filterEnabled).some((enabled) => enabled);
 
     return (
         <div>
             <h3>Buscar Reservación</h3>
-            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                <select
-                    value={filters.devuelto}
-                    onChange={(e) => handleFilterChange("devuelto", e.target.value)}
-                    style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
-                >
-                    <option value="">Devuelto</option>
-                    <option value="true">Sí</option>
-                    <option value="false">No</option>
-                </select>
+            <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "nowrap" }}>
+                <FilterSection
+                    label="Devuelto"
+                    filterName="devuelto"
+                    filterValue={filters.devuelto}
+                    enabled={filterEnabled.devuelto}
+                    onCheckboxChange={handleCheckboxChange}
+                    onFilterChange={handleFilterChange}
+                    options={[
+                        { value: "", label: "Seleccione" },
+                        { value: "true", label: "Sí" },
+                        { value: "false", label: "No" },
+                    ]}
+                />
 
-                <select
-                    value={filters.tipoReserva}
-                    onChange={(e) => handleFilterChange("tipoReserva", e.target.value)}
-                    style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
-                >
-                    <option value="">Tipo de Reserva</option>
-                    <option value="sala">Sala</option>
-                    <option value="recurso">Recurso</option>
-                </select>
+                <FilterSection
+                    label="Tipo de Reserva"
+                    filterName="tipoReserva"
+                    filterValue={filters.tipoReserva}
+                    enabled={filterEnabled.tipoReserva}
+                    onCheckboxChange={handleCheckboxChange}
+                    onFilterChange={handleFilterChange}
+                    options={[
+                        { value: "", label: "Seleccione" },
+                        { value: "sala", label: "Sala" },
+                        { value: "recurso", label: "Recurso" },
+                    ]}
+                />
 
-                <select
-                    value={filters.estado}
-                    onChange={(e) => handleFilterChange("estado", e.target.value)}
-                    style={{ padding: "5px", borderRadius: "5px", border: "1px solid #ccc" }}
-                >
-                    <option value="">Estado</option>
-                    <option value="pendiente">Pendiente</option>
-                    <option value="aprobada">Aprobada</option>
-                    <option value="rechazada">Rechazada</option>
-                </select>
+                <FilterSection
+                    label="Estado"
+                    filterName="estado"
+                    filterValue={filters.estado}
+                    enabled={filterEnabled.estado}
+                    onCheckboxChange={handleCheckboxChange}
+                    onFilterChange={handleFilterChange}
+                    options={[
+                        { value: "", label: "Seleccione" },
+                        { value: "pendiente", label: "Pendiente" },
+                        { value: "aprobada", label: "Aprobada" },
+                        { value: "rechazada", label: "Rechazada" },
+                    ]}
+                />
 
-                {/* Fecha Desde */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-                    <label>Fecha Desde</label>
-                    <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
-                        <input
-                            type="date"
-                            value={filters.fechaDesde}
-                            onChange={(e) => handleFilterChange("fechaDesde", e.target.value)}
-                            style={{
-                                padding: "5px",
-                                borderRadius: "5px",
-                                border: "1px solid #ccc",
-                            }}
-                        />
-                        <input
-                            type="time"
-                            value={filters.horaDesde}
-                            onChange={(e) => handleFilterChange("horaDesde", e.target.value)}
-                            step="60" // Incremento de un minuto
-                            style={{
-                                padding: "5px",
-                                borderRadius: "5px",
-                                border: "1px solid #ccc",
-                            }}
-                        />
-                    </div>
-                </div>
+                <DateTimeFilter
+                    label="Fecha Desde"
+                    dateValue={filters.fechaDesde}
+                    timeValue={filters.horaDesde}
+                    enabled={filterEnabled.fechaDesde}
+                    onCheckboxChange={() => handleCheckboxChange("fechaDesde")}
+                    onDateChange={(e) => handleFilterChange("fechaDesde", e.target.value)}
+                    onTimeChange={(e) => handleFilterChange("horaDesde", e.target.value)}
+                    onClearTime={() => handleFilterChange("horaDesde", "")}
+                />
 
-                {/* Fecha Hasta */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-                    <label>Fecha Hasta</label>
-                    <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
-                        <input
-                            type="date"
-                            value={filters.fechaHasta}
-                            onChange={(e) => handleFilterChange("fechaHasta", e.target.value)}
-                            style={{
-                                padding: "5px",
-                                borderRadius: "5px",
-                                border: "1px solid #ccc",
-                            }}
-                        />
-                        <input
-                            type="time"
-                            value={filters.horaHasta}
-                            onChange={(e) => handleFilterChange("horaHasta", e.target.value)}
-                            step="60" // Incremento de un minuto
-                            style={{
-                                padding: "5px",
-                                borderRadius: "5px",
-                                border: "1px solid #ccc",
-                            }}
-                        />
-                    </div>
-                </div>
+                <DateTimeFilter
+                    label="Fecha Hasta"
+                    dateValue={filters.fechaHasta}
+                    timeValue={filters.horaHasta}
+                    enabled={filterEnabled.fechaHasta}
+                    onCheckboxChange={() => handleCheckboxChange("fechaHasta")}
+                    onDateChange={(e) => handleFilterChange("fechaHasta", e.target.value)}
+                    onTimeChange={(e) => handleFilterChange("horaHasta", e.target.value)}
+                    onClearTime={() => handleFilterChange("horaHasta", "")}
+                />
+            </div>
 
-                {areFiltersActive && (
+            {filtersActive && (
+                <div style={{ textAlign: "center", marginTop: "20px" }}>
                     <button
                         onClick={handleResetFilters}
                         style={{
@@ -162,11 +168,100 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                             cursor: "pointer",
                         }}
                     >
-                        Ver Todas las Reservaciones
+                        Resetear Filtros
+                    </button>
+                </div>
+            )}
+
+            {loading && <p>Cargando reservaciones...</p>}
+        </div>
+    );
+}
+
+function FilterSection({
+    label,
+    filterName,
+    filterValue,
+    enabled,
+    onCheckboxChange,
+    onFilterChange,
+    options,
+}) {
+    return (
+        <div>
+            <input type="checkbox" checked={enabled} onChange={() => onCheckboxChange(filterName)} />
+            <label style={{ marginLeft: "5px" }}>{label}</label>
+            <select
+                value={filterValue}
+                onChange={(e) => onFilterChange(filterName, e.target.value)}
+                disabled={!enabled}
+                style={{
+                    backgroundColor: enabled ? "#fff" : "#e0e0e0",
+                }}
+            >
+                {options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                        {option.label}
+                    </option>
+                ))}
+            </select>
+        </div>
+    );
+}
+
+function DateTimeFilter({
+    label,
+    dateValue,
+    timeValue,
+    enabled,
+    onCheckboxChange,
+    onDateChange,
+    onTimeChange,
+    onClearTime,
+}) {
+    return (
+        <div>
+            <input type="checkbox" checked={enabled} onChange={onCheckboxChange} />
+            <label style={{ marginLeft: "5px" }}>{label}</label>
+            <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
+                <input
+                    type="date"
+                    value={dateValue}
+                    onChange={onDateChange}
+                    disabled={!enabled}
+                    style={{
+                        backgroundColor: enabled ? "#fff" : "#e0e0e0",
+                    }}
+                />
+                <input
+                    type="time"
+                    value={timeValue}
+                    onChange={onTimeChange}
+                    disabled={!enabled}
+                    style={{
+                        backgroundColor: enabled ? "#fff" : "#e0e0e0",
+                        textAlign: "center",
+                        lineHeight: "1.2",
+                        height: "36px",
+                        padding: "0 5px",
+                    }}
+                />
+                {timeValue && (
+                    <button
+                        onClick={onClearTime}
+                        style={{
+                            backgroundColor: "#d33",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "5px",
+                            padding: "5px",
+                            cursor: "pointer",
+                        }}
+                    >
+                        X
                     </button>
                 )}
             </div>
-            {loading && <p>Cargando reservaciones...</p>}
         </div>
     );
 }
