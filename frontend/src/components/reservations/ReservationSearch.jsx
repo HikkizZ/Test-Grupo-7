@@ -89,6 +89,10 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
         onReset();
     };
 
+    const clearTimeField = (field) => {
+        handleFilterChange(field, "");
+    };
+
     return (
         <div>
             <h3>Buscar Reservación</h3>
@@ -173,7 +177,7 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                             onChange={() => handleCheckboxChange("fechaDesde")}
                         />
                         <label style={{ marginLeft: "5px" }}>Fecha Desde</label>
-                        <div style={{ display: "flex", gap: "5px" }}>
+                        <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
                             <input
                                 type="date"
                                 value={filters.fechaDesde}
@@ -191,11 +195,27 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                                 style={{
                                     backgroundColor: filterEnabled.fechaDesde ? "#fff" : "#e0e0e0",
                                     textAlign: "center",
-                                    lineHeight: "1.2", // Alinea verticalmente
-                                    height: "36px",    // Ajusta la altura
-                                    padding: "0 5px",  // Espaciado uniforme
+                                    lineHeight: "1.2",
+                                    height: "36px",
+                                    padding: "0 5px",
                                 }}
                             />
+                            {filters.horaDesde && (
+                                <button
+                                    onClick={() => clearTimeField("horaDesde")}
+                                    style={{
+                                        marginLeft: "5px",
+                                        padding: "5px",
+                                        backgroundColor: "#d33",
+                                        color: "#fff",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    X
+                                </button>
+                            )}
                         </div>
                     </div>
 
@@ -207,7 +227,7 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                             onChange={() => handleCheckboxChange("fechaHasta")}
                         />
                         <label style={{ marginLeft: "5px" }}>Fecha Hasta</label>
-                        <div style={{ display: "flex", gap: "5px" }}>
+                        <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
                             <input
                                 type="date"
                                 value={filters.fechaHasta}
@@ -230,6 +250,22 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                                     padding: "0 5px",
                                 }}
                             />
+                            {filters.horaHasta && (
+                                <button
+                                    onClick={() => clearTimeField("horaHasta")}
+                                    style={{
+                                        marginLeft: "5px",
+                                        padding: "5px",
+                                        backgroundColor: "#d33",
+                                        color: "#fff",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    X
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
