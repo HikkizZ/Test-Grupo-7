@@ -6,10 +6,8 @@ import { useUpdateForo } from "@hooks/foro/useUpdateForo";  // Hook adaptado par
 import ForoForm from "@components/ForoForm";  // Formulario para foros
 import ForoTable from "@components/ForoTable";  // Tabla para foros
 
-//IMPORT CSS
-
-import '../styles/Foro.css';  // Ajusta la ruta según la ubicación de tu archivo
-
+// IMPORT CSS
+import "../styles/Foro.css";  
 
 export default function Foros() {
     const { foros, fetchForos, loading: loadingForos } = useGetForos();
@@ -22,7 +20,7 @@ export default function Foros() {
     }, [fetchForos]);
 
     return (
-        <div>
+        <div className="foro-container"> {/* Clase contenedora para aislar estilos */}
             <br />
             <br />
             <br />
