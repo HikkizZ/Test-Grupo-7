@@ -1,21 +1,22 @@
 "use strict";
+
 import {
     createResourceService,
     getResourcesService,
     getResourceService,
     updateResourceService,
-    deleteResourceService
+    deleteResourceService,
 } from "../services/resource.service.js";
 
 import {
     handleErrorClient,
     handleSuccess,
-    handleErrorServer
+    handleErrorServer,
 } from "../handlers/responseHandlers.js";
 
 import {
     resourceBodyValidation,
-    resourceQueryValidation
+    resourceQueryValidation,
 } from "../validations/resource.validation.js";
 
 // Crear un nuevo recurso
@@ -35,29 +36,31 @@ export async function createResource(req, res) {
     }
 }
 
-// Listar todos los recursos (opcionalmente podrían ser solo disponibles)
+// Listar todos los recursos
 export async function getResources(req, res) {
     try {
         const [resources, resourcesError] = await getResourcesService(req);
 
         if (resourcesError) return handleErrorClient(res, 404, resourcesError);
 
-        resources.length === 0 ? handleSuccess(res, 204, "No resources found") : handleSuccess(res, 200, "Resources found", resources);
+        resources.length === 0
+            ? handleSuccess(res, 204, "No resources found")
+            : handleSuccess(res, 200, "Resources found", resources);
     } catch (error) {
         handleErrorServer(res, 500, "Internal Server Error", error.message);
     }
-};
+}
 
 // Mostrar información de un recurso en particular
 export async function getResource(req, res) {
     try {
-        const { id, name } = req.query;
+        const { id, name, brand, resourceType } = req.query;
 
-        const { error } = resourceQueryValidation.validate({ id, name });
+        const { error } = resourceQueryValidation.validate({ id, name, brand, resourceType });
 
         if (error) return handleErrorClient(res, 400, "Validation Error", error.message);
 
-        const [resource, resourceError] = await getResourceService({ idResource: id, nameResource: name });
+        const [resource, resourceError] = await getResourceService({ id, name, brand, resourceType });
 
         if (resourceError) return handleErrorClient(res, 404, resourceError);
 
@@ -65,7 +68,7 @@ export async function getResource(req, res) {
     } catch (error) {
         handleErrorServer(res, 500, "Internal Server Error", error.message);
     }
-};
+}
 
 // Actualizar información de un recurso
 export async function updateResource(req, res) {
@@ -76,13 +79,13 @@ export async function updateResource(req, res) {
 
         const { error: queryError } = resourceQueryValidation.validate({ id, name });
 
-        if (queryError) return handleErrorClient(res, 400, "Validation Query Error", queryError.message);
+        if (queryError) return handleErrorClient(res, 400, "Validation Error", queryError.message);
 
         const { error: bodyError } = resourceBodyValidation.validate(body);
 
-        if (bodyError) return handleErrorClient(res, 400, "Validation Body Error", bodyError.message);
+        if (bodyError) return handleErrorClient(res, 400, "Validation Error", bodyError.message);
 
-        const [resourceUpdated, resourceError] = await updateResourceService({ idResource: id, nameResource: name }, body);
+        const [resourceUpdated, resourceError] = await updateResourceService({ id, name }, body);
 
         if (resourceError) return handleErrorClient(res, 400, resourceError);
 
@@ -90,7 +93,7 @@ export async function updateResource(req, res) {
     } catch (error) {
         handleErrorServer(res, 500, "Internal Server Error", error.message);
     }
-};
+}
 
 // Eliminar un recurso
 export async function deleteResource(req, res) {
@@ -99,9 +102,9 @@ export async function deleteResource(req, res) {
 
         const { error } = resourceQueryValidation.validate({ id, name });
 
-        if (error) return handleErrorClient(res, 400, "Validation Query Error", error.message);
+        if (error) return handleErrorClient(res, 400, "Validation Error", error.message);
 
-        const [resourceDeleted, resourceError] = await deleteResourceService({ idResource: id, nameResource: name });
+        const [resourceDeleted, resourceError] = await deleteResourceService({ id, name });
 
         if (resourceError) return handleErrorClient(res, 400, resourceError);
 
@@ -109,4 +112,4 @@ export async function deleteResource(req, res) {
     } catch (error) {
         handleErrorServer(res, 500, "Internal Server Error", error.message);
     }
-};
+}
