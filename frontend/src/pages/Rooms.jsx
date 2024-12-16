@@ -44,6 +44,13 @@ export default function Rooms() {
     const noRooms = rooms.length === 0;
     const noSearchResults = searchResults.length === 0 && !noRooms;
 
+    const placeholderText = {
+        id: "Buscar por ID",
+        name: "Buscar por Nombre",
+        size: "Buscar por Tamaño (m²)",
+        roomType: "Buscar por Tipo (laboratorio, computacion, clases)",
+    };
+
     return (
         <div>
             <br />
@@ -59,15 +66,7 @@ export default function Rooms() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={
-                        searchFilter === "id"
-                            ? "Buscar por ID"
-                            : searchFilter === "name"
-                            ? "Buscar por Nombre"
-                            : searchFilter === "roomType"
-                            ? "Buscar por Tipo de Sala"
-                            : "Buscar sala"
-                    }
+                    placeholder={placeholderText[searchFilter] || "Buscar sala"}
                     style={{ flex: "1" }}
                 />
                 <select
@@ -85,6 +84,7 @@ export default function Rooms() {
                     <option value="">--Seleccionar filtro--</option>
                     <option value="id">Buscar sala por ID</option>
                     <option value="name">Buscar sala por Nombre</option>
+                    <option value="size">Buscar sala por Tamaño</option>
                     <option value="roomType">Buscar sala por Tipo</option>
                 </select>
                 {searchQuery && (

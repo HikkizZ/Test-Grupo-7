@@ -33,20 +33,18 @@ export async function deleteRoom(id) {
     }
 }
 
-// Buscar una sala por ID o Nombre
-export async function getRoom({ id, name }) {
+// Buscar una sala por parámetros
+export async function getRoom(params) {
     try {
-        const params = {};
-        if (id) params.id = id.trim();
-        if (name) params.name = name.trim();
-
-        const { data } = await axios.get('/room/detail', { params });
+        const queryParams = { ...params };
+        const { data } = await axios.get('/room/detail', { params: queryParams });
         return data.data;
     } catch (error) {
         console.error('Error fetching room:', error.response?.data?.message || error.message);
         throw error.response?.data?.message || 'Error desconocido al buscar la sala.';
     }
 }
+
 
 // Actualizar una sala
 export async function updateRoom(id, data) {

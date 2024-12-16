@@ -64,26 +64,21 @@ export async function getRoomsService() {
 
 export async function getRoomService(query) {
     try {
-        const { idRoom, nameRoom } = query;
-
         const roomRepository = AppDataSource.getRepository(Room);
 
-        // Buscar una sala por ID o nombre
-        const roomFound = await roomRepository.findOne({
-            where: [{ id: idRoom }, { name: nameRoom }],
-        });
+        const filters = [];
+        if (query.id) filters.push({ id: query.id });
+        if (query.name) filters.push({ name: query.name });
+        if (query.size) filters.push({ size: query.size });
+        if (query.roomType) filters.push({ roomType: query.roomType });
 
-        if (!roomFound) {
-            return [null, "Sala no encontrada."];
-        }
+        const roomFound = await roomRepository.findOne({ where: filters });
 
-        // Formatear el tamaño (size) para agregar "m²"
-        const formattedRoomGet = {
-            ...roomFound,
-            size: `${roomFound.size} m²`,
-        };
+        if (!roomFound) return [null, "Sala no encontrada."];
 
-        return [formattedRoomGet, null];
+        const formattedRoom = { ...roomFound, size: `${roomFound.size} m²` };
+
+        return [formattedRoom, null];
     } catch (error) {
         return [null, "Internal Server Error", error.message];
     }
