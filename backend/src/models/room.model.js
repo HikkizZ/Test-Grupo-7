@@ -15,9 +15,19 @@ const RoomSchema = new EntitySchema({
             length: 255,
             nullable: false,
             unique: true,
-        }
+        },
+        size: { // Nueva columna para el tamaño de la sala en metros cuadrados (m2), permite decimales
+            type: "float",
+            nullable: false,
+            // Se mostrará dinámicamente como "45.5 m²" en el backend o frontend
+        },
+        roomType: { // Nueva columna para clasificar la sala
+            type: "enum",
+            enum: ["laboratorio", "computacion", "clases"],
+            nullable: false,
+        },
     },
-    relations:{
+    relations: {
         schedules: { // Relación con Schedule
             target: "Schedule", 
             type: "one-to-many", 

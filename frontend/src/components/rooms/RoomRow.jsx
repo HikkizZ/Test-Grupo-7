@@ -2,33 +2,51 @@ import { useState } from "react";
 
 export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
     const [isEditing, setIsEditing] = useState(false);
-    const [editName, setEditName] = useState(room.name);
+    const [editData, setEditData] = useState({
+        name: room.name,
+        size: room.size.replace(" m²", ""), // Remover "m²" para la edición
+        roomType: room.roomType,
+    });
+
+    // Manejar cambios en los inputs
+    const handleChange = (field, value) => {
+        setEditData((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
 
     const handleEditClick = () => {
         setIsEditing(true);
-        setEditName(room.name);
     };
 
     const handleCancelEdit = () => {
         setIsEditing(false);
-        setEditName(room.name);
+        setEditData({
+            name: room.name,
+            size: room.size.replace(" m²", ""),
+            roomType: room.roomType,
+        });
     };
 
     const handleSaveEdit = () => {
-        onUpdate(room.id, { name: editName });
+        onUpdate(room.name, { // Usar el nombre como identificador para actualizar
+            ...editData,
+            size: parseFloat(editData.size), // Asegurar que el tamaño es un número válido
+        });
         setIsEditing(false);
     };
 
     return (
         <tr>
-            <td>{room.id}</td>
             <td>
                 {isEditing ? (
                     <input
                         type="text"
-                        value={editName}
-                        onChange={(e) => setEditName(e.target.value)}
+                        value={editData.name}
+                        onChange={(e) => handleChange("name", e.target.value)}
                         disabled={loadingUpdate}
+                        placeholder="Nombre"
                         style={{
                             width: "100%",
                             padding: "5px",
@@ -38,6 +56,46 @@ export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadi
                     />
                 ) : (
                     room.name
+                )}
+            </td>
+            <td>
+                {isEditing ? (
+                    <input
+                        type="number"
+                        value={editData.size}
+                        onChange={(e) => handleChange("size", e.target.value)}
+                        disabled={loadingUpdate}
+                        placeholder="Tamaño"
+                        style={{
+                            width: "100%",
+                            padding: "5px",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                        }}
+                    />
+                ) : (
+                    room.size
+                )}
+            </td>
+            <td>
+                {isEditing ? (
+                    <select
+                        value={editData.roomType}
+                        onChange={(e) => handleChange("roomType", e.target.value)}
+                        disabled={loadingUpdate}
+                        style={{
+                            width: "100%",
+                            padding: "5px",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                        }}
+                    >
+                        <option value="laboratorio">Laboratorio</option>
+                        <option value="computacion">Computación</option>
+                        <option value="clases">Clases</option>
+                    </select>
+                ) : (
+                    room.roomType
                 )}
             </td>
             <td>
@@ -91,7 +149,7 @@ export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadi
                             Modificar
                         </button>
                         <button
-                            onClick={() => onDelete(room.id)}
+                            onClick={() => onDelete(room.name)} // Usar nombre como identificador para eliminar
                             disabled={loadingDelete}
                             style={{
                                 backgroundColor: "#d33",
