@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export default function ReservationSearch({ onFilterUpdate, onReset, loading }) {
-    const [areFiltersActive, setAreFiltersActive] = useState(false);
+    const [ setAreFiltersActive] = useState(false);
 
     const [filters, setFilters] = useState({
         devuelto: "",
@@ -35,7 +35,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
             [filter]: !prev[filter],
         }));
 
-        // Limpiar valores cuando se desactiva el filtro
         if (!filterEnabled[filter]) {
             handleFilterChange(filter, "");
             if (filter === "fechaDesde") handleFilterChange("horaDesde", "");
@@ -186,6 +185,10 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                             disabled={!filterEnabled.fechaDesde}
                             style={{
                                 backgroundColor: filterEnabled.fechaDesde ? "#fff" : "#e0e0e0",
+                                textAlign: "center",
+                                lineHeight: "1.2", // Alinea verticalmente
+                                height: "36px",    // Ajusta la altura
+                                padding: "0 5px",  // Espaciado uniforme
                             }}
                         />
                     </div>
@@ -216,6 +219,10 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                             disabled={!filterEnabled.fechaHasta}
                             style={{
                                 backgroundColor: filterEnabled.fechaHasta ? "#fff" : "#e0e0e0",
+                                textAlign: "center",
+                                lineHeight: "1.2",
+                                height: "36px",
+                                padding: "0 5px",
                             }}
                         />
                     </div>
