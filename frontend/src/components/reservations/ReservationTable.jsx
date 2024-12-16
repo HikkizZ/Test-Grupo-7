@@ -1,11 +1,23 @@
 import ReservationRow from "./ReservationRow";
+import { parse } from "date-fns";
 
 export default function ReservationTable({ reservations, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
+    // Función para convertir fechaDesde en objeto Date
+    const parseFechaDesde = (fecha) => {
+        return parse(fecha, "dd-MM-yyyy HH:mm", new Date());
+    };
+
+    // Ordenar reservaciones por fechaDesde (ascendente)
+    const sortedReservations = [...reservations].sort((a, b) => {
+        const dateA = parseFechaDesde(a.fechaDesde); // Parsear fecha
+        const dateB = parseFechaDesde(b.fechaDesde);
+        return dateA - dateB; // Orden ascendente
+    });
+
     return (
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Fecha Desde</th>
                     <th>Fecha Hasta</th>
                     <th>Tipo Reserva</th>
@@ -17,16 +29,22 @@ export default function ReservationTable({ reservations, onUpdate, onDelete, loa
                 </tr>
             </thead>
             <tbody>
-                {reservations.map((reservation) => (
-                    <ReservationRow
-                        key={reservation.id}
-                        reservation={reservation}
-                        onUpdate={onUpdate}
-                        onDelete={onDelete}
-                        loadingUpdate={loadingUpdate}
-                        loadingDelete={loadingDelete}
-                    />
-                ))}
+                {sortedReservations.length > 0 ? (
+                    sortedReservations.map((reservation) => (
+                        <ReservationRow
+                            key={reservation.id}
+                            reservation={reservation}
+                            onUpdate={onUpdate}
+                            onDelete={onDelete}
+                            loadingUpdate={loadingUpdate}
+                            loadingDelete={loadingDelete}
+                        />
+                    ))
+                ) : (
+                    <tr>
+                        <td colSpan="8" style={{ textAlign: "center" }}>No se encontraron reservaciones.</td>
+                    </tr>
+                )}
             </tbody>
         </table>
     );

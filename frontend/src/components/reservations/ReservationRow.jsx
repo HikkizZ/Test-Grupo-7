@@ -1,30 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ReservationRow({ reservation, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
     const [isEditing, setIsEditing] = useState(false);
     const [editState, setEditState] = useState(reservation.estado);
     const [editDevuelto, setEditDevuelto] = useState(reservation.devuelto);
 
+    useEffect(() => {
+        // Actualizar el valor de devuelto si el estado cambia
+        if (editState === "rechazada") {
+            setEditDevuelto(true); // Siempre true si estado es rechazada
+        } else if (editState === "pendiente") {
+            setEditDevuelto(false); // Siempre false si estado es pendiente
+        }
+    }, [editState]);
+
     const handleEditClick = () => {
         setIsEditing(true);
-        setEditState(reservation.estado); // Inicializa con el estado actual
-        setEditDevuelto(reservation.devuelto); // Inicializa con el devuelto actual
+        setEditState(reservation.estado);
+        setEditDevuelto(reservation.devuelto);
     };
 
     const handleCancelEdit = () => {
         setIsEditing(false);
-        setEditState(reservation.estado); // Reinicia al valor original
+        setEditState(reservation.estado);
         setEditDevuelto(reservation.devuelto);
     };
 
     const handleSaveEdit = () => {
+        // Enviar los datos actualizados al backend
         onUpdate(reservation.id, { estado: editState, devuelto: editDevuelto });
         setIsEditing(false);
     };
 
     return (
         <tr>
-            <td>{reservation.id}</td>
             <td>{reservation.fechaDesde}</td>
             <td>{reservation.fechaHasta}</td>
             <td>{reservation.tipoReserva}</td>
@@ -51,20 +60,29 @@ export default function ReservationRow({ reservation, onUpdate, onDelete, loadin
             </td>
             <td>
                 {isEditing ? (
-                    <select
-                        value={editDevuelto ? "Sí" : "No"}
-                        onChange={(e) => setEditDevuelto(e.target.value === "Sí")}
-                        disabled={loadingUpdate}
-                        style={{
-                            width: "100%",
-                            padding: "5px",
-                            border: "1px solid #ccc",
-                            borderRadius: "4px",
-                        }}
-                    >
-                        <option value="Sí">Sí</option>
-                        <option value="No">No</option>
-                    </select>
+                    editState === "aprobada" ? (
+                        // Permitir edición si estado es aprobada
+                        <select
+                            value={editDevuelto ? "Sí" : "No"}
+                            onChange={(e) => setEditDevuelto(e.target.value === "Sí")}
+                            disabled={loadingUpdate}
+                            style={{
+                                width: "100%",
+                                padding: "5px",
+                                border: "1px solid #ccc",
+                                borderRadius: "4px",
+                            }}
+                        >
+                            <option value="Sí">Sí</option>
+                            <option value="No">No</option>
+                        </select>
+                    ) : editState === "rechazada" ? (
+                        // Estado rechazada: Siempre "Sí"
+                        <span>Sí</span>
+                    ) : (
+                        // Estado pendiente: Siempre "No"
+                        <span>No</span>
+                    )
                 ) : (
                     reservation.devuelto ? "Sí" : "No"
                 )}

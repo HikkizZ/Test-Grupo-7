@@ -15,7 +15,6 @@ export function useSearchReservation(reservations) {
         const filterReservations = () => {
             let filteredResults = reservations;
 
-            // Aplica filtros dinámicamente
             if (searchFilters.id) {
                 filteredResults = filteredResults.filter((reservation) =>
                     reservation.id.toString().includes(searchFilters.id)
@@ -42,16 +41,14 @@ export function useSearchReservation(reservations) {
             }
 
             if (searchFilters.fechaDesde) {
-                // Comparación exacta de cadenas
                 filteredResults = filteredResults.filter(
-                    (reservation) => reservation.fechaDesde === searchFilters.fechaDesde
+                    (reservation) => reservation.fechaDesde.startsWith(searchFilters.fechaDesde)
                 );
             }
 
             if (searchFilters.fechaHasta) {
-                // Comparación exacta de cadenas
                 filteredResults = filteredResults.filter(
-                    (reservation) => reservation.fechaHasta === searchFilters.fechaHasta
+                    (reservation) => reservation.fechaHasta.startsWith(searchFilters.fechaHasta)
                 );
             }
 
