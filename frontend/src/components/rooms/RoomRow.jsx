@@ -30,12 +30,12 @@ export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadi
     };
 
     const handleSaveEdit = () => {
-        onUpdate(room.name, { // Usar el nombre como identificador para actualizar
+        onUpdate(room.id, {
             ...editData,
-            size: parseFloat(editData.size), // Asegurar que el tamaño es un número válido
+            size: parseFloat(editData.size), // Asegura que el tamaño sea número
         });
         setIsEditing(false);
-    };
+    };    
 
     return (
         <tr>
@@ -149,7 +149,7 @@ export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadi
                             Modificar
                         </button>
                         <button
-                            onClick={() => onDelete(room.name)} // Usar nombre como identificador para eliminar
+                            onClick={() => onDelete(room.id)} // Usar nombre como identificador para eliminar
                             disabled={loadingDelete}
                             style={{
                                 backgroundColor: "#d33",

@@ -14,19 +14,24 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
         roomType: false,
     });
 
+    // Mostrar botón de reset dinámicamente
+    const [filtersActive, setFiltersActive] = useState(false);
+
     // Buscador General
     const handleSearch = (e) => {
         const value = e.target.value;
         setQuery(value);
         onSearch(value);
+        setFiltersActive(value.trim().length > 0 || Object.values(filterEnabled).includes(true));
     };
 
     // Checkbox Handling
     const handleCheckboxChange = (filter) => {
-        setFilterEnabled((prev) => ({
-            ...prev,
-            [filter]: !prev[filter],
-        }));
+        setFilterEnabled((prev) => {
+            const updated = { ...prev, [filter]: !prev[filter] };
+            setFiltersActive(Object.values(updated).includes(true) || query.trim().length > 0);
+            return updated;
+        });
 
         if (filterEnabled[filter]) {
             handleFilterChange(filter, "");
@@ -35,23 +40,22 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
 
     // Actualizar filtros individuales
     const handleFilterChange = (filter, value) => {
-        setFilters((prev) => ({
-            ...prev,
-            [filter]: value,
-        }));
+        setFilters((prev) => {
+            const updated = { ...prev, [filter]: value };
+            setFiltersActive(Object.values(updated).some((val) => val.trim().length > 0) || query.trim().length > 0);
+            return updated;
+        });
         onFilterUpdate(filter, value);
     };
 
-    // Resetear filtros
+    // Resetear filtros y buscador
     const resetFilters = () => {
         setFilters({ name: "", size: "", roomType: "" });
         setFilterEnabled({ name: false, size: false, roomType: false });
         setQuery("");
-        onReset(); // Llama a la función para restablecer desde el padre
+        setFiltersActive(false);
+        onReset();
     };
-
-    // Comprobar si hay filtros activos
-    const filtersActive = Object.values(filterEnabled).some((enabled) => enabled);
 
     return (
         <div>
@@ -61,7 +65,7 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
                     type="text"
                     value={query}
                     onChange={handleSearch}
-                    placeholder="Buscar por Nombre, Tamaño o Tipo"
+                    placeholder="Buscar por Nombre, Tamaño o Tipo de Sala"
                     style={{
                         width: "100%",
                         padding: "10px",
@@ -153,7 +157,7 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
                             cursor: "pointer",
                         }}
                     >
-                        Resetear Filtros
+                        Resetear Búsqueda
                     </button>
                 </div>
             )}

@@ -42,6 +42,23 @@ export default function RoomForm({ onCreate, loading, onClose }) {
             );
             return;
         }
+
+        if (roomName.trim().length < 3) {
+            showErrorAlert(
+                "Nombre demasiado corto",
+                "El nombre de la sala debe tener al menos 3 caracteres."
+            );
+            return;
+        }
+
+        if (parseFloat(roomSize) <= 0) {
+            showErrorAlert(
+                "Tamaño inválido",
+                "El tamaño de la sala debe ser un número positivo."
+            );
+            return;
+        }
+
         onCreate({ name: roomName, size: parseFloat(roomSize), roomType });
         handleCancel();
     };
@@ -53,7 +70,7 @@ export default function RoomForm({ onCreate, loading, onClose }) {
             style={modalStyles}
             ariaHideApp={false}
         >
-            <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Crear Sala</h2>
+            <h2 style={{ textAlign: "center", marginBottom: "20px", color: "#333" }}>Crear Sala</h2>
             <input
                 type="text"
                 value={roomName}
@@ -99,7 +116,7 @@ export default function RoomForm({ onCreate, loading, onClose }) {
             >
                 <option value="">Seleccionar tipo de sala</option>
                 <option value="laboratorio">Laboratorio</option>
-                <option value="computacion">Computacion</option>
+                <option value="computacion">Computación</option>
                 <option value="clases">Clases</option>
             </select>
             <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
