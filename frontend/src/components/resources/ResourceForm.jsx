@@ -2,7 +2,6 @@ import { useState } from "react";
 import Modal from "react-modal";
 import { showErrorAlert } from "../../utils/alerts";
 
-// Estilo para la ventana modal
 const modalStyles = {
     content: {
         top: "50%",
@@ -25,14 +24,25 @@ const modalStyles = {
 
 export default function ResourceForm({ onCreate, loading, onClose }) {
     const [resourceName, setResourceName] = useState("");
+    const [resourceBrand, setResourceBrand] = useState("");
+    const [resourceType, setResourceType] = useState("");
 
     const handleCancel = () => {
         setResourceName("");
+        setResourceBrand("");
+        setResourceType("");
         onClose();
     };
 
     const handleSubmit = () => {
-        if (!resourceName.trim()) return;
+        if (!resourceName.trim() || !resourceBrand.trim() || !resourceType) {
+            showErrorAlert(
+                "Campos incompletos",
+                "Debes completar todos los campos para crear un recurso."
+            );
+            return;
+        }
+
         if (resourceName.trim().length < 3) {
             showErrorAlert(
                 "Nombre demasiado corto",
@@ -40,9 +50,17 @@ export default function ResourceForm({ onCreate, loading, onClose }) {
             );
             return;
         }
-        onCreate({ name: resourceName });
-        setResourceName("");
-        onClose();
+
+        if (resourceBrand.trim().length < 2) {
+            showErrorAlert(
+                "Marca inválida",
+                "La marca del recurso debe tener al menos 2 caracteres."
+            );
+            return;
+        }
+
+        onCreate({ name: resourceName, brand: resourceBrand, resourceType });
+        handleCancel();
     };
 
     return (
@@ -52,7 +70,9 @@ export default function ResourceForm({ onCreate, loading, onClose }) {
             style={modalStyles}
             ariaHideApp={false}
         >
-            <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Crear Recurso</h2>
+            <h2 style={{ textAlign: "center", marginBottom: "20px", color: "#333" }}>
+                Crear Recurso
+            </h2>
             <input
                 type="text"
                 value={resourceName}
@@ -68,6 +88,39 @@ export default function ResourceForm({ onCreate, loading, onClose }) {
                     fontSize: "14px",
                 }}
             />
+            <input
+                type="text"
+                value={resourceBrand}
+                onChange={(e) => setResourceBrand(e.target.value)}
+                placeholder="Marca del recurso"
+                disabled={loading}
+                style={{
+                    width: "100%",
+                    padding: "10px",
+                    marginBottom: "20px",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    fontSize: "14px",
+                }}
+            />
+            <select
+                value={resourceType}
+                onChange={(e) => setResourceType(e.target.value)}
+                disabled={loading}
+                style={{
+                    width: "100%",
+                    padding: "10px",
+                    marginBottom: "20px",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    fontSize: "14px",
+                }}
+            >
+                <option value="">Seleccionar tipo de recurso</option>
+                <option value="Tecnologia">Tecnología</option>
+                <option value="Equipo de Sonido">Equipo de Sonido</option>
+                <option value="Material Didactico">Material Didáctico</option>
+            </select>
             <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
                 <button
                     onClick={handleSubmit}

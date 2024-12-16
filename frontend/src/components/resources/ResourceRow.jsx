@@ -2,33 +2,48 @@ import { useState } from "react";
 
 export default function ResourceRow({ resource, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
     const [isEditing, setIsEditing] = useState(false);
-    const [editName, setEditName] = useState(resource.name); // Inicializamos con el nombre actual
+    const [editData, setEditData] = useState({
+        name: resource.name,
+        brand: resource.brand,
+        resourceType: resource.resourceType,
+    });
+
+    // Manejar cambios en los inputs
+    const handleChange = (field, value) => {
+        setEditData((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
 
     const handleEditClick = () => {
         setIsEditing(true);
-        setEditName(resource.name); // Aseguramos que siempre se use el nombre actual
     };
 
     const handleCancelEdit = () => {
         setIsEditing(false);
-        setEditName(resource.name); // Reinicia el nombre al valor actual
+        setEditData({
+            name: resource.name,
+            brand: resource.brand,
+            resourceType: resource.resourceType,
+        });
     };
 
     const handleSaveEdit = () => {
-        onUpdate(resource.id, { name: editName });
+        onUpdate(resource.id, editData);
         setIsEditing(false);
     };
 
     return (
         <tr>
-            <td>{resource.id}</td>
             <td>
                 {isEditing ? (
                     <input
                         type="text"
-                        value={editName}
-                        onChange={(e) => setEditName(e.target.value)}
+                        value={editData.name}
+                        onChange={(e) => handleChange("name", e.target.value)}
                         disabled={loadingUpdate}
+                        placeholder="Nombre"
                         style={{
                             width: "100%",
                             padding: "5px",
@@ -38,6 +53,46 @@ export default function ResourceRow({ resource, onUpdate, onDelete, loadingUpdat
                     />
                 ) : (
                     resource.name
+                )}
+            </td>
+            <td>
+                {isEditing ? (
+                    <input
+                        type="text"
+                        value={editData.brand}
+                        onChange={(e) => handleChange("brand", e.target.value)}
+                        disabled={loadingUpdate}
+                        placeholder="Marca"
+                        style={{
+                            width: "100%",
+                            padding: "5px",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                        }}
+                    />
+                ) : (
+                    resource.brand
+                )}
+            </td>
+            <td>
+                {isEditing ? (
+                    <select
+                        value={editData.resourceType}
+                        onChange={(e) => handleChange("resourceType", e.target.value)}
+                        disabled={loadingUpdate}
+                        style={{
+                            width: "100%",
+                            padding: "5px",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                        }}
+                    >
+                        <option value="Tecnologia">Tecnología</option>
+                        <option value="Equipo de Sonido">Equipo de Sonido</option>
+                        <option value="Material Didactico">Material Didáctico</option>
+                    </select>
+                ) : (
+                    resource.resourceType
                 )}
             </td>
             <td>

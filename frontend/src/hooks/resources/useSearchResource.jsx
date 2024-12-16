@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import Swal from "sweetalert2";
 
 export function useSearchResource(resources) {
     const [searchQuery, setSearchQuery] = useState("");
-    const [searchFilter, setSearchFilter] = useState("");
+    const [searchFilter, setSearchFilter] = useState(""); // Filtro activo
     const [searchResults, setSearchResults] = useState(resources || []);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -14,30 +13,40 @@ export function useSearchResource(resources) {
             setError(null);
 
             try {
-                let filteredResults = [];
+                let filteredResults = resources;
 
-                if (!searchQuery) {
-                    filteredResults = resources;
-                } else {
-                    if (searchFilter === "id") {
-                        filteredResults = resources.filter((resource) =>
-                            resource.id.toString().includes(searchQuery)
-                        );
-                    } else if (searchFilter === "name") {
-                        filteredResults = resources.filter((resource) =>
-                            resource.name.toLowerCase().includes(searchQuery.toLowerCase())
-                        );
-                    } else {
-                        filteredResults = resources.filter((resource) =>
-                            `${resource.id} ${resource.name.toLowerCase()}`.includes(searchQuery.toLowerCase())
-                        );
+                if (searchQuery) {
+                    switch (searchFilter) {
+                        case "name":
+                            filteredResults = resources.filter((resource) =>
+                                resource.name.toLowerCase().includes(searchQuery.toLowerCase())
+                            );
+                            break;
+                        case "brand":
+                            filteredResults = resources.filter((resource) =>
+                                resource.brand.toLowerCase().includes(searchQuery.toLowerCase())
+                            );
+                            break;
+                        case "resourceType":
+                            filteredResults = resources.filter((resource) =>
+                                resource.resourceType.toLowerCase().includes(searchQuery.toLowerCase())
+                            );
+                            break;
+                        default:
+                            // Búsqueda general si no se selecciona un filtro específico
+                            filteredResults = resources.filter((resource) =>
+                                `${resource.name.toLowerCase()} ${resource.brand.toLowerCase()} ${resource.resourceType.toLowerCase()}`.includes(
+                                    searchQuery.toLowerCase()
+                                )
+                            );
+                            break;
                     }
                 }
 
                 setSearchResults(filteredResults);
             } catch (err) {
-                console.error("Error en búsqueda automática:", err);
-                setError("Error al buscar recursos.");
+                console.error("Error en la búsqueda:", err);
+                setError("Hubo un problema al realizar la búsqueda.");
             } finally {
                 setLoading(false);
             }
@@ -46,36 +55,17 @@ export function useSearchResource(resources) {
         performSearch();
     }, [searchQuery, searchFilter, resources]);
 
+    // Actualizar la consulta de búsqueda
     const handleQueryChange = (query) => {
-        if (searchFilter === "id" && !/^\d*$/.test(query)) {
-            Swal.fire({
-                icon: "error",
-                title: "Error de búsqueda",
-                text: "El ID debe contener solo números.",
-            }).then(() => {
-                const inputElement = document.querySelector('input[type="text"]');
-                if (inputElement) {
-                    inputElement.focus();
-                    inputElement.setSelectionRange(searchQuery.length, searchQuery.length);
-                }
-            });
-            return;
-        }
         setSearchQuery(query);
     };
 
+    // Actualizar el filtro activo
     const handleFilterChange = (filter) => {
-        if (filter === "id" && /\D/.test(searchQuery)) {
-            Swal.fire({
-                icon: "info",
-                title: "Búsqueda restablecida",
-                text: "El buscador ha sido limpiado porque el filtro 'ID' acepta solo números.",
-            });
-            setSearchQuery(""); // Limpia el buscador si contiene letras
-        }
         setSearchFilter(filter);
     };
 
+    // Reiniciar la búsqueda
     const resetSearch = () => {
         setSearchQuery("");
         setSearchResults(resources);

@@ -4,7 +4,7 @@ import axios from './root.service.js';
 export async function getResources() {
     try {
         const { data } = await axios.get('/resource/all');
-        return data.data; 
+        return data.data;
     } catch (error) {
         console.error('Error fetching all resources:', error.response?.data?.message || error.message);
         throw error.response?.data?.message || 'Error desconocido al obtener los recursos.';
@@ -15,7 +15,7 @@ export async function getResources() {
 export async function createResource(resourceData) {
     try {
         const { data } = await axios.post('/resource/', resourceData);
-        return data; 
+        return data;
     } catch (error) {
         console.error('Error creating resource:', error.response?.data?.message || error.message);
         throw error.response?.data?.message || 'Error desconocido al crear el recurso.';
@@ -26,22 +26,19 @@ export async function createResource(resourceData) {
 export async function deleteResource(id) {
     try {
         const { data } = await axios.delete(`/resource/delete/?id=${id}`);
-        return data; 
+        return data;
     } catch (error) {
         console.error('Error deleting resource:', error.response?.data?.message || error.message);
         throw error.response?.data?.message || 'Error desconocido al eliminar el recurso.';
     }
 }
 
-// Buscar un recurso por ID o Nombre
-export async function getResource({ id, name }) {
+// Buscar un recurso por parámetros
+export async function getResource(params) {
     try {
-        const params = {};
-        if (id) params.id = id.trim();
-        if (name) params.name = name.trim();
-
-        const { data } = await axios.get('/resource/detail', { params });
-        return data.data; 
+        const queryParams = { ...params };
+        const { data } = await axios.get('/resource/detail', { params: queryParams });
+        return data.data;
     } catch (error) {
         console.error('Error fetching resource:', error.response?.data?.message || error.message);
         throw error.response?.data?.message || 'Error desconocido al buscar el recurso.';

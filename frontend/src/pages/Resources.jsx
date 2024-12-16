@@ -1,112 +1,89 @@
 import { useEffect, useState } from "react";
-import { useCreateResource } from "../hooks/resources/useCreateResource";
-import { useGetResources } from "../hooks/resources/useGetResources";
-import { useSearchResource } from "../hooks/resources/useSearchResource";
-import { useUpdateResource } from "../hooks/resources/useUpdateResource";
-import { useDeleteResource } from "../hooks/resources/useDeleteResource";
+import ResourceSearch from "../components/resources/ResourceSearch";
 import ResourceTable from "../components/resources/ResourceTable";
 import ResourceForm from "../components/resources/ResourceForm";
+import { useCreateResource } from "../hooks/resources/useCreateResource";
+import { useGetResources } from "../hooks/resources/useGetResources";
+import { useUpdateResource } from "../hooks/resources/useUpdateResource";
+import { useDeleteResource } from "../hooks/resources/useDeleteResource";
 
 export default function Resources() {
     const { resources, fetchResources, loading: loadingResources } = useGetResources();
     const { handleCreate, loading: loadingCreate } = useCreateResource(fetchResources);
     const { handleUpdate, loading: loadingUpdate } = useUpdateResource(fetchResources);
-
-    const [searchResults, setSearchResults] = useState(resources); // Estado de resultados de búsqueda
-    const [showCreateModal, setShowCreateModal] = useState(false); // Control de visibilidad del modal
-
-    const {
-        searchQuery,
-        setSearchQuery,
-        searchFilter,
-        setSearchFilter,
-        searchResults: filteredResults,
-        resetSearch,
-        loading: loadingSearch,
-        error: errorSearch,
-    } = useSearchResource(resources);
-
-    useEffect(() => {
-        setSearchResults(filteredResults);
-    }, [filteredResults]);
-
     const { handleDelete, loading: loadingDelete } = useDeleteResource({
-        resources,
         setResources: fetchResources,
-        searchResults,
-        setSearchResults,
     });
+
+    const [filteredResources, setFilteredResources] = useState([]);
+    const [filters, setFilters] = useState({});
+    const [showCreateModal, setShowCreateModal] = useState(false);
 
     useEffect(() => {
         fetchResources();
     }, [fetchResources]);
 
-    const noResources = resources.length === 0;
-    const noSearchResults = searchResults.length === 0 && !noResources;
+    useEffect(() => {
+        let results = resources;
+
+        if (filters.name) {
+            results = results.filter((resource) =>
+                resource.name.toLowerCase().includes(filters.name.toLowerCase())
+            );
+        }
+        if (filters.brand) {
+            results = results.filter((resource) =>
+                resource.brand.toLowerCase().includes(filters.brand.toLowerCase())
+            );
+        }
+        if (filters.resourceType) {
+            results = results.filter((resource) => resource.resourceType === filters.resourceType);
+        }
+
+        setFilteredResources(results);
+    }, [filters, resources]);
+
+    const handleFilterUpdate = (filter, value) => {
+        setFilters((prev) => ({
+            ...prev,
+            [filter]: value.trim(),
+        }));
+    };
+
+    const handleResetFilters = () => {
+        setFilters({});
+        setFilteredResources(resources);
+    };
 
     return (
         <div>
             <br />
             <br />
             <br />
-            <br />
-            <h1>Recursos</h1>
+            <h1 style={{ textAlign: "center" }}>Recursos</h1>
 
-            {/* Buscar recurso */}
+            {/* Buscar Recurso */}
             <h3>Buscar Recurso</h3>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
-                <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={
-                        searchFilter === "id"
-                            ? "Buscar por ID"
-                            : searchFilter === "name"
-                            ? "Buscar por Nombre"
-                            : "Buscar recurso"
-                    }
-                    style={{ flex: "1" }}
-                />
-                <select
-                    value={searchFilter}
-                    onChange={(e) => setSearchFilter(e.target.value)}
-                    style={{
-                        maxWidth: "200px",
-                        minWidth: "150px",
-                        height: "38px",
-                        borderRadius: "5px",
-                        border: "1px solid #ccc",
-                        padding: "5px",
-                    }}
-                >
-                    <option value="">--Seleccionar filtro--</option>
-                    <option value="id">Buscar recurso por ID</option>
-                    <option value="name">Buscar recurso por Nombre</option>
-                </select>
-                {searchQuery && (
-                    <button
-                        onClick={resetSearch}
-                        style={{
-                            height: "38px",
-                            backgroundColor: "#007bff",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: "5px",
-                            padding: "5px 10px",
-                            cursor: "pointer",
-                        }}
-                    >
-                        Ver Todos los Recursos
-                    </button>
-                )}
-            </div>
+            <ResourceSearch
+                onSearch={(query) =>
+                    setFilteredResources(
+                        resources.filter((resource) =>
+                            `${resource.name.toLowerCase()} ${resource.brand.toLowerCase()} ${resource.resourceType.toLowerCase()}`.includes(
+                                query.toLowerCase()
+                            )
+                        )
+                    )
+                }
+                onFilterUpdate={handleFilterUpdate}
+                onReset={handleResetFilters}
+                loading={loadingResources}
+            />
 
-            {/* Lista de recursos y botón Crear */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px" }}>
+            {/* Lista de Recursos */}
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
                 <h3>Lista de Recursos</h3>
                 <button
-                    onClick={() => setShowCreateModal(true)}
+                    onClick={() => setShowCreateModal(true)} // Mostrar el modal
                     style={{
                         height: "38px",
                         backgroundColor: "#28a745", // Color verde
@@ -122,30 +99,20 @@ export default function Resources() {
                 </button>
             </div>
 
-            {loadingSearch || loadingResources ? (
-                <p>Cargando recursos...</p>
-            ) : errorSearch ? (
-                <p style={{ color: "red" }}>{errorSearch}</p>
-            ) : noResources ? (
-                <p>No hay recursos registrados.</p>
-            ) : noSearchResults ? (
-                <p>No se encontraron recursos que coincidan con tu búsqueda.</p>
-            ) : (
-                <ResourceTable
-                    resources={searchResults}
-                    onDelete={handleDelete}
-                    loadingDelete={loadingDelete}
-                    onUpdate={handleUpdate}
-                    loadingUpdate={loadingUpdate}
-                />
-            )}
+            <ResourceTable
+                resources={filteredResources}
+                onUpdate={handleUpdate}
+                onDelete={handleDelete}
+                loadingUpdate={loadingUpdate}
+                loadingDelete={loadingDelete}
+            />
 
-            {/* Modal para Crear Recurso */}
+            {/* Modal Crear Recurso */}
             {showCreateModal && (
                 <ResourceForm
                     onCreate={handleCreate}
                     loading={loadingCreate}
-                    onClose={() => setShowCreateModal(false)} // Manejo del cierre del modal
+                    onClose={() => setShowCreateModal(false)}
                 />
             )}
         </div>

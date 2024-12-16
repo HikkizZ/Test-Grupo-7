@@ -10,13 +10,14 @@ export function useGetResources() {
         try {
             setLoading(true);
             const response = await getResources();
+
             setResources(response);
             setLoading(false);
         } catch (err) {
             setLoading(false);
-            setError(err.message || "Error al obtener los recursos");
+            setError(err.message || "Error al obtener los recursos.");
         }
-    }, []); // useCallback asegura que la referencia de la función no cambie
+    }, []);
 
     return { resources, fetchResources, loading, error };
 }

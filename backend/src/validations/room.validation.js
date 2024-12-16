@@ -3,7 +3,7 @@
 import Joi from "joi";
 
 // Validación para las consultas (query)
-export const resourceQueryValidation = Joi.object({
+export const roomQueryValidation = Joi.object({
     id: Joi.number()
         .positive()
         .integer()
@@ -16,71 +16,65 @@ export const resourceQueryValidation = Joi.object({
         }),
     name: Joi.string()
         .min(3)
-        .max(255)
+        .max(70)
         .optional()
         .messages({
             "string.empty": "The name is required.",
             "any.required": "The name is required.",
             "string.base": "The name must be a string.",
             "string.min": "The name must be at least 3 characters long.",
-            "string.max": "The name must be at most 255 characters long.",
+            "string.max": "The name must be at most 70 characters long.",
         }),
-    brand: Joi.string()
-        .min(2)
-        .max(255)
+    size: Joi.number()
+        .positive()
         .optional()
         .messages({
-            "string.empty": "The brand cannot be empty.",
-            "string.base": "The brand must be a string.",
-            "string.min": "The brand must be at least 2 characters long.",
-            "string.max": "The brand must be at most 255 characters long.",
+            "number.base": "The size must be a number.",
+            "number.positive": "The size must be a positive number.",
         }),
-    resourceType: Joi.string()
-        .valid("Tecnologia", "Equipo de Sonido", "Material Didactico")
+    roomType: Joi.string()
+        .valid("laboratorio", "computacion", "clases")
         .optional()
         .messages({
-            "string.base": "The resourceType must be a string.",
-            "any.only": "The resourceType must be one of: Tecnologia, Equipo de Sonido, Material Didactico.",
+            "string.base": "The roomType must be a string.",
+            "any.only": "The roomType must be one of: laboratorio, computacion, clases.",
         }),
 })
-.or("id", "name", "brand", "resourceType")
+.or("id", "name", "size", "roomType")
 .messages({
-    "object.unknown": "The query must have at least one field: id, name, brand, or resourceType.",
-    "object.missing": "The query must have at least one field: id, name, brand, or resourceType.",
+    "object.unknown": "The query must have at least one field: id, name, size, or roomType.",
+    "object.missing": "The query must have at least one field: id, name, size, or roomType.",
 });
 
 // Validación para el cuerpo de las peticiones (body)
-export const resourceBodyValidation = Joi.object({
+export const roomBodyValidation = Joi.object({
     name: Joi.string()
         .min(3)
-        .max(255)
+        .max(70)
         .optional()
         .messages({
             "string.empty": "The name cannot be empty.",
             "string.base": "The name must be a string.",
             "string.min": "The name must be at least 3 characters long.",
-            "string.max": "The name must be at most 255 characters long.",
+            "string.max": "The name must be at most 70 characters long.",
         }),
-    brand: Joi.string()
-        .min(2)
-        .max(255)
+    size: Joi.number()
+        .positive()
         .optional()
         .messages({
-            "string.empty": "The brand cannot be empty.",
-            "string.base": "The brand must be a string.",
-            "string.min": "The brand must be at least 2 characters long.",
-            "string.max": "The brand must be at most 255 characters long.",
+            "number.base": "The size must be a number.",
+            "number.positive": "The size must be a positive number.",
         }),
-    resourceType: Joi.string()
-        .valid("Tecnologia", "Equipo de Sonido", "Material Didactico")
+    roomType: Joi.string()
+        .valid("laboratorio", "computacion", "clases")
         .optional()
         .messages({
-            "string.base": "The resourceType must be a string.",
-            "any.only": "The resourceType must be one of: Tecnologia, Equipo de Sonido, Material Didactico.",
+            "string.base": "The roomType must be a string.",
+            "any.only": "The roomType must be one of: laboratorio, computacion, clases.",
         }),
 })
-.or("name", "brand", "resourceType")
+.or("name", "size", "roomType")
 .messages({
-    "object.missing": "At least one of the fields (name, brand, resourceType) must be provided.",
+    "object.missing": "At least one of the fields (name, size, roomType) must be provided.",
     "object.unknown": "Don't send more properties than the ones required.",
 });
