@@ -1,7 +1,7 @@
 import RoomRow from "./RoomRow";
 
-export default function RoomTable({ rooms, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
-    // Ordenar por nombre de sala alfabéticamente
+export default function RoomTable({ rooms, onSelect, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
+    // Ordenar las salas alfabéticamente por nombre
     const sortedRooms = [...rooms].sort((a, b) => a.name.localeCompare(b.name));
 
     return (
@@ -17,8 +17,9 @@ export default function RoomTable({ rooms, onUpdate, onDelete, loadingUpdate, lo
             <tbody>
                 {sortedRooms.map((room) => (
                     <RoomRow
-                        key={room.name} // Usar el nombre como clave 
+                        key={room.id}
                         room={room}
+                        onSelect={onSelect} // Nueva función de selección
                         onUpdate={onUpdate}
                         onDelete={onDelete}
                         loadingUpdate={loadingUpdate}
