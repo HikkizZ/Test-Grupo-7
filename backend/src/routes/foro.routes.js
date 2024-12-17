@@ -1,11 +1,13 @@
 import { Router } from "express";
 import {
-    createNews,
-    getNews,
-    getNewsId,
-    updateNews,
-    deleteNews
-} from "../controllers/news.controller.js";
+    createForo,
+    getForos,
+    getForo,
+    updateForo,
+    deleteForo,
+    getForosByCurso,
+    downloadFile
+} from "../controllers/foro.controller.js";
 import { authenticateJWT } from "../middlewares/authentication.middleware.js";
 import { verifyRole } from "../middlewares/authorization.middleware.js";
 
@@ -14,12 +16,14 @@ const router = Router();
 // Aplicar autenticación JWT a todas las rutas
 router.use(authenticateJWT);
 
-// Definición de rutas para noticias
+// Definición de rutas para foros
 router
-    .post("/", verifyRole(["admin", "Profesor", "Encargado"]), createNews) // Crear una noticia
-    .get("/all", verifyRole(["Encargado", "admin", "Profesor", "Alumno"]), getNews) // Obtener todas las noticias
-    .get("/:id", verifyRole(["Encargado", "admin", "Profesor", "Alumno"]), getNewsId) // Obtener una noticia por ID
-    .patch("/:id", verifyRole(["Encargado", "admin", "Profesor"]), updateNews) // Actualizar una noticia
-    .delete("/:id", verifyRole(["admin"]), deleteNews); // Eliminar una noticia
+    .post("/", verifyRole(["Profesor","admin"]), createForo) // Crear un foro
+    .get("/all", verifyRole(["Profesor", "Alumno","admin","administrador"]), getForos) // Obtener todos los foros
+    .get("/curso/:cursoCode", verifyRole(["Profesor", "Alumno","admin"]), getForosByCurso) // Obtener foros por curso
+    .get("/:id", verifyRole(["Profesor", "Alumno","admin"]), getForo) // Obtener un foro por ID
+    .patch("/:id", verifyRole(["Profesor","admin","Encargado"]), updateForo) // Actualizar un foro
+    .delete("/:id", verifyRole(["Profesor","admin"]), deleteForo) // Eliminar un foro
+    .get("/:foroId/download/:fileName", verifyRole(["Profesor", "Alumno"]), downloadFile); // Descargar archivo adjunto
 
 export default router;

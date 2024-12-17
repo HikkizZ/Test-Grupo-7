@@ -1,156 +1,198 @@
 import { handleSuccess, handleErrorClient, handleErrorServer } from "../handlers/responseHandlers.js";
 import { foroValidation } from "../validations/foro.validation.js";
-import { createForoService, getForosService, getForoService, updateForoService, deleteForoService } from "../services/foro.service.js";
+import { createForoService, getForosService, getForoService, updateForoService, deleteForoService, getForosByCursoService } from "../services/foro.service.js";
+import path from 'path';
+import fs from 'fs';
 
-// Función para crear un nuevo anuncio
+// Función para crear un nuevo foro
 export async function createForo(req, res) {
     try {
         // Extraer datos del cuerpo de la solicitud
-        const { titulo, nombreProfesor, categoria, contenido, fecha } = req.body;
+        const { titulo, categoria, contenido, level, section } = req.body;
         const archivos = req.files; // Archivos subidos
+        const profesorId = req.user.id; // Asumimos que el ID del profesor está en req.user
 
-        // Validar los datos recibidos
-        const { error } = foroValidation.validate({ titulo, nombreProfesor, categoria, contenido, fecha });
-        if (error) {
-            return handleErrorClient(res, 400, error.message);
+        // Log the received data for debugging
+        console.log('Received data:', { titulo, categoria, contenido, level, section, archivos });
+
+        // Ensure all required fields are present
+        if (!titulo || !categoria || !contenido || !level || !section) {
+            return handleErrorClient(res, 400, "Todos los campos son obligatorios");
         }
 
-        // Llamar al servicio para crear el anuncio
+        // Validar los datos recibidos
+        const { error } = foroValidation.validate({ titulo, categoria, contenido, level, section });
+        if (error) {
+            return handleErrorClient(res, 400, error.details[0].message);
+        }
+
+        // Llamar al servicio para crear el foro
         const [foro, errorService] = await createForoService({
             titulo,
-            nombreProfesor,
+            level,
+            section,
             categoria,
             contenido,
-            fecha,
-            archivos
+            archivos,
+            profesorId,
+ 
         });
 
         // Manejar errores del servicio
         if (errorService) {
-            console.error("Error al crear el anuncio:", errorService);
-            return handleErrorServer(res, 500, "Error al crear el anuncio.");
+            console.error("Error al crear el foro:", errorService);
+            return handleErrorServer(res, 500, "Error al crear el foro.");
         }
 
         // Enviar respuesta exitosa
-        handleSuccess(res, 201, "Anuncio creado con éxito", foro);
+        handleSuccess(res, 201, "Foro creado con éxito", foro);
     } catch (error) {
-        console.error("Error en el controlador al crear el anuncio:", error);
+        console.error("Error en el controlador al crear el foro:", error);
         handleErrorServer(res, 500, "Error interno del servidor.", error.message);
     }
 }
 
-// Función para obtener todos los anuncios
+// Función para obtener todos los foros
 export async function getForos(req, res) {
     try {
-        // Llamar al servicio para obtener todos los anuncios
+        // Llamar al servicio para obtener todos los foros
         const [foros, error] = await getForosService();
         if (error) return handleErrorServer(res, 400, error);
 
-        // Manejar el caso de que no se encuentren anuncios
+        // Manejar el caso de que no se encuentren foros
         if (foros.length === 0) {
-            return handleSuccess(res, 200, "No se encontraron anuncios.", []);
+            return handleSuccess(res, 200, "No se encontraron foros.", []);
         }
 
-        // Enviar respuesta exitosa con los anuncios encontrados
-        handleSuccess(res, 200, "Anuncios encontrados", foros);
+        // Enviar respuesta exitosa con los foros encontrados
+        handleSuccess(res, 200, "Foros encontrados", foros);
     } catch (error) {
         handleErrorServer(res, 500, "Error interno del servidor.", error.message);
     }
 }
 
-// Función para obtener un anuncio por ID
+// Función para obtener un foro por ID
 export async function getForo(req, res) {
     try {
         // Extraer el ID de los parámetros de la ruta
         const { id } = req.params;
 
-        // Llamar al servicio para obtener el anuncio por ID
+        // Llamar al servicio para obtener el foro por ID
         const [foro, error] = await getForoService(id);
         if (error) return handleErrorClient(res, 404, error);
 
-        // Enviar respuesta exitosa con el anuncio encontrado
-        handleSuccess(res, 200, "Anuncio encontrado", foro);
+        // Enviar respuesta exitosa con el foro encontrado
+        handleSuccess(res, 200, "Foro encontrado", foro);
     } catch (error) {
         handleErrorServer(res, 500, "Error interno del servidor.", error.message);
     }
 }
 
-// Función para actualizar un anuncio
+// Función para actualizar un foro
 export async function updateForo(req, res) {
     try {
         // Extraer el ID de los parámetros de la ruta y los datos del cuerpo de la solicitud
         const { id } = req.params;
-        const { titulo, nombreProfesor, categoria, contenido, fecha } = req.body;
+        const { titulo, categoria, contenido, level, section } = req.body;
+        const nuevosArchivosAdjuntos = req.files; // Nuevos archivos subidos
+        const userId = req.user.id; // ID del usuario que intenta actualizar el foro
 
         // Validar los datos recibidos
-        const { error } = foroValidation.validate({ titulo, nombreProfesor, categoria, contenido, fecha });
+        const { error } = foroValidation.validate({ titulo, categoria, contenido, level, section });
         if (error) {
-            return handleErrorClient(res, 400, error.message);
+            return handleErrorClient(res, 400, error.details[0].message);
         }
 
-        // Llamar al servicio para actualizar el anuncio
+        // Llamar al servicio para actualizar el foro
         const [foroActualizado, errorService] = await updateForoService(id, {
             titulo,
-            nombreProfesor,
+            level,
+            section,
             categoria,
             contenido,
-            fecha,
-        });
+            nuevosArchivosAdjuntos,
+            level,
+            section
+        }, userId);
 
         // Manejar errores del servicio
         if (errorService) {
-            return handleErrorServer(res, 400, errorService);
+            return handleErrorClient(res, 400, errorService);
         }
 
-        // Enviar respuesta exitosa con el anuncio actualizado
-        handleSuccess(res, 200, "Anuncio actualizado correctamente", foroActualizado);
+        // Enviar respuesta exitosa con el foro actualizado
+        handleSuccess(res, 200, "Foro actualizado correctamente", foroActualizado);
     } catch (error) {
-        console.error("Error al actualizar el anuncio:", error);
+        console.error("Error al actualizar el foro:", error);
         handleErrorServer(res, 500, "Error interno del servidor.", error.message);
     }
 }
 
-// Función para eliminar un anuncio
+// Función para eliminar un foro
 export async function deleteForo(req, res) {
     try {
         // Extraer el ID de los parámetros de la ruta
         const { id } = req.params;
+        const userId = req.user.id; // ID del usuario que intenta eliminar el foro
 
-        // Llamar al servicio para eliminar el anuncio
-        const [foro, error] = await deleteForoService(id);
+        // Llamar al servicio para eliminar el foro
+        const [foro, error] = await deleteForoService(id, userId);
         if (error) return handleErrorClient(res, 404, error);
 
-        // Enviar respuesta exitosa con el anuncio eliminado
-        handleSuccess(res, 200, "Anuncio eliminado", foro);
+        // Enviar respuesta exitosa con el foro eliminado
+        handleSuccess(res, 200, "Foro eliminado", foro);
     } catch (error) {
         handleErrorServer(res, 500, "Error interno del servidor.", error.message);
     }
 }
+
+// Función para obtener foros por curso
+export async function getForosByCurso(req, res) {
+    try {
+        // Extraer el nivel y sección del curso de los parámetros de la ruta
+        const { level, section } = req.params;
+
+        // Llamar al servicio para obtener los foros por curso
+        const [foros, error] = await getForosByCursoService(parseInt(level), section);
+        if (error) return handleErrorServer(res, 400, error);
+
+        // Manejar el caso de que no se encuentren foros
+        if (foros.length === 0) {
+            return handleSuccess(res, 200, "No se encontraron foros para este curso.", []);
+        }
+
+        // Enviar respuesta exitosa con los foros encontrados
+        handleSuccess(res, 200, "Foros encontrados para el curso", foros);
+    } catch (error) {
+        handleErrorServer(res, 500, "Error interno del servidor.", error.message);
+    }
+}
+
+// Función para descargar un archivo adjunto
 export const downloadFile = async (req, res) => {
     try {
-      const { foroId, fileName } = req.params;
-      const foro = await getForo(foroId);
-  
-      if (!foro) {
-        return res.status(404).json({ message: 'Foro no encontrado' });
-      }
-  
-      const file = foro.archivosAdjuntos.find(archivo => archivo.nombre === fileName);
-  
-      if (!file) {
-        return res.status(404).json({ message: 'Archivo no encontrado' });
-      }
-  
-      const filePath = path.join(__dirname, '..', file.archivoPath);
-  
-      if (fs.existsSync(filePath)) {
-        res.download(filePath, file.nombre);
-      } else {
-        res.status(404).json({ message: 'Archivo no encontrado en el servidor' });
-      }
+        const { foroId, fileName } = req.params;
+        const [foro, error] = await getForoService(foroId);
+
+        if (error) {
+            return handleErrorClient(res, 404, "Foro no encontrado");
+        }
+
+        const file = foro.archivosAdjuntos.find(archivo => archivo.nombre === fileName);
+
+        if (!file) {
+            return handleErrorClient(res, 404, "Archivo no encontrado");
+        }
+
+        const filePath = path.join(__dirname, '..', file.archivoPath);
+
+        if (fs.existsSync(filePath)) {
+            res.download(filePath, file.nombre);
+        } else {
+            handleErrorClient(res, 404, "Archivo no encontrado en el servidor");
+        }
     } catch (error) {
-      console.error('Error al descargar el archivo:', error);
-      res.status(500).json({ message: 'Error al descargar el archivo', error: error.message });
+        console.error('Error al descargar el archivo:', error);
+        handleErrorServer(res, 500, "Error al descargar el archivo", error.message);
     }
-  };
-  
+};

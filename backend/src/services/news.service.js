@@ -51,32 +51,31 @@ export async function getNewService(id) {
 // Servicio para actualizar una noticia existente
 export async function updateNewService(id, { tituloNews, nombreAutor, contenido, imagenPortada }) {
     try {
-        const newsRepository = AppDataSource.getRepository(News);
-
-        // Busca la noticia por su ID
-        const news = await newsRepository.findOneBy({ id });
-        if (!news) return [null, "La noticia no existe."];
-
-        // Actualiza los campos de la noticia
-        news.tituloNews = tituloNews;
-        news.nombreAutor = nombreAutor;
-        news.contenido = contenido;
-        if (imagenPortada) {
-            news.imagenPortada = imagenPortada;
-        }
-
-        // Actualiza la fecha de edición
-        news.fechaUpdate = new Date();
-
-        // Guarda los cambios en la base de datos
-        const newsActualizada = await newsRepository.save(news);
-        return [newsActualizada, null];
+      const newsRepository = AppDataSource.getRepository(News);
+  
+      // Busca la noticia por su ID
+      const news = await newsRepository.findOneBy({ id });
+      if (!news) return [null, "La noticia no existe."];
+  
+      // Actualiza los campos de la noticia
+      news.tituloNews = tituloNews || news.tituloNews;
+      news.nombreAutor = nombreAutor || news.nombreAutor;
+      news.contenido = contenido || news.contenido;
+      if (imagenPortada) {
+        news.imagenPortada = imagenPortada;
+      }
+  
+      // Actualiza la fecha de edición
+      news.fechaUpdate = new Date();
+  
+      // Guarda los cambios en la base de datos
+      const newsActualizada = await newsRepository.save(news);
+      return [newsActualizada, null];
     } catch (error) {
-        console.error("Error al actualizar la noticia:", error);
-        return [null, "Error al actualizar la noticia."];
+      console.error("Error al actualizar la noticia:", error);
+      return [null, "Error al actualizar la noticia."];
     }
-}
-
+  }
 // Servicio para eliminar una noticia
 export async function deleteNewService(id) {
     try {

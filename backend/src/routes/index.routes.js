@@ -32,7 +32,7 @@ router
     .use('/room', Room) //! http://localhost:3000/api/room
     .use('/resource', Resource) //! http://localhost:3000/api/resource
     .use('/reservation', Reservation) //! http://localhost:3000/api/reservation
-    .use('/posts', foroRoutes)//!!http://localhost:3000/api/posts
+    .use('/foro', foroRoutes)//!!http://localhost:3000/api/foro
     .use('/news', newsRoutes) //!!http://localhost:3000/api/news
 
 
