@@ -10,15 +10,13 @@
     justify-content: center;
 }
 .subject-popup {
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    height: 570px;
-    width: auto;
-    background: white;
-    position: fixed;
-    border-radius: 12px;
-    overflow: auto;  /* Agrega scroll si el contenido es demasiado grande */
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    width: 90%;
+    max-width: 500px;
 }
 
 .subject-popup-close{
