@@ -1,7 +1,6 @@
 import RoomRow from "./RoomRow";
 
-export default function RoomTable({ rooms, onSelect, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
-    // Ordenar las salas alfabéticamente por nombre
+export default function RoomTable({ rooms, onUpdate, onDelete, loadingUpdate, loadingDelete, role }) {
     const sortedRooms = [...rooms].sort((a, b) => a.name.localeCompare(b.name));
 
     return (
@@ -11,7 +10,7 @@ export default function RoomTable({ rooms, onSelect, onUpdate, onDelete, loading
                     <th>Nombre</th>
                     <th>Tamaño (m²)</th>
                     <th>Tipo de Sala</th>
-                    <th>Acciones</th>
+                    {role !== "Profesor" && role !== "Alumno" && <th>Acciones</th>}
                 </tr>
             </thead>
             <tbody>
@@ -19,11 +18,11 @@ export default function RoomTable({ rooms, onSelect, onUpdate, onDelete, loading
                     <RoomRow
                         key={room.id}
                         room={room}
-                        onSelect={onSelect} // Nueva función de selección
                         onUpdate={onUpdate}
                         onDelete={onDelete}
                         loadingUpdate={loadingUpdate}
                         loadingDelete={loadingDelete}
+                        role={role} // Pasar el rol
                     />
                 ))}
             </tbody>

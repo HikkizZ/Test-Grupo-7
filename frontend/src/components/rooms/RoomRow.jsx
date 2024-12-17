@@ -1,26 +1,12 @@
-export default function RoomRow({ room, onSelect, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
+export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadingDelete, role }) {
     return (
         <tr>
             <td>{room.name}</td>
             <td>{room.size}</td>
             <td>{room.roomType}</td>
-            <td>
-                {onSelect ? (
-                    <button
-                        onClick={() => onSelect(room)}
-                        style={{
-                            backgroundColor: "#28a745",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: "5px",
-                            padding: "5px 10px",
-                            cursor: "pointer",
-                        }}
-                    >
-                        Seleccionar
-                    </button>
-                ) : (
-                    <>
+            {role !== "Profesor" && role !== "Alumno" && (
+                <td>
+                    {onUpdate && (
                         <button
                             onClick={() => onUpdate(room.id)}
                             disabled={loadingUpdate}
@@ -36,6 +22,8 @@ export default function RoomRow({ room, onSelect, onUpdate, onDelete, loadingUpd
                         >
                             Modificar
                         </button>
+                    )}
+                    {onDelete && role === "admin" && (
                         <button
                             onClick={() => onDelete(room.id)}
                             disabled={loadingDelete}
@@ -50,9 +38,9 @@ export default function RoomRow({ room, onSelect, onUpdate, onDelete, loadingUpd
                         >
                             Eliminar
                         </button>
-                    </>
-                )}
-            </td>
+                    )}
+                </td>
+            )}
         </tr>
     );
 }
