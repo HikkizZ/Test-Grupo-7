@@ -19,16 +19,26 @@ export default function Reservations() {
         setReservations: fetchReservations,
     });
 
-    console.log("Usuario obtenido desde AuthContext:", user);
-
-    const { updateFilter, resetFilters, searchResults: filteredResults, loading: loadingSearch } =
+    const { resetFilters, searchResults: filteredResults, loading: loadingSearch } =
         useSearchReservation(reservations);
 
     const [showCreateModal, setShowCreateModal] = useState(false);
 
+    // Estado adicional para manejar los filtros
+    const [filters, setFilters] = useState({});
+
     useEffect(() => {
         fetchReservations();
     }, [fetchReservations]);
+
+    const handleFilterUpdate = (filterName, value) => {
+        setFilters((prevFilters) => ({ ...prevFilters, [filterName]: value }));
+    };
+
+    const handleResetFilters = () => {
+        setFilters({});
+        resetFilters(); // Resetea los filtros generales
+    };
 
     const noReservations = reservations.length === 0;
     const noSearchResults = filteredResults.length === 0 && !noReservations;
@@ -43,7 +53,11 @@ export default function Reservations() {
             <h1>Reservaciones</h1>
 
             {/* Buscar reservaciones */}
-            <ReservationSearch onFilterUpdate={updateFilter} onReset={resetFilters} loading={loadingSearch} />
+            <ReservationSearch
+                onFilterUpdate={handleFilterUpdate}
+                onReset={handleResetFilters}
+                loading={loadingSearch}
+            />
 
             {/* Lista de reservaciones y botón Crear */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px" }}>
@@ -75,12 +89,13 @@ export default function Reservations() {
             ) : (
                 <ReservationTable
                     reservations={filteredResults}
-                    onUpdate={user?.role === "admin" || user?.role === "Encargado" ? handleUpdate : null} // Admin y Encargado pueden modificar
-                    onDelete={user?.role === "admin" ? handleDelete : null} // Solo admin puede eliminar
+                    onUpdate={user?.role === "admin" || user?.role === "Encargado" ? handleUpdate : null}
+                    onDelete={user?.role === "admin" ? handleDelete : null}
                     loadingDelete={loadingDelete}
                     loadingUpdate={loadingUpdate}
-                    hideDevuelto={isProfesorOrAlumno} // Ocultar Devuelto si es Profesor/Alumno
-                    user={user} // Pasar el usuario autenticado
+                    hideDevuelto={isProfesorOrAlumno}
+                    user={user}
+                    filters={filters} // Pasamos los filtros al componente ReservationTable
                 />
             )}
 

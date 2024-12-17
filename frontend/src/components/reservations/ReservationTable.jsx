@@ -9,20 +9,62 @@ export default function ReservationTable({
     loadingDelete,
     user,
     hideDevuelto,
+    filters,
 }) {
     // Función para convertir fechaDesde en objeto Date
     const parseFechaDesde = (fecha) => {
         return parse(fecha, "dd-MM-yyyy HH:mm", new Date());
     };
 
-    // Filtrado de reservaciones
+    // Función para filtrar las reservaciones
     const filteredReservations = reservations.filter((reservation) => {
         const reservanteNombre = reservation.Reservante?.nombre || "-------";
-        if (user?.role === "Profesor" || user?.role === "Alumno") {
-            if (reservanteNombre.trim() === "-------" && reservation.estado !== "aprobada") {
+
+        // Filtrar por Devuelto
+        if (filters?.devuelto && reservation.devuelto?.toString() !== filters.devuelto) {
+            return false;
+        }
+
+        // Filtrar por Tipo de Reserva
+        if (filters?.tipoReserva && reservation.tipoReserva !== filters.tipoReserva) {
+            return false;
+        }
+
+        // Filtrar por Estado
+        if (filters?.estado && reservation.estado !== filters.estado) {
+            return false;
+        }
+
+        // Filtrar por Fecha Desde
+        if (filters?.fechaDesde) {
+            const fechaDesdeFiltro = parseFechaDesde(filters.fechaDesde);
+            const fechaReserva = parseFechaDesde(reservation.fechaDesde);
+            if (fechaReserva < fechaDesdeFiltro) {
                 return false;
             }
         }
+
+        // Filtrar por Fecha Hasta
+        if (filters?.fechaHasta) {
+            const fechaHastaFiltro = parseFechaDesde(filters.fechaHasta);
+            const fechaReserva = parseFechaDesde(reservation.fechaHasta);
+            if (fechaReserva > fechaHastaFiltro) {
+                return false;
+            }
+        }
+
+        // Filtrar por Reservante (nombre)
+        if (filters?.reservante && !reservanteNombre.toLowerCase().includes(filters.reservante.toLowerCase())) {
+            return false;
+        }
+
+        // Lógica especial para Profesor y Alumno
+        if (user?.role === "Profesor" || user?.role === "Alumno") {
+            if (reservanteNombre.trim() === "-------" && reservation.estado !== "aprobada") {
+                return false; // Excluir si no es aprobada
+            }
+        }
+
         return true;
     });
 
@@ -32,9 +74,6 @@ export default function ReservationTable({
         const dateB = parseFechaDesde(b.fechaDesde);
         return dateA - dateB;
     });
-
-    // Determinar si se debe mostrar la columna Acciones
-    const hideActions = user?.role === "Profesor" || user?.role === "Alumno";
 
     return (
         <table>
@@ -47,7 +86,7 @@ export default function ReservationTable({
                     {!hideDevuelto && <th>Devuelto</th>}
                     <th>Reservante</th>
                     <th>Sala/Recurso</th>
-                    {!hideActions && <th>Acciones</th>} {/* Ocultar Acciones */}
+                    {onUpdate || onDelete ? <th>Acciones</th> : null}
                 </tr>
             </thead>
             <tbody>
@@ -62,7 +101,6 @@ export default function ReservationTable({
                             loadingDelete={loadingDelete}
                             user={user}
                             hideDevuelto={hideDevuelto}
-                            hideActions={hideActions} // Pasar la propiedad para la fila
                         />
                     ))
                 ) : (
