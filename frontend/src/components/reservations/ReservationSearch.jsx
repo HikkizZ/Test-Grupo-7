@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export default function ReservationSearch({ onFilterUpdate, onReset, loading }) {
     const [filters, setFilters] = useState({
+        reservante: "", // Nuevo filtro
         devuelto: "",
         tipoReserva: "",
         estado: "",
@@ -12,6 +13,7 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
     });
 
     const [filterEnabled, setFilterEnabled] = useState({
+        reservante: false, // Nuevo checkbox
         devuelto: false,
         tipoReserva: false,
         estado: false,
@@ -57,12 +59,13 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
             );
             onFilterUpdate("fechaHasta", fechaHoraHasta.trim());
         } else {
-            onFilterUpdate(filter, value);
+            onFilterUpdate(filter, value); // Nuevo filtro "reservante" también se manejará aquí
         }
     };
 
     const handleResetFilters = () => {
         setFilters({
+            reservante: "",
             devuelto: "",
             tipoReserva: "",
             estado: "",
@@ -73,6 +76,7 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
         });
 
         setFilterEnabled({
+            reservante: false,
             devuelto: false,
             tipoReserva: false,
             estado: false,
@@ -88,9 +92,8 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
     return (
         <div>
             <h3>Buscar Reservación</h3>
-
-            {/* Primera fila de filtros */}
-            <div style={{ display: "flex", gap: "20px", justifyContent: "center", marginBottom: "10px" }}>
+            {/* Fila 1 */}
+            <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
                 <FilterSection
                     label="Devuelto"
                     filterName="devuelto"
@@ -104,7 +107,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                         { value: "false", label: "No" },
                     ]}
                 />
-
                 <FilterSection
                     label="Tipo de Reserva"
                     filterName="tipoReserva"
@@ -118,7 +120,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                         { value: "recurso", label: "Recurso" },
                     ]}
                 />
-
                 <FilterSection
                     label="Estado"
                     filterName="estado"
@@ -135,7 +136,7 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                 />
             </div>
 
-            {/* Segunda fila de filtros */}
+            {/* Fila 2 */}
             <div style={{ display: "flex", gap: "20px", justifyContent: "center", marginTop: "10px" }}>
                 <DateTimeFilter
                     label="Fecha Desde"
@@ -158,6 +159,32 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                     onTimeChange={(e) => handleFilterChange("horaHasta", e.target.value)}
                     onClearTime={() => handleFilterChange("horaHasta", "")}
                 />
+            </div>
+
+            {/* Nueva Fila: Filtrar por Reservante */}
+            <div style={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
+                <div>
+                    <input
+                        type="checkbox"
+                        checked={filterEnabled.reservante}
+                        onChange={() => handleCheckboxChange("reservante")}
+                    />
+                    <label style={{ marginLeft: "5px" }}>Reservante</label>
+                    <input
+                        type="text"
+                        value={filters.reservante}
+                        onChange={(e) => handleFilterChange("reservante", e.target.value)}
+                        disabled={!filterEnabled.reservante}
+                        placeholder="Nombre del Reservante"
+                        style={{
+                            backgroundColor: filterEnabled.reservante ? "#fff" : "#e0e0e0",
+                            padding: "5px",
+                            marginLeft: "10px",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
+                        }}
+                    />
+                </div>
             </div>
 
             {filtersActive && (
