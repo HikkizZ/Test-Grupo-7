@@ -130,18 +130,15 @@ export default function CursoForm({ onCreate, loading }) {
                         disabled={loading}
                         style={styles.input}
                     />
-                    <select
-                        value={cursoData.year}
+                    <input
+                        type='text'
+                        placeholder='Año'
+                        value={cursoData.year = new Date().getFullYear()}
                         onChange={(e) => setCursoData({ ...cursoData, year: e.target.value })}
+                        readOnly
                         disabled={loading}
-                        style={styles.select}
-                    >
-                        <option value=''>Año</option>
-                        <option value='2022'>2022</option>
-                        <option value='2023'>2023</option>
-                        <option value='2024'>2024</option>
-                        <option value='2025'>2025</option>
-                    </select>
+                        style={{...styles.input, backgroundColor: '#e9ecef', cursor: 'not-allowed'}}
+                    />
                     <div style={styles.buttonGroup}>
                         <button 
                             onClick={handleCancel} 

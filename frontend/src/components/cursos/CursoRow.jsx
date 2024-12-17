@@ -17,7 +17,6 @@ export default function CursoRow({ curso, onEdit, onDelete, loadingUpdate, loadi
 
     };
 
-    console.log('curso:', curso);
     return (
         <>
             <tr style={styles.tr}>
