@@ -1,0 +1,112 @@
+.custom-form {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .custom-form__title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .custom-form__input-container {
+    margin-bottom: 15px;
+    position: relative;
+  }
+
+  .custom-form__select-container {
+    margin-bottom: 15px;
+    position: relative;
+  }
+  
+  .custom-form__label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .custom-form__input{
+    width: 380px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+
+  .custom-form__textarea,
+  .custom-form__select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .custom-form__textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+  
+  .custom-form__select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z' fill='%23000000'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+  }
+  
+  .custom-form__option {
+    font-size: 16px;
+  }
+  
+  .custom-form__toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+  
+  .custom-form__toggle-password img {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .custom-form__error {
+    color: #ff0000;
+    font-size: 14px;
+    margin-top: 5px;
+    display: none;
+  }
+  
+  .custom-form__error--visible {
+    display: block;
+  }
+  
+  .custom-form__submit {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .custom-form__submit:hover {
+    background-color: #0056b3;
+  }
+  
+  .custom-form__footer {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 14px;
+  }
+  
+  
