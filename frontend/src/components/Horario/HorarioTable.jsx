@@ -13,7 +13,6 @@ export default function HorarioTable({
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Curso</th>
                     <th>Profesor</th>
                     <th>RUT</th>
