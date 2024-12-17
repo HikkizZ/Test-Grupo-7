@@ -9,32 +9,51 @@ import { useDeleteRoom } from "../hooks/rooms/useDeleteRoom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Rooms() {
-    const { user } = useAuth(); // Accede al rol del usuario autenticado
+    const { user } = useAuth();
     const { rooms, fetchRooms, loading: loadingRooms } = useGetRooms();
     const { handleCreate, loading: loadingCreate } = useCreateRoom(fetchRooms);
     const { handleUpdate, loading: loadingUpdate } = useUpdateRoom(fetchRooms);
-    const { handleDelete, loading: loadingDelete } = useDeleteRoom({
-        setRooms: fetchRooms,
-    });
+    const { handleDelete, loading: loadingDelete } = useDeleteRoom({ setRooms: fetchRooms });
 
-    const [setFilteredRooms] = useState([]);
-    const [setFilters] = useState({});
+    const [filteredRooms, setFilteredRooms] = useState([]); // Estado de filtrado
+    const [filters, setFilters] = useState({}); // Filtros aplicados
     const [showCreateModal, setShowCreateModal] = useState(false);
 
     useEffect(() => {
-        fetchRooms();
+        fetchRooms(); // Cargar las salas al montar el componente
     }, [fetchRooms]);
 
+    useEffect(() => {
+        setFilteredRooms(rooms); // Inicializa las salas al cargarlas
+    }, [rooms]);
+
     const handleFilterUpdate = (filter, value) => {
-        setFilters((prev) => ({
-            ...prev,
-            [filter]: value.trim(),
-        }));
+        const updatedFilters = { ...filters, [filter]: value.trim() };
+        setFilters(updatedFilters);
+
+        let results = rooms; // Filtrar a partir del estado original de las salas
+
+        // Aplicar filtros individuales
+        if (updatedFilters.name) {
+            results = results.filter((room) =>
+                room.name.toLowerCase().includes(updatedFilters.name.toLowerCase())
+            );
+        }
+        if (updatedFilters.size) {
+            results = results.filter((room) =>
+                room.size.replace(" m²", "") === updatedFilters.size
+            );
+        }
+        if (updatedFilters.roomType) {
+            results = results.filter((room) => room.roomType === updatedFilters.roomType);
+        }
+
+        setFilteredRooms(results);
     };
 
     const handleResetFilters = () => {
         setFilters({});
-        setFilteredRooms(rooms);
+        setFilteredRooms(rooms); // Reinicia las salas al estado original
     };
 
     return (
@@ -45,15 +64,14 @@ export default function Rooms() {
             {/* Buscar Sala */}
             <h3>Buscar Sala</h3>
             <RoomSearch
-                onSearch={(query) =>
-                    setFilteredRooms(
-                        rooms.filter((room) =>
-                            `${room.name.toLowerCase()} ${room.size} ${room.roomType.toLowerCase()}`.includes(
-                                query.toLowerCase()
-                            )
+                onSearch={(query) => {
+                    const filtered = rooms.filter((room) =>
+                        `${room.name.toLowerCase()} ${room.size} ${room.roomType.toLowerCase()}`.includes(
+                            query.toLowerCase()
                         )
-                    )
-                }
+                    );
+                    setFilteredRooms(filtered);
+                }}
                 onFilterUpdate={handleFilterUpdate}
                 onReset={handleResetFilters}
                 loading={loadingRooms}
@@ -62,7 +80,7 @@ export default function Rooms() {
             {/* Lista de Salas */}
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
                 <h3>Lista de Salas</h3>
-                {user?.role === "admin" && ( // Solo el admin puede ver el botón de crear
+                {user?.role === "admin" && (
                     <button
                         onClick={() => setShowCreateModal(true)}
                         style={{
@@ -82,12 +100,12 @@ export default function Rooms() {
             </div>
 
             <RoomTable
-                rooms={rooms}
-                onUpdate={["admin", "Encargado"].includes(user?.role) ? handleUpdate : null} // Solo Admin y Encargado
-                onDelete={user?.role === "admin" ? handleDelete : null} // Solo Admin
+                rooms={filteredRooms} // Renderiza el estado filtrado
+                onUpdate={["admin", "Encargado"].includes(user?.role) ? handleUpdate : null}
+                onDelete={user?.role === "admin" ? handleDelete : null}
                 loadingUpdate={loadingUpdate}
                 loadingDelete={loadingDelete}
-                role={user?.role} // Pasar el rol al componente
+                role={user?.role}
             />
 
             {/* Modal Crear Sala */}
