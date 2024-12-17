@@ -185,10 +185,16 @@ export async function createHorarioService(body) {
 export async function updateHorarioService(query, body) {
     try {
         const { idHorario } = query;
+        console.log("Cuerpo recibido en el backend:", body);
 
         const horarioRepository = AppDataSource.getRepository(Horario);
+        const userRepository = AppDataSource.getRepository(User);
+        const subjectRepository = AppDataSource.getRepository(Subject);
+        const periodRepository = AppDataSource.getRepository(Period);
+        const cursoRepository = AppDataSource.getRepository(Curso);
+        const roomRepository = AppDataSource.getRepository(Room);
 
-        // Buscar el horario existente con las relaciones necesarias
+        // Buscar el horario existente
         const horarioFound = await horarioRepository.findOne({
             where: { id: idHorario },
             relations: ["teacher", "subject", "curso", "room", "period"],
@@ -196,10 +202,41 @@ export async function updateHorarioService(query, body) {
 
         if (!horarioFound) return [null, "Horario no encontrado."];
 
+        // Buscar entidades relacionadas si se envían en el body
+        const teacher = body.teacherId
+            ? await userRepository.findOne({ where: { rut: body.teacherId } })
+            : horarioFound.teacher;
+        if (body.teacherId && !teacher) return [null, "El profesor especificado no existe."];
+
+        const subject = body.subjectId
+            ? await subjectRepository.findOne({ where: { name: body.subjectId } })
+            : horarioFound.subject;
+        if (body.subjectId && !subject) return [null, "La asignatura especificada no existe."];
+
+        const period = body.periodId
+            ? await periodRepository.findOne({ where: { name: body.periodId } })
+            : horarioFound.period;
+        if (body.periodId && !period) return [null, "El período especificado no existe."];
+
+        const curso = body.cursoId
+            ? await cursoRepository.findOne({ where: { code: body.cursoId } })
+            : horarioFound.curso;
+        if (body.cursoId && !curso) return [null, "El curso especificado no existe."];
+
+        const room = body.classroomId
+            ? await roomRepository.findOne({ where: { name: body.classroomId } })
+            : horarioFound.room;
+        if (body.classroomId && !room) return [null, "La sala especificada no existe."];
+
         // Actualizar el horario con los nuevos datos
         const updatedHorario = await horarioRepository.save({
-            ...horarioFound,
-            ...body,
+            id: horarioFound.id,
+            teacher, // Relación con User
+            subject, // Relación con Subject
+            curso,   // Relación con Curso
+            room,    // Relación con Room
+            dayOfWeek: body.dayOfWeek || horarioFound.dayOfWeek,
+            period,  // Relación con Period
         });
 
         // Volver a cargar las relaciones después de la actualización
@@ -210,8 +247,11 @@ export async function updateHorarioService(query, body) {
 
         // Preparar los datos con nombres en lugar de IDs
         const responseData = {
-            teacherName: updatedHorarioWithRelations.teacher.name,
-            subjectName: updatedHorarioWithRelations.subject.name,
+            teacher: {
+                name: updatedHorarioWithRelations.teacher.name,
+                rut: updatedHorarioWithRelations.teacher.rut,
+            },
+            subject: updatedHorarioWithRelations.subject.name,
             curso: {
                 name: updatedHorarioWithRelations.curso.name,
                 code: updatedHorarioWithRelations.curso.code,
@@ -225,12 +265,15 @@ export async function updateHorarioService(query, body) {
             },
         };
 
+        console.log("Datos actualizados correctamente:", responseData);
         return [responseData, null];
     } catch (error) {
         console.error("Error al actualizar el horario:", error);
         return [null, "Error interno del servidor"];
     }
 }
+
+
 
 
 export async function deleteHorarioService(query) {
