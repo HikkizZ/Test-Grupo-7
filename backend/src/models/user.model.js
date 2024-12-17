@@ -48,6 +48,14 @@ const UserSchema = new EntitySchema({
             onUpdate: 'CURRENT_TIMESTAMP',
             nullable: false,
         },
+    }, 
+    relations: {
+        horarios: { // Relación con Horarios 
+            target: "Horario",
+            type: "one-to-many", 
+            inverseSide: "teacher", 
+            onDelete: "CASCADE",
+        },
     },
     indices: [ //? Indexes of the table to optimize the search.
         {
