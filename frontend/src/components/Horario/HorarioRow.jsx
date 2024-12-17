@@ -127,7 +127,7 @@ export default function HorarioRow({ horario, onUpdate, onDelete, loadingUpdate,
                      }
                      disabled={loadingUpdate}
                  >
-                     <option value="">Selecciona un período</option>
+    
                      {periods.map((p) => (
                          <option key={p.id} value={p.name}> {/* El valor es el nombre */}
                              {p.name} {/* Mostrar el nombre */}
