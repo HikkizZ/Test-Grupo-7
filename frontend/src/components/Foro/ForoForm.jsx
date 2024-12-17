@@ -3,15 +3,11 @@ import styles from '@styles/foro.module.css';
 
 function ForoForm({ onCreate, loading, onCancel }) {
     const [titulo, setTitulo] = useState('');
-    const [nombreProfesor, setNombreProfesor] = useState('');
     const [categoria, setCategoria] = useState('');
-    const [fecha, setFecha] = useState('');
+    const [contenido, setContenido] = useState('');
+    const [level, setLevel] = useState('');
+    const [section, setSection] = useState('');
     const [archivos, setArchivos] = useState([]);
-
-    const handleFechaChange = (event) => {
-        const selectedDate = event.target.value;
-        setFecha(selectedDate);
-    };
 
     const handleFileChange = (event) => {
         setArchivos(Array.from(event.target.files));
@@ -20,25 +16,25 @@ function ForoForm({ onCreate, loading, onCancel }) {
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        const [year, month, day] = fecha.split("-");
-        const formattedDate = `${day}/${month}/${year}`;
-
         const formData = new FormData();
         formData.append('titulo', titulo);
-        formData.append('nombreProfesor', nombreProfesor);
         formData.append('categoria', categoria);
-        formData.append('fecha', formattedDate);
+        formData.append('contenido', contenido);
+        formData.append('level', level);
+        formData.append('section', section);
 
-        archivos.forEach((archivo, index) => {
-            formData.append(`archivos`, archivo);
+        archivos.forEach((archivo) => {
+            formData.append('archivos', archivo);
         });
 
         onCreate(formData);
         
+        // Reset form fields
         setTitulo('');
-        setNombreProfesor('');
         setCategoria('');
-        setFecha('');
+        setContenido('');
+        setLevel('');
+        setSection('');
         setArchivos([]);
     };
 
@@ -51,17 +47,6 @@ function ForoForm({ onCreate, loading, onCancel }) {
                     type="text"
                     value={titulo}
                     onChange={(e) => setTitulo(e.target.value)}
-                    required
-                    className={styles.formInput}
-                />
-            </div>
-            <div className={styles.formGroup}>
-                <label htmlFor="nombreProfesor" className={styles.formLabel}>Nombre del Profesor:</label>
-                <input
-                    id="nombreProfesor"
-                    type="text"
-                    value={nombreProfesor}
-                    onChange={(e) => setNombreProfesor(e.target.value)}
                     required
                     className={styles.formInput}
                 />
@@ -82,12 +67,37 @@ function ForoForm({ onCreate, loading, onCancel }) {
                 </select>
             </div>
             <div className={styles.formGroup}>
-                <label htmlFor="fecha" className={styles.formLabel}>Fecha:</label>
+                <label htmlFor="contenido" className={styles.formLabel}>Contenido:</label>
+                <textarea
+                    id="contenido"
+                    value={contenido}
+                    onChange={(e) => setContenido(e.target.value)}
+                    required
+                    className={styles.formTextarea}
+                />
+            </div>
+            <div className={styles.formGroup}>
+                <label htmlFor="level" className={styles.formLabel}>Nivel:</label>
                 <input
-                    id="fecha"
-                    type="date"
-                    value={fecha}
-                    onChange={handleFechaChange}
+                    id="level"
+                    type="number"
+                    min="1"
+                    max="4"
+                    value={level}
+                    onChange={(e) => setLevel(e.target.value)}
+                    required
+                    className={styles.formInput}
+                />
+            </div>
+            <div className={styles.formGroup}>
+                <label htmlFor="section" className={styles.formLabel}>Sección:</label>
+                <input
+                    id="section"
+                    type="text"
+                    maxLength="1"
+                    pattern="[A-Z]"
+                    value={section}
+                    onChange={(e) => setSection(e.target.value.toUpperCase())}
                     required
                     className={styles.formInput}
                 />

@@ -29,7 +29,7 @@ export default function Foros() {
 
     useEffect(() => {
         fetchForos();
-    }, []);
+    }, [fetchForos]);
 
     const handleView = (foro) => {
         setSelectedForo(foro);
@@ -47,16 +47,24 @@ export default function Foros() {
     };
 
     const handleUpdateSubmit = async (id, updatedData) => {
-        await handleUpdate(id, updatedData);
-        setIsUpdating(false);
-        setSelectedForo(null);
-        fetchForos();
+        try {
+            await handleUpdate(id, updatedData);
+            setIsUpdating(false);
+            setSelectedForo(null);
+            fetchForos();
+        } catch (error) {
+            console.error("Error al actualizar el foro:", error);
+        }
     };
 
     const handleCreateSubmit = async (foroData) => {
-        await handleCreate(foroData);
-        setIsCreating(false);
-        fetchForos();
+        try {
+            await handleCreate(foroData);
+            setIsCreating(false);
+            fetchForos();
+        } catch (error) {
+            console.error("Error al crear el foro:", error);
+        }
     };
     
     return (

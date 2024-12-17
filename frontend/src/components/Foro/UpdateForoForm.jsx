@@ -1,39 +1,34 @@
 import React, { useState, useEffect } from 'react';
 
 function UpdateForoForm({ foro, onUpdate, onCancel, loading }) {
-    console.log('Initial foro data:', foro);
     const [titulo, setTitulo] = useState(foro.titulo);
-    const [nombreProfesor, setNombreProfesor] = useState(foro.nombreProfesor);
-    const [categoria, setCategoria] = useState(foro.categoria);
-    const [fecha, setFecha] = useState(foro.fecha);
-    const [archivos, setArchivos] = useState([]);
+    const [contenido, setContenido] = useState(foro.contenido);
+    const [categoria,setCategoria] = useState(foro.categoria);
+    const [archivo, setArchivo] = useState(null);
+    const [level, setLevel] = useState(foro.level);
+    const [section,setSection] = useState (foro.state);
 
     useEffect(() => {
         setTitulo(foro.titulo);
-        setNombreProfesor(foro.nombreProfesor);
-        setCategoria(foro.categoria);
-        setFecha(foro.fecha);
+        setContenido(foro.contenido);
     }, [foro]);
 
     const handleFileChange = (e) => {
-        setArchivos(Array.from(e.target.files));
+        setArchivo(e.target.files[0]);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData();
         formData.append('titulo', titulo);
-        formData.append('nombreProfesor', nombreProfesor);
+        formData.append('contenido', contenido);
         formData.append('categoria', categoria);
-        formData.append('fecha', fecha);
-
-        if (archivos.length > 0) {
-            archivos.forEach(archivo => {
-                formData.append('archivos', archivo);
-            });
+        formData.append('level', level );
+        formData.append('section', section)
+        if (archivo) {
+            formData.append('archivos', archivo);
         }
 
-        console.log('Form data being sent:', Object.fromEntries(formData));
         onUpdate(foro.id, formData);
     };
 
@@ -50,50 +45,53 @@ function UpdateForoForm({ foro, onUpdate, onCancel, loading }) {
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 />
             </div>
+            
             <div>
-                <label htmlFor="nombreProfesor" className="block text-sm font-medium text-gray-700">Nombre del Profesor:</label>
-                <input
-                    id="nombreProfesor"
-                    type="text"
-                    value={nombreProfesor}
-                    onChange={(e) => setNombreProfesor(e.target.value)}
-                    required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                />
-            </div>
-            <div>
-                <label htmlFor="categoria" className="block text-sm font-medium text-gray-700">Categoría:</label>
-                <select
+                <label htmlFor="categoria" className="block text-sm font-medium text-gray-700">Categoria:</label>
+                <textarea
                     id="categoria"
                     value={categoria}
                     onChange={(e) => setCategoria(e.target.value)}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                >
-                    <option value="">Seleccionar categoría</option>
-                    <option value="Tarea">Tarea</option>
-                    <option value="Contenido">Contenido</option>
-                    <option value="Variedad">Variedad</option>
-                </select>
+                />
             </div>
             <div>
-                <label htmlFor="fecha" className="block text-sm font-medium text-gray-700">Fecha:</label>
-                <input
-                    id="fecha"
-                    type="date"
-                    value={fecha}
-                    onChange={(e) => setFecha(e.target.value)}
+                <label htmlFor="level" className="block text-sm font-medium text-gray-700">Nivel:</label>
+                <textarea
+                    id="level"
+                    value={level}
+                    onChange={(e) => setLevel(e.target.value)}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 />
             </div>
             <div>
-                <label htmlFor="archivos" className="block text-sm font-medium text-gray-700">Archivos adjuntos:</label>
+                <label htmlFor="section" className="block text-sm font-medium text-gray-700">Seccion:</label>
+                <textarea
+                    id="section"
+                    value={section}
+                    onChange={(e) => setSection(e.target.value)}
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                />
+            </div>
+            <div>
+                <label htmlFor="contenido" className="block text-sm font-medium text-gray-700">Contenido:</label>
+                <textarea
+                    id="contenido"
+                    value={contenido}
+                    onChange={(e) => setContenido(e.target.value)}
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                />
+            </div>
+            <div>
+                <label htmlFor="archivo" className="block text-sm font-medium text-gray-700">Archivo adjunto:</label>
                 <input
-                    id="archivos"
+                    id="archivo"
                     type="file"
                     onChange={handleFileChange}
-                    multiple
                     className="mt-1 block w-full"
                 />
             </div>
@@ -118,3 +116,4 @@ function UpdateForoForm({ foro, onUpdate, onCancel, loading }) {
 }
 
 export default UpdateForoForm;
+
