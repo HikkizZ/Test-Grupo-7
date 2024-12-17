@@ -10,13 +10,17 @@ export async function login(dataUser) {
             password: dataUser.password
         });
         const { status, data } = response;
+
         if (status === 200) {
-            const { nombreCompleto, email, rut, role } = jwtDecode(data.data.token);
-            const userData = { nombreCompleto, email, rut, role };
+            const decodedToken = jwtDecode(data.data.token);
+            console.log("Token decodificado:", decodedToken); // <-- Verifica aquí si "name" existe
+
+            const { name, email, rut, role } = decodedToken;
+            const userData = { name, email, rut, role };
             sessionStorage.setItem('usuario', JSON.stringify(userData));
             axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-            cookies.set('jwt-auth', data.data.token, {path:'/'});
-            return response.data
+            cookies.set('jwt-auth', data.data.token, { path: '/' });
+            return response.data;
         }
     } catch (error) {
         return error.response.data;
@@ -26,9 +30,9 @@ export async function login(dataUser) {
 export async function register(data) {
     try {
         const dataRegister = convertirMinusculas(data);
-        const { nombreCompleto, email, rut, password } = dataRegister
+        const { name, email, rut, password } = dataRegister
         const response = await axios.post('/auth/register', {
-            nombreCompleto,
+            name,
             email,
             rut,
             password

@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
 
-export default function ReservationRow({ reservation, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
+export default function ReservationRow({ reservation, onUpdate, onDelete, loadingUpdate, loadingDelete, user, hideDevuelto }) {
     const [isEditing, setIsEditing] = useState(false);
     const [editState, setEditState] = useState(reservation.estado);
     const [editDevuelto, setEditDevuelto] = useState(reservation.devuelto);
 
     useEffect(() => {
-        // Actualizar el valor de devuelto si el estado cambia
         if (editState === "rechazada") {
-            setEditDevuelto(true); // Siempre true si estado es rechazada
+            setEditDevuelto(true);
         } else if (editState === "pendiente") {
-            setEditDevuelto(false); // Siempre false si estado es pendiente
+            setEditDevuelto(false);
         }
     }, [editState]);
 
@@ -27,12 +26,25 @@ export default function ReservationRow({ reservation, onUpdate, onDelete, loadin
     };
 
     const handleSaveEdit = () => {
-        // Enviar los datos actualizados al backend
         if (onUpdate) {
             onUpdate(reservation.id, { estado: editState, devuelto: editDevuelto });
         }
         setIsEditing(false);
     };
+
+    // Lógica corregida para mostrar el nombre del Reservante
+    let reservanteNombre = reservation.Reservante?.nombre || "No disponible";
+
+    // Log para depuración
+    console.log("Usuario logueado:", user?.name);
+    console.log("Reservante de la fila:", reservanteNombre);
+
+    if ((user?.role === "Profesor" || user?.role === "Alumno") && reservanteNombre !== user?.name) {
+        console.log("No coincide. Se reemplaza por '-------'");
+        reservanteNombre = "-------";
+    } else {
+        console.log("Coincide. Se muestra el nombre del Reservante.");
+    }
 
     return (
         <tr>
@@ -45,12 +57,7 @@ export default function ReservationRow({ reservation, onUpdate, onDelete, loadin
                         value={editState}
                         onChange={(e) => setEditState(e.target.value)}
                         disabled={loadingUpdate}
-                        style={{
-                            width: "100%",
-                            padding: "5px",
-                            border: "1px solid #ccc",
-                            borderRadius: "4px",
-                        }}
+                        style={{ width: "100%", padding: "5px", border: "1px solid #ccc", borderRadius: "4px" }}
                     >
                         <option value="pendiente">Pendiente</option>
                         <option value="aprobada">Aprobada</option>
@@ -60,33 +67,8 @@ export default function ReservationRow({ reservation, onUpdate, onDelete, loadin
                     reservation.estado
                 )}
             </td>
-            <td>
-                {isEditing ? (
-                    editState === "aprobada" ? (
-                        <select
-                            value={editDevuelto ? "Sí" : "No"}
-                            onChange={(e) => setEditDevuelto(e.target.value === "Sí")}
-                            disabled={loadingUpdate}
-                            style={{
-                                width: "100%",
-                                padding: "5px",
-                                border: "1px solid #ccc",
-                                borderRadius: "4px",
-                            }}
-                        >
-                            <option value="Sí">Sí</option>
-                            <option value="No">No</option>
-                        </select>
-                    ) : editState === "rechazada" ? (
-                        <span>Sí</span>
-                    ) : (
-                        <span>No</span>
-                    )
-                ) : (
-                    reservation.devuelto ? "Sí" : "No"
-                )}
-            </td>
-            <td>{reservation.Reservante?.nombre || "No disponible"}</td>
+            {!hideDevuelto && <td>{reservation.devuelto ? "Sí" : "No"}</td>}
+            <td>{reservanteNombre}</td>
             <td>
                 {reservation.tipoReserva === "sala"
                     ? reservation.Sala?.nombre || "No disponible"
@@ -127,7 +109,6 @@ export default function ReservationRow({ reservation, onUpdate, onDelete, loadin
                     </>
                 ) : (
                     <>
-                        {/* Solo mostrar el botón Modificar si onUpdate existe */}
                         {onUpdate && (
                             <button
                                 onClick={handleEditClick}
@@ -145,8 +126,6 @@ export default function ReservationRow({ reservation, onUpdate, onDelete, loadin
                                 Modificar
                             </button>
                         )}
-
-                        {/* Solo mostrar el botón Eliminar si onDelete existe */}
                         {onDelete && (
                             <button
                                 onClick={() => onDelete(reservation.id)}
