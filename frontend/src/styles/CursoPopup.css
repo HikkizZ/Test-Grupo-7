@@ -1,89 +1,81 @@
-.curso-popup-bg{
+.popup-cursos-bg {
     position: fixed;
     top: 0;
-    bottom: 0;
     left: 0;
-    right: 0;
-    background: rgba(18, 19, 18, 0.338);
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
-    align-items: center;
     justify-content: center;
-}
-.curso-popup {
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    height: 570px;
-    width: auto;
-    background: white;
-    position: fixed;
-    border-radius: 12px;
-    overflow: auto;  /* Agrega scroll si el contenido es demasiado grande */
-}
-
-.curso-popup-close{
-    position: absolute;
-    margin-top: 20px;
-    margin-right: 10px;
-    right: 10px;
-    cursor: pointer;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .popup-cursos {
     background-color: white;
-    border: white;
-
-}
-.curso-popup-title{
-    font-size: 17px;
-    font-weight: 700;
-}
-.curso-popup .form {
-    padding: 35px;
-    h1 {
-        margin-bottom: 30px;
-    }
-    button {
-        margin-top: 0;
-    }
-    .container_inputs {
-        margin-bottom: 10px;
-    }
-    .tooltip-icon {
-        position: relative;
-        top: 4px;
-        margin-left: 3px;
-        cursor: pointer;
-        display: inline-block;
-    }
-    .tooltip-icon .tooltip-text {
-    visibility: hidden;
-    width: 150px;
-    background-color: rgba(0, 0, 0, 0.75);
-    color: #fff;
-    text-align: center;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    width: 90%;
+    max-width: 500px;
+  }
+  
+  .popup-cursos-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
+  }
+  
+  .popup-cursos-close:hover {
+    color: #000;
+  }
+  
+  .popup-cursos-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .popup-cursos-input,
+  .popup-cursos-select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
     border-radius: 4px;
-    padding: 5px;
-    position: absolute;
-    font-size: 12px;
-    z-index: 1;
-    top: -3px;
-    left: 105%;
-    opacity: 0;
-    transition: opacity 0.3s;
+    font-size: 1rem;
+  }
+  
+  .popup-cursos-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2rem;
+  }
+  
+  .popup-cursos-form button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+  }
+  
+  .popup-cursos-form button[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+  
+  @media (max-width: 600px) {
+    .popup-cursos {
+      width: 95%;
+      padding: 1.5rem;
     }
-    .tooltip-icon .tooltip-text::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    right: 100%;
-    margin-top: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent rgba(0, 0, 0, 0.75) transparent transparent;
-    }
-    .tooltip-icon:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
-    }
-    .toggle-password-icon {
-        top: 47.5%;
-    }
-}
+  }
