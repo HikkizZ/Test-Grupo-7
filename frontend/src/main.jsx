@@ -42,7 +42,7 @@ const router = createBrowserRouter([
         path: '/schedule',
         element: <Schedule />
       },
-      // Recursos: Encargados y admin pueden ver y modificar (sólo admin puede crear y eliminar sala)
+      // Recursos: Encargados y admin pueden ver, crear y modificar (sólo admin puede eliminar sala)
       {
         path: '/resources',
         element: (
