@@ -1,164 +1,122 @@
-import { useEffect, useState } from "react";
-import {
-    getCursos,
-    deleteCurso,
-    createCurso,
-    updateCurso,
-} from "@services/curso.service";
-import {
-    deleteDataAlert,
-    showSuccessAlert,
-    showErrorAlert,
-} from "../helpers/sweetAlert";
-import Table from "@components/Table";
-import Search from "@components/Search";
-import PopupCursos from "@components/PopupCursos";
+import { useEffect } from "react";
 
-export default function Cursos() { //? Página para mostrar los cursos
-    const [cursos, setCursos] = useState([]); //? Estado para almacenar los cursos
-    const [loading, setLoading] = useState(true); //? Estado para mostrar un mensaje de carga
-    const [filter, setFilter] = useState(""); //? Estado para filtrar los cursos
-    const [showPopup, setShowPopup] = useState(false); //? Estado para mostrar el popup
-    const [selectedCurso, setSelectedCurso] = useState(null); //? Estado para almacenar el curso seleccionado
+import { useGetCursos } from "../hooks/cursos/useGetCursos";
+import { useSearchCurso } from "../hooks/cursos/useSearchCurso";
+import { useCreateCurso } from "../hooks/cursos/useCreateCurso";
+import { useUpdateCurso } from "../hooks/cursos/useUpdateCurso";
+import { useDeleteCurso } from "../hooks/cursos/useDeleteCurso";
 
-    const fetchCursos = async () => { //? Función para obtener los cursos
-        try {
-            const response = await getCursos(); //? Obtenemos los cursos
-            if (response) {
-                setCursos(response);
-            } else {
-                showErrorAlert( //? Mostramos un mensaje de error
-                    "Error al cargar los cursos",
-                    "No se pudieron obtener los datos desde el servidor."
-                );
-            }
-        } catch (error) {
-            console.error("Error al cargar los cursos:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+import CursoForm from "../components/cursos/CursoForm";
+import CursoTable from "../components/cursos/CursoTable";
 
-    const handleDelete = async () => { //? Función para eliminar un curso
-        try {
-            if (!selectedCurso) {
-                showErrorAlert("Error", "Selecciona un curso antes de eliminarlo.");
-                return;
-            }
-            const result = await deleteDataAlert();
-            if (result.isConfirmed) {
-                await deleteCurso(selectedCurso.code);
-                showSuccessAlert(
-                    "¡Curso eliminado!",
-                    "El curso ha sido eliminado correctamente."
-                );
-                setSelectedCurso(null);
-                fetchCursos();
-            }
-        } catch (error) {
-            console.error("Error al eliminar el curso:", error);
-        }
-    };
+export default function Cursos() {
+    const { cursos, fetchCursos, loading: loadingCursos } = useGetCursos();
+    const { handleCreate, loading: loadingCreate } = useCreateCurso(fetchCursos);
+    const { handleUpdate, loading: loadingUpdate } = useUpdateCurso(fetchCursos);
 
-    const handleCreate = async (data) => { //? Función para crear un curso
-        try {
-            await createCurso(data);
-            setShowPopup(false);
-            fetchCursos();
-            showSuccessAlert(
-                "¡Curso creado!",
-                "El curso ha sido creado correctamente."
-            );
-        } catch (error) {
-            console.error("Error al crear el curso:", error);
-            showErrorAlert(
-                "Error al crear el curso",
-                "Ocurrió un error al intentar crear el curso."
-            );
-        }
-    };
+    const {
+        searchQuery,
+        setSearchQuery,
+        searchFilter,
+        setSearchFilter,
+        searchResults,
+        loading: loadingSearch,
+        error: errorSearch,
+    } = useSearchCurso(cursos);
 
-    const handleUpdate = async (data) => {  //? Función para actualizar un curso
-        try {
-            await updateCurso(data, selectedCurso.code);
-            setShowPopup(false);
-            setSelectedCurso(null);
-            fetchCursos();
-            showSuccessAlert(
-                "¡Curso actualizado!",
-                "El curso ha sido actualizado correctamente."
-            );
-        } catch (error) {
-            console.error("Error al actualizar el curso:", error);
-            showErrorAlert(
-                "Error al actualizar el curso",
-                "Ocurrió un error al intentar actualizar el curso."
-            );
-        }
-    };
+    const { handleDelete, loading: loadingDelete } = useDeleteCurso({ fetchCursos, cursos, setCursos: fetchCursos });
 
-    // Función para manejar la búsqueda por código
-    const handleSearch = (e) => {
-        setFilter(e.target.value);
-    };
-
-    // Función para manejar el click en una fila de la tabla
-    const handleRowClick = (curso) => {
-        console.log("Curso seleccionado:", curso);
-        setSelectedCurso(curso);
-        setShowPopup(true);
+    const handleView = (curso) => {
+        console.log("Viewing curso", curso);
     };
 
     useEffect(() => {
         fetchCursos();
-    }, []);
+    }, [fetchCursos]);
+
+    const noCursos = !cursos || cursos.length === 0;
+    const noSearchResults = searchResults.length === 0 && !noCursos;
+
+    const getPlaceholder = () => {
+        switch (searchFilter) {
+            case "code":
+                return "Buscar por código";
+            case "name":
+                return "Buscar por nombre";
+            case "level":
+                return "Buscar por nivel";
+            case "year":
+                return "Buscar por año";
+            default:
+                return "Buscar curso";
+        }
+    };
 
     return (
-        <div className="container">
-            <h1>Cursos</h1>
-            <div className="actions">
-                <Search
-                    value={filter}
-                    onChange={handleSearch}
-                    placeholder="Buscar por código"
-                />
-                <button
-                    onClick={() => {
-                        setSelectedCurso(null);
-                        setShowPopup(true);
-                    }}
-                >
-                    Nuevo Curso
-                </button>
-            </div>
-            {loading ? (
-                <p>Cargando cursos...</p>
-            ) : (
-                <Table
-                    data={cursos}
-                    columns={[
-                        { title: "Código", field: "code" },
-                        { title: "Nombre", field: "name" },
-                    ]}
-                    filter={filter}
-                    dataToFilter="code"
-                    rowClick={(e, row) => handleRowClick(row)}
-                />
-            )}
-            {selectedCurso && (
-                <div className="actions">
-                    <button onClick={() => setShowPopup(true)}>Editar Curso</button>
-                    <button onClick={handleDelete}>Eliminar Curso</button>
+        <div>
+            <section>
+                <h1>Cursos</h1>
+            </section>
+
+            <section>
+                <h3>Crear Curso</h3>
+                <CursoForm onCreate={handleCreate} loading={loadingCreate} />
+            </section>
+
+            <section>
+                <h3>Buscar Curso</h3>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
+                    {/* Input de búsqueda */}
+                    <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder={getPlaceholder()}
+                        style={{ flex: "1" }}
+                    />
+                    {/* Filtro */}
+                    <select
+                        value={searchFilter}
+                        onChange={(e) => setSearchFilter(e.target.value)}
+                        style={{
+                            maxWidth: "200px",
+                            minWidth: "100px",
+                            height: "38px",
+                            borderRadius: "5px",
+                            border: "1px solid #ccc",
+                            padding: "5px",
+                        }}
+                    >
+                        <option value="">Seleccionar filtro</option>
+                        <option value="code">Buscar por código</option>
+                        <option value="name">Buscar por nombre</option>
+                        <option value="level">Buscar por nivel</option>
+                        <option value="year">Buscar por año</option>
+                    </select>
                 </div>
-            )}
-            {showPopup && (
-                <PopupCursos
-                    show={showPopup}
-                    setShow={setShowPopup}
-                    data={selectedCurso}
-                    action={selectedCurso ? handleUpdate : handleCreate}
-                />
-            )}
+            </section>
+
+            <section>
+                {loadingSearch || loadingCursos ? (
+                    <p>Cargando cursos...</p>
+                ) : errorSearch ? (
+                    <p style={{ color: "red" }}>{errorSearch}</p>
+                ) : noCursos ? (
+                    <p>No hay cursos registrados</p>
+                ) : noSearchResults ? (
+                    <p>No se encontraron cursos que coincidan con tu búsqueda</p>
+                ) : (
+                    <CursoTable
+                        cursos={searchResults}
+                        onUpdate={handleUpdate}
+                        loadingDelete={loadingDelete}
+                        onDelete={handleDelete}
+                        loadingUpdate={loadingUpdate}
+                        onView={handleView}
+                        fetchCursos={fetchCursos}
+                    />
+                )}
+            </section>
         </div>
     );
 }
