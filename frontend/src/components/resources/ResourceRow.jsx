@@ -149,7 +149,7 @@ export default function ResourceRow({
                                 onClick={handleEditClick}
                                 disabled={loadingUpdate}
                                 style={{
-                                    backgroundColor: "#007bff",
+                                    backgroundColor: "#cc8400",
                                     color: "#fff",
                                     border: "none",
                                     borderRadius: "5px",

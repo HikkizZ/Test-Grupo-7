@@ -118,13 +118,31 @@ export default function ReservationRow({
                                 <button
                                     onClick={handleEditClick}
                                     disabled={loadingUpdate}
-                                    style={{ marginRight: "5px" }}
+                                    style={{
+                                        backgroundColor: "#cc8400",
+                                        color: "#fff",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        padding: "5px 10px",
+                                        marginRight: "5px",
+                                        cursor: "pointer",
+                                    }}
                                 >
                                     Modificar
                                 </button>
                             )}
                             {onDelete && (
-                                <button onClick={() => onDelete(reservation.id)} disabled={loadingDelete}>
+                                <button onClick={() => onDelete(reservation.id)} 
+                                disabled={loadingDelete}
+                                style={{
+                                    backgroundColor: "#d33",
+                                    color: "#fff",
+                                    border: "none",
+                                    borderRadius: "5px",
+                                    padding: "5px 10px",
+                                    cursor: "pointer",
+                                }}
+                                >
                                     Eliminar
                                 </button>
                             )}

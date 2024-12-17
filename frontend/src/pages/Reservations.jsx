@@ -50,6 +50,7 @@ export default function Reservations() {
         <div>
             <br />
             <br />
+            <br />
             <h1>Reservaciones</h1>
 
             {/* Buscar reservaciones */}
@@ -66,12 +67,14 @@ export default function Reservations() {
                     <button
                         onClick={() => setShowCreateModal(true)}
                         style={{
-                            backgroundColor: "#007bff",
+                            height: "38px",
+                            backgroundColor: "#28a745",
                             color: "#fff",
                             border: "none",
                             borderRadius: "5px",
-                            padding: "5px 10px",
+                            padding: "10px 15px",
                             cursor: "pointer",
+                            fontSize: "14px",
                         }}
                     >
                         Crear Reservación
