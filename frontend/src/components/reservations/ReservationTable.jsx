@@ -19,54 +19,36 @@ export default function ReservationTable({
     // Función para filtrar las reservaciones
     const filteredReservations = reservations.filter((reservation) => {
         const reservanteNombre = reservation.Reservante?.nombre || "-------";
-
-        // Filtrar por Devuelto
-        if (filters?.devuelto && reservation.devuelto?.toString() !== filters.devuelto) {
+    
+        // Filtrar por Fecha Desde
+        if (filters?.fechaDesde) {
+            if (!reservation.fechaDesde.startsWith(filters.fechaDesde)) return false;
+        }
+    
+        // Filtrar por Fecha Hasta
+        if (filters?.fechaHasta) {
+            if (!reservation.fechaHasta.startsWith(filters.fechaHasta)) return false;
+        }
+    
+        // Resto de filtros
+        if (filters?.id && !reservation.id.toString().includes(filters.id)) {
             return false;
         }
-
-        // Filtrar por Tipo de Reserva
+        if (filters?.devuelto && reservation.devuelto.toString() !== filters.devuelto) {
+            return false;
+        }
         if (filters?.tipoReserva && reservation.tipoReserva !== filters.tipoReserva) {
             return false;
         }
-
-        // Filtrar por Estado
         if (filters?.estado && reservation.estado !== filters.estado) {
             return false;
         }
-
-        // Filtrar por Fecha Desde
-        if (filters?.fechaDesde) {
-            const fechaDesdeFiltro = parseFechaDesde(filters.fechaDesde);
-            const fechaReserva = parseFechaDesde(reservation.fechaDesde);
-            if (fechaReserva < fechaDesdeFiltro) {
-                return false;
-            }
-        }
-
-        // Filtrar por Fecha Hasta
-        if (filters?.fechaHasta) {
-            const fechaHastaFiltro = parseFechaDesde(filters.fechaHasta);
-            const fechaReserva = parseFechaDesde(reservation.fechaHasta);
-            if (fechaReserva > fechaHastaFiltro) {
-                return false;
-            }
-        }
-
-        // Filtrar por Reservante (nombre)
         if (filters?.reservante && !reservanteNombre.toLowerCase().includes(filters.reservante.toLowerCase())) {
             return false;
         }
-
-        // Lógica especial para Profesor y Alumno
-        if (user?.role === "Profesor" || user?.role === "Alumno") {
-            if (reservanteNombre.trim() === "-------" && reservation.estado !== "aprobada") {
-                return false; // Excluir si no es aprobada
-            }
-        }
-
+    
         return true;
-    });
+    });    
 
     // Ordenar reservaciones por fechaDesde (ascendente)
     const sortedReservations = [...filteredReservations].sort((a, b) => {
