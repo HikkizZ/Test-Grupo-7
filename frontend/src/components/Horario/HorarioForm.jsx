@@ -79,7 +79,7 @@ export default function HorarioForm({ onCreate, loading }) {
     };
 
     return (
-        <div6>
+        <div>
             {!showForm ? (
                 <button onClick={() => setShowForm(true)}>Crear Horario</button>
             ) : (
@@ -201,6 +201,6 @@ export default function HorarioForm({ onCreate, loading }) {
                 </div>
                 
             )}
-        </div6>
+        </div>
     );
 }
