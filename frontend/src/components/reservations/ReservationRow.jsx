@@ -1,6 +1,15 @@
 import { useState, useEffect } from "react";
 
-export default function ReservationRow({ reservation, onUpdate, onDelete, loadingUpdate, loadingDelete, user, hideDevuelto }) {
+export default function ReservationRow({
+    reservation,
+    onUpdate,
+    onDelete,
+    loadingUpdate,
+    loadingDelete,
+    user,
+    hideDevuelto,
+    hideActions, // Nueva propiedad para ocultar Acciones
+}) {
     const [isEditing, setIsEditing] = useState(false);
     const [editState, setEditState] = useState(reservation.estado);
     const [editDevuelto, setEditDevuelto] = useState(reservation.devuelto);
@@ -32,9 +41,8 @@ export default function ReservationRow({ reservation, onUpdate, onDelete, loadin
         setIsEditing(false);
     };
 
-    // VALIDACIÓN 2: Reemplazar nombre si no coincide
-    let reservanteNombre = reservation.Reservante?.nombre || "-------";
-
+    // Mostrar el nombre del reservante
+    let reservanteNombre = reservation.Reservante?.nombre || "No disponible";
     if ((user?.role === "Profesor" || user?.role === "Alumno") && reservanteNombre !== user?.name) {
         reservanteNombre = "-------";
     }
@@ -44,22 +52,7 @@ export default function ReservationRow({ reservation, onUpdate, onDelete, loadin
             <td>{reservation.fechaDesde}</td>
             <td>{reservation.fechaHasta}</td>
             <td>{reservation.tipoReserva}</td>
-            <td>
-                {isEditing ? (
-                    <select
-                        value={editState}
-                        onChange={(e) => setEditState(e.target.value)}
-                        disabled={loadingUpdate}
-                        style={{ width: "100%", padding: "5px", border: "1px solid #ccc", borderRadius: "4px" }}
-                    >
-                        <option value="pendiente">Pendiente</option>
-                        <option value="aprobada">Aprobada</option>
-                        <option value="rechazada">Rechazada</option>
-                    </select>
-                ) : (
-                    reservation.estado
-                )}
-            </td>
+            <td>{reservation.estado}</td>
             {!hideDevuelto && <td>{reservation.devuelto ? "Sí" : "No"}</td>}
             <td>{reservanteNombre}</td>
             <td>
@@ -67,47 +60,15 @@ export default function ReservationRow({ reservation, onUpdate, onDelete, loadin
                     ? reservation.Sala?.nombre || "No disponible"
                     : reservation.Recurso?.nombre || "No disponible"}
             </td>
-            <td>
-                {isEditing ? (
-                    <>
-                        <button
-                            onClick={handleSaveEdit}
-                            disabled={loadingUpdate}
-                            style={{
-                                backgroundColor: "#007bff",
-                                color: "#fff",
-                                border: "none",
-                                borderRadius: "5px",
-                                padding: "5px 10px",
-                                marginRight: "5px",
-                                cursor: "pointer",
-                            }}
-                        >
-                            Guardar
-                        </button>
-                        <button
-                            onClick={handleCancelEdit}
-                            disabled={loadingUpdate}
-                            style={{
-                                backgroundColor: "#d33",
-                                color: "#fff",
-                                border: "none",
-                                borderRadius: "5px",
-                                padding: "5px 10px",
-                                cursor: "pointer",
-                            }}
-                        >
-                            Cancelar
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        {onUpdate && (
+            {!hideActions && ( // Ocultar columna Acciones
+                <td>
+                    {isEditing ? (
+                        <>
                             <button
-                                onClick={handleEditClick}
+                                onClick={handleSaveEdit}
                                 disabled={loadingUpdate}
                                 style={{
-                                    backgroundColor: "#cc8400",
+                                    backgroundColor: "#007bff",
                                     color: "#fff",
                                     border: "none",
                                     borderRadius: "5px",
@@ -116,13 +77,11 @@ export default function ReservationRow({ reservation, onUpdate, onDelete, loadin
                                     cursor: "pointer",
                                 }}
                             >
-                                Modificar
+                                Guardar
                             </button>
-                        )}
-                        {onDelete && (
                             <button
-                                onClick={() => onDelete(reservation.id)}
-                                disabled={loadingDelete}
+                                onClick={handleCancelEdit}
+                                disabled={loadingUpdate}
                                 style={{
                                     backgroundColor: "#d33",
                                     color: "#fff",
@@ -132,12 +91,48 @@ export default function ReservationRow({ reservation, onUpdate, onDelete, loadin
                                     cursor: "pointer",
                                 }}
                             >
-                                Eliminar
+                                Cancelar
                             </button>
-                        )}
-                    </>
-                )}
-            </td>
+                        </>
+                    ) : (
+                        <>
+                            {onUpdate && (
+                                <button
+                                    onClick={handleEditClick}
+                                    disabled={loadingUpdate}
+                                    style={{
+                                        backgroundColor: "#cc8400",
+                                        color: "#fff",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        padding: "5px 10px",
+                                        marginRight: "5px",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    Modificar
+                                </button>
+                            )}
+                            {onDelete && (
+                                <button
+                                    onClick={() => onDelete(reservation.id)}
+                                    disabled={loadingDelete}
+                                    style={{
+                                        backgroundColor: "#d33",
+                                        color: "#fff",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        padding: "5px 10px",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    Eliminar
+                                </button>
+                            )}
+                        </>
+                    )}
+                </td>
+            )}
         </tr>
     );
 }
