@@ -47,8 +47,12 @@ export async function getCursosService() { //* This function gets all the course
 
         return [{
             cursos: cursos.map(curso => ({ //? Returning the courses. Se muestra el id, nombre, nivel, año, sección y código del curso.
+                id: curso.id,
                 name: curso.name,
                 code: curso.code,
+                level: curso.level,
+                section: curso.section,
+                year: curso.year,
                 subjects: curso.subjects,
                 students: curso.students.map(student => ({ //? Getting the students of the course.
                     name: student.name,
@@ -94,13 +98,15 @@ export async function createCursoService(body) { //* This function creates a cou
 };
 
 export async function updateCursoService(query, body) { //* This function updates a course by id, code, and name.
+    console.log("query:", query);
+    console.log("body:", body);
     try {
-        const { idCurso, codeCurso, nameCurso } = query;
+        const { idCurso, codeCurso } = query;
 
         const cursoRepository = AppDataSource.getRepository(Curso); //? Getting the course repository.
 
         const cursoFound = await cursoRepository.findOne({ //? Finding the course by id, code, and name.
-            where: [{ id: idCurso }, { code: codeCurso }, { name: nameCurso }],
+            where: [{ id: idCurso }, { code: codeCurso }],
         });
 
         if (!cursoFound) return [null, "Curso no encontrado"]; //? If the course is not found, return null and a message.
@@ -127,12 +133,11 @@ export async function updateCursoService(query, body) { //* This function update
             cursoUpdated: { //? Returning the course. Se muestra el id, nombre, nivel, año, sección y código del curso.
                 name: cursoUpdated.name,
                 code: cursoUpdated.code,
+                level: cursoUpdated.level,
+                section: cursoUpdated.section,
+                year: cursoUpdated.year,
                 subjects: cursoUpdated.subjects,
-                students: cursoUpdated.students.map(student => ({ //? Getting the students of the course.
-                    name: student.name,
-                    rut: student.rut,
-                    email: student.email,
-                })),
+                students: cursoUpdated.students
             },
         }, null];
     } catch (error) {
@@ -193,11 +198,11 @@ export async function assingSubjectsToStudentsService(query) {
     try {
         const cursoRepository = AppDataSource.getRepository(Curso); //? Getting the course repository.
 
-        const { cursoCode } = query; //? Getting the query parameters: cursocode.
-
         const cursoFound = await cursoRepository.findOne({
-            where: { code: cursoCode }, relations: ['students', 'subjects']
+            where: { code: query }, relations: ['students', 'subjects']
         }); //? Finding the course by code.
+
+        console.log("cursoFound:", cursoFound);
 
         if (!cursoFound) return [null, "Curso no encontrado"]; //? If the course is not found, return null and a message.
 
