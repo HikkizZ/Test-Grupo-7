@@ -12,6 +12,7 @@ export function useCreateReservation(fetchReservations) {
             showSuccessAlert("Reservación creada", "La reservación ha sido creada correctamente");
             fetchReservations();
         } catch (error) {
+            console.error("Detalles del error:", error.response || error.message);
             showErrorAlert(
                 "Error al crear la reservación",
                 error.response?.data?.message || "Hubo un problema al crear la reservación."

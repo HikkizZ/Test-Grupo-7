@@ -23,12 +23,16 @@ function validateDate(value, helpers) {
 }
 
 // Función para convertir y validar fechas para el cuerpo
-function parseDate(value) {
-    const parsedDate = parse(value, "dd-MM-yyyy HH:mm", new Date());
+function parseDate(value, helpers) {
+    const trimmedValue = value.trim();
+    const parsedDate = parse(trimmedValue, "dd-MM-yyyy HH:mm", new Date());
+
     if (!isValid(parsedDate)) {
-        throw new Error("Fecha inválida. El formato debe ser DD-MM-YYYY HH:mm, por ejemplo: '15-12-2024 10:00'.");
+        return helpers.message(
+            "Fecha inválida. El formato debe ser 'DD-MM-YYYY HH:mm', por ejemplo: '25-12-2024 10:00'."
+        );
     }
-    return parsedDate;
+    return trimmedValue; // Devuelve la fecha como string para no alterarla
 }
 
 // Función para truncar la fecha actual a nivel de minutos
@@ -55,10 +59,10 @@ export const reservationQueryValidation = Joi.object({
         "string.valid": "The reservation status must be either 'pendiente', 'aprobada', or 'rechazada'.",
     }),
     fechaDesde: Joi.string().custom(validateDate, 'Validación de formato de fecha').messages({
-        "any.invalid": "El campo 'fechaDesde' debe seguir el formato 'DD-MM-YYYY' o 'DD-MM-YYYY HH:mm', por ejemplo '30-12-2024' o '30-12-2024 10:00'.",
+        "any.invalid": "El campo 'fechaDesde' debe seguir el formato 'DD-MM-YYYY' o 'DD-MM-YYYY HH:mm'.",
     }),
     fechaHasta: Joi.string().custom(validateDate, 'Validación de formato de fecha').messages({
-        "any.invalid": "El campo 'fechaHasta' debe seguir el formato 'DD-MM-YYYY' o 'DD-MM-YYYY HH:mm', por ejemplo '30-12-2024' o '30-12-2024 10:00'.",
+        "any.invalid": "El campo 'fechaHasta' debe seguir el formato 'DD-MM-YYYY' o 'DD-MM-YYYY HH:mm'.",
     }),
 })
 .or("id", "devuelto", "tipoReserva", "estado", "fechaDesde", "fechaHasta")
@@ -70,38 +74,23 @@ export const reservationQueryValidation = Joi.object({
 // Validaciones para el cuerpo de las reservas
 export const reservationBodyValidation = Joi.object({
     fechaDesde: Joi.string()
-        .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/)
-        .required()
-        .messages({
-            "string.pattern.base": "El campo 'fechaDesde' debe seguir el formato DD-MM-YYYY HH:mm, por ejemplo: '30-12-2024 10:00'.",
-            "any.required": "El campo 'fechaDesde' es obligatorio.",
-        })
-        .custom((value, helpers) => {
-            const fechaDesde = parseDate(value);
-            const now = truncateDateToMinutes(new Date());
+    .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/)
+    .required()
+    .custom(parseDate)
+    .messages({
+        "string.pattern.base": "El campo 'fechaDesde' debe seguir el formato 'DD-MM-YYYY HH:mm'.",
+        "any.required": "El campo 'fechaDesde' es obligatorio.",
+    }),
 
-            if (fechaDesde < now) {
-                return helpers.message("La fecha desde no puede ser anterior al momento actual.");
-            }
-            return value;
-        }, 'Validación de fechaDesde'),
+fechaHasta: Joi.string()
+    .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/)
+    .required()
+    .custom(parseDate)
+    .messages({
+        "string.pattern.base": "El campo 'fechaHasta' debe seguir el formato 'DD-MM-YYYY HH:mm'.",
+        "any.required": "El campo 'fechaHasta' es obligatorio.",
+    }),
 
-    fechaHasta: Joi.string()
-        .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/)
-        .required()
-        .messages({
-            "string.pattern.base": "El campo 'fechaHasta' debe seguir el formato DD-MM-YYYY HH:mm, por ejemplo: '30-12-2024 10:00'.",
-            "any.required": "El campo 'fechaHasta' es obligatorio.",
-        })
-        .custom((value, helpers) => {
-            const fechaHasta = parseDate(value);
-            const now = truncateDateToMinutes(new Date());
-
-            if (fechaHasta < now) {
-                return helpers.message("La fecha hasta no puede ser anterior al momento actual.");
-            }
-            return value;
-        }, 'Validación de fechaHasta'),
     tipoReserva: Joi.string().valid("recurso", "sala").required().messages({
         "any.required": "El tipo de reserva es obligatorio.",
         "any.only": "El tipo de reserva debe ser 'recurso' o 'sala'.",
@@ -115,7 +104,6 @@ export const reservationBodyValidation = Joi.object({
         })
         .messages({
             "any.required": "El ID del recurso es obligatorio cuando el tipo de reserva es 'recurso'.",
-            "number.base": "El ID del recurso debe ser un número.",
         }),
     sala_id: Joi.number()
         .integer()
@@ -126,7 +114,6 @@ export const reservationBodyValidation = Joi.object({
         })
         .messages({
             "any.required": "El ID de la sala es obligatorio cuando el tipo de reserva es 'sala'.",
-            "number.base": "El ID de la sala debe ser un número.",
         }),
     devuelto: Joi.boolean()
         .default(false)
@@ -139,24 +126,12 @@ export const reservationBodyValidation = Joi.object({
         .messages({
             "any.only": "El estado debe ser 'pendiente', 'aprobada' o 'rechazada'.",
         }),
-    encargado_id: Joi.number()
-        .integer()
-        .when("estado", {
-            is: "pendiente",
-            then: Joi.allow(null),
-            otherwise: Joi.required(),
-        })
-        .messages({
-            "any.required": "El ID del encargado es obligatorio cuando el estado no es 'pendiente'.",
-            "number.base": "El ID del encargado debe ser un número.",
-        }),
 }).custom((value, helpers) => {
-    const fechaDesde = parseDate(value.fechaDesde);
-    const fechaHasta = parseDate(value.fechaHasta);
+    const fechaDesde = parseDate(value.fechaDesde, helpers);
+    const fechaHasta = parseDate(value.fechaHasta, helpers);
 
     if (fechaHasta <= fechaDesde) {
         return helpers.message("La fecha hasta debe ser posterior a la fecha desde.");
     }
-
     return value;
 }, 'Validación cruzada entre fechaDesde y fechaHasta');
