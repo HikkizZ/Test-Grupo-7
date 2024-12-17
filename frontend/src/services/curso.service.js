@@ -30,15 +30,21 @@ export async function deleteCurso(code){ //? Función para eliminar un curso
     }
 }
 
-export async function createCurso(cursoCode, studentsRut){ //? Función para crear un curso
+export async function createCurso(data){ //? Función para crear un curso
+    const { name, section } = data;
+    const level = parseInt(data.level);
+    const year = parseInt(data.year);
+
+    // Crear objeto con los datos a enviar
+    const cursoData = { name, level, section, year };
+
     try {
-        const response = await axios.post('/curso/', { code: cursoCode, students: studentsRut });
+        const response = await axios.post('/curso', cursoData);
         return response.data;
     } catch (error) {
-        console.error("Error al crear el curso:", error.response?.data?.message || error.message);
-        return error.response?.data?.message || "Error desconocido al crear el curso";
+        return error.response.data.message || "Error desconocido al crear el curso";
     }
-};
+}
 
 export async function updateCurso(id, data){ //? Función para actualizar un curso
     const { name, section } = data;
