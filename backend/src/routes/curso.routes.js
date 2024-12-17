@@ -8,7 +8,9 @@ import {
     getCursos,
     createCurso,
     updateCurso,
-    deleteCurso
+    deleteCurso,
+    addStudentsToCurso,
+    assingSubjectsToStudents
 } from '../controllers/curso.controller.js';
 
 const router = Router();
@@ -21,6 +23,9 @@ router
     .get('/all', verifyRole(['admin', 'profesor', 'administrativo', 'alumno']), getCursos)
     .post('/', verifyRole(['admin', 'profesor', 'administrativo']), createCurso)
     .put('/', verifyRole(['admin', 'profesor', 'administrativo']), updateCurso)
-    .delete('/', verifyRole(['admin', 'profesor', 'administrativo']), deleteCurso);
+    .delete('/', verifyRole(['admin', 'profesor', 'administrativo']), deleteCurso)
+    .post('/addstudents', verifyRole(['admin', 'profesor', 'administrativo']), addStudentsToCurso)
+    .post('/assignsubjects/', verifyRole(['admin', 'profesor', 'administrativo']), assingSubjectsToStudents);
+    
 
 export default router;

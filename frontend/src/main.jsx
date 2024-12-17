@@ -13,7 +13,8 @@ import Schedule from '@pages/Schedule';
 import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
 import Foro from '@pages/Foro';
-import Cursos from './pages/Cursos';
+
+import Cursos from '@pages/Cursos';
 import Subjects from './pages/Subjects';
 
 // Configuración de rutas con ProtectedRoute
