@@ -1,152 +1,113 @@
-import { useEffect, useState } from "react";
-import { getSubjects, createSubject, deleteSubject } from "@services/subject.service";
-import { deleteDataAlert, showSuccessAlert, showErrorAlert } from "@helpers/sweetAlert";
+import { useEffect } from "react";
 
-export default function Subject() {
-  const [Subjects, setSubjects] = useState([]); 
-  const [showSubjects, setShowSubjects] = useState(false);
-  const [showForm, setShowForm] = useState(false); 
-  const [newSubject, setNewSubject] = useState({
-    name: "",
-    cursoId: "",
-    description: ""
-  });
+import { useGetSubjects } from "../hooks/subjects/useGetSubjects";
+import { useSearchSubject } from "../hooks/subjects/useSearchSubject";
+import { useCreateSubject } from "../hooks/subjects/useCreateSubject";
+import { useUpdateSubject } from "../hooks/subjects/useUpdateSubject";
+import { useDeleteSubject } from "../hooks/subjects/useDeleteSubject";
 
-  const fetchSubjects = async () => {
-    try {
-      const response = await getSubjects();
-      setSubjects(response);
-    } catch (error) {
-      console.error("Error al cargar las asignaturas:", error);
-    }
-  };
+import SubjectForm from "../components/subjects/SubjectForm";
+import SubjectTable from "../components/subjects/SubjectTable";
 
-  const handleShowSubjects = async () => {
-    setShowSubjects((prevState) => !prevState);
-    if (!showSubjects) {
-      await fetchSubjects();
-    }
-  };
+export default function Subjects() {
+  const { subjects, fetchSubjects, loading: loadingSubjects } = useGetSubjects();
+  const { handleCreate, loading: loadingCreate } = useCreateSubject(fetchSubjects);
+  const { handleUpdate, loading: loadingUpdate } = useUpdateSubject(fetchSubjects);
 
-  const validateForm = () => {
-    const { name, cursoId, description } = newSubject;
-    if (!name || !cursoId || !description) {
-      showErrorAlert("Error", "Todos los campos son obligatorios.");
-      return false;
-    }
-    return true;
-  };
-  
+  const {
+    searchQuery,
+    setSearchQuery,
+    searchFilter,
+    setSearchFilter,
+    searchResults,
+    loading: loadingSearch,
+    error: errorSearch,
+  } = useSearchSubject(subjects);
 
-  const handleCreate = async () => {
-    if (!validateForm()) return; 
-    try {
-      await createSubject(newSubject);
-      setNewSubject({
-        nombre: "",
-        curso: "",
-        descrición: ""
-      });
-      setShowForm(false);
-      showSuccessAlert("¡Asignatura creada!", "La asignatura ha sido registrada correctamente.");
-      await fetchSubjects();
-    } catch (error) {
-      console.error("Error al crear la asignatura:", error);
-      showErrorAlert("Error", "No se pudo crear la asignatura.");
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      const result = await deleteDataAlert();
-      if (result.isConfirmed) {
-        await deleteSubject(id);
-        showSuccessAlert("¡Asignatura eliminada!", "La asignatura ha sido eliminada con éxito.");
-        await fetchSubjects();
-      }
-    } catch (error) {
-      console.error("Error al intentar eliminar la asignatura:", error);
-      showErrorAlert("Error", "No se pudo eliminar la asignatura.");
-    }
-  };
+  const { handleDelete, loading: loadingDelete } = useDeleteSubject({ fetchSubjects, subjects, setSubjects: fetchSubjects });
 
   useEffect(() => {
     fetchSubjects();
-  }, []);
+  }, [fetchSubjects]);
+
+  const noSubjects = !subjects || subjects.length === 0;
+  const noSearchResults = searchResults.length === 0 && !noSubjects;
+
+  const getPlaceholder = () => {
+    switch (searchFilter) {
+      case "code":
+        return "Buscar por código";
+      case "name":
+        return "Buscar por nombre";
+      case "cursoCode":
+        return "Buscar por código de curso";
+      case "rutProfesor":
+        return "Buscar por profesor";
+    }
+  };
 
   return (
     <div>
-      <br />
-      <br />
-      <br />
-      <br />
-      <h1>Asignaturas</h1>
-      <button onClick={() => setShowForm(!showForm)}>
-        {showForm ? "Cerrar Formulario" : "Crear Asignatura"}
-      </button>
-      <br />
-      <br />
-      {showForm && (
-        <div style={{ marginTop: "20px" }}>
-          <h2>Nueva Asignatura</h2>
+      <section>
+        <h1>Asignaturas</h1>
+      </section>
+
+      <section>
+        <h3>Crear Asignatura</h3>
+        <SubjectForm onCreate={handleCreate} loading={loadingCreate} />
+      </section>
+
+      <section>
+        <h3>Buscar Asignatura</h3>
+        <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
+          {/* Input de búsqueda */}
           <input
             type="text"
-            placeholder="Nombre"
-            value={newSubject.name}
-            onChange={(e) => setNewSubject({ ...newSubject, name: e.target.value })}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={getPlaceholder()}
+            style={{ flex: "1" }}
           />
-          <input
-            type="text"
-            placeholder="CursoID"
-            value={newSubject.cursoId}
-            onChange={(e) => setNewSubject({ ...newSubject, cursoId: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Descripción"
-            value={newSubject.description}
-            onChange={(e) => setNewSubject({ ...newSubject, description: e.target.value })}
-          />
-          <button onClick={handleCreate}>Guardar</button>
+          {/* Filtro */}
+          <select
+            value={searchFilter}
+            onChange={(e) => setSearchFilter(e.target.value)}
+            style={{
+              maxWidth: "200px",
+              minWidth: "100px",
+              height: "38px",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+              padding: "5px",
+            }}
+          >
+            <option value="">Seleccionar filtro</option>
+            <option value="name">Buscar por nombre</option>
+            <option value="codeCurso">Buscar por codigo de curso</option>
+            <option value="rutProfesor">Buscar por profesor</option>
+          </select>
         </div>
-      )}
+      </section>
 
-      <br />
-      <br />
-      <button onClick={handleShowSubjects}>
-        {showSubjects ? "Ocultar Asignaturas" : "Mostrar Asignaturas"}
-      </button>
-      <br />
-      <br />
-
-      {showSubjects && Subjects.length > 0 ? (
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>CursoID</th>
-              <th>Descripción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Subjects.map((subject) => (
-              <tr key={subject.id}>
-                <td>{subject.id}</td>
-                <td>{subject.name}</td>
-                <td>{subject.cursoId}</td>
-                <td>{subject.description}</td>
-                <td>
-                  <button onClick={() => handleDelete(subject.id)}>Eliminar</button>   
-                            
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        showSubjects && <p>No hay Asignaturas disponibles</p>
-      )}
+      <section>
+                {loadingSearch || loadingSubjects ? (
+                    <p>Cargando Asignaturas...</p>
+                ) : errorSearch ? (
+                    <p style={{ color: "red" }}>{errorSearch}</p>
+                ) : noSubjects ? (
+                    <p>No hay asignaturas registradas</p>
+                ) : noSearchResults ? (
+                    <p>No se encontraron asignaturas que coincidan con tu búsqueda</p>
+                ) : (
+                    <SubjectTable
+                        subjects={searchResults}
+                        onUpdate={handleUpdate}
+                        loadingDelete={loadingDelete}
+                        onDelete={handleDelete}
+                        loadingUpdate={loadingUpdate}
+                    />
+                )}
+      </section>
     </div>
-  );
+  )
 }
