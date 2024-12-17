@@ -10,6 +10,12 @@ export function useGetCursos() {
         try {
             setLoading(true);
             const response = await getCursos();
+            // En caso de no haber cursos
+            if (!response.cursos) {
+                setCursos([]);
+                setLoading(false);
+                return;
+            }
             // Ordenar cursos por código
             response.cursos.sort((a, b) => a.code.localeCompare(b.code));
             setCursos(response.cursos);

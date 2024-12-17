@@ -9,14 +9,17 @@ export function useUpdateCurso(fetchCursos) {
         try {
             setLoading(true);
             const updatedCurso = await updateCurso(id, cursoData);
+            console.log('updatedCurso:', updatedCurso);
             
-            if (updatedCurso) {
+            if (updatedCurso && updatedCurso.message === "Curso actualizado exitosamente") {
                 showSuccessAlert('¡Actualizado!', 'El curso ha sido actualizado correctamente.');
                 fetchCursos((prevCursos) => 
                     prevCursos.map((curso) => 
                         curso.id === id ? { ...curso, ...cursoData } : curso
             )
                 );
+            } else {
+                showErrorAlert('Error', `${updatedCurso}`);
             }
         } catch (error) {
             showErrorAlert(error.response.data.message)
