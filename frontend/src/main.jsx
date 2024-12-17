@@ -12,7 +12,7 @@ import Schedule from '@pages/Schedule';
 import '@styles/styles.css';
 //import Hallam
 import Foro from '@pages/Foro';
-//? Import services Felipe
+
 import Cursos from '@pages/Cursos';
 import Subjects from './pages/Subjects';
 
