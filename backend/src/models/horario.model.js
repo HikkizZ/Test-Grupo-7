@@ -68,6 +68,7 @@ const HorarioSchema = new EntitySchema({
             target: "User",  
             type: "many-to-one",  
             joinColumn: { name: "teacherId" },
+            nullable: false,
             inverseSide: "horarios",
             onDelete: "CASCADE", 
         }
