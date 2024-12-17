@@ -2,7 +2,6 @@ import { useState } from "react";
 
 export default function ReservationSearch({ onFilterUpdate, onReset, loading }) {
     const [filters, setFilters] = useState({
-        reservante: "", // Nuevo filtro
         devuelto: "",
         tipoReserva: "",
         estado: "",
@@ -10,15 +9,16 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
         horaDesde: "",
         fechaHasta: "",
         horaHasta: "",
+        reservante: "",
     });
 
     const [filterEnabled, setFilterEnabled] = useState({
-        reservante: false, // Nuevo checkbox
         devuelto: false,
         tipoReserva: false,
         estado: false,
         fechaDesde: false,
         fechaHasta: false,
+        reservante: false,
     });
 
     const formatDateTime = (date, time) => {
@@ -59,13 +59,12 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
             );
             onFilterUpdate("fechaHasta", fechaHoraHasta.trim());
         } else {
-            onFilterUpdate(filter, value); // Nuevo filtro "reservante" también se manejará aquí
+            onFilterUpdate(filter, value);
         }
     };
 
     const handleResetFilters = () => {
         setFilters({
-            reservante: "",
             devuelto: "",
             tipoReserva: "",
             estado: "",
@@ -73,15 +72,16 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
             horaDesde: "",
             fechaHasta: "",
             horaHasta: "",
+            reservante: "",
         });
 
         setFilterEnabled({
-            reservante: false,
             devuelto: false,
             tipoReserva: false,
             estado: false,
             fechaDesde: false,
             fechaHasta: false,
+            reservante: false,
         });
 
         onReset();
@@ -92,21 +92,17 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
     return (
         <div>
             <h3>Buscar Reservación</h3>
-            {/* Fila 1 */}
-            <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
-                <FilterSection
-                    label="Devuelto"
-                    filterName="devuelto"
-                    filterValue={filters.devuelto}
-                    enabled={filterEnabled.devuelto}
-                    onCheckboxChange={handleCheckboxChange}
-                    onFilterChange={handleFilterChange}
-                    options={[
-                        { value: "", label: "Seleccione" },
-                        { value: "true", label: "Sí" },
-                        { value: "false", label: "No" },
-                    ]}
-                />
+            {/* Primera Fila */}
+            <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap" }}>
+                <TextFilter
+                        label="Reservante"
+                        filterName="reservante"
+                        filterValue={filters.reservante}
+                        enabled={filterEnabled.reservante}
+                        onCheckboxChange={() => handleCheckboxChange("reservante")}
+                        onFilterChange={handleFilterChange}
+                    />
+
                 <FilterSection
                     label="Tipo de Reserva"
                     filterName="tipoReserva"
@@ -120,6 +116,7 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                         { value: "recurso", label: "Recurso" },
                     ]}
                 />
+
                 <FilterSection
                     label="Estado"
                     filterName="estado"
@@ -136,8 +133,8 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                 />
             </div>
 
-            {/* Fila 2 */}
-            <div style={{ display: "flex", gap: "20px", justifyContent: "center", marginTop: "10px" }}>
+            {/* Segunda Fila */}
+            <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap", marginTop: "10px" }}>
                 <DateTimeFilter
                     label="Fecha Desde"
                     dateValue={filters.fechaDesde}
@@ -159,34 +156,25 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                     onTimeChange={(e) => handleFilterChange("horaHasta", e.target.value)}
                     onClearTime={() => handleFilterChange("horaHasta", "")}
                 />
+
+                <FilterSection
+                    label="Devuelto"
+                    filterName="devuelto"
+                    filterValue={filters.devuelto}
+                    enabled={filterEnabled.devuelto}
+                    onCheckboxChange={handleCheckboxChange}
+                    onFilterChange={handleFilterChange}
+                    options={[
+                        { value: "", label: "Seleccione" },
+                        { value: "true", label: "Sí" },
+                        { value: "false", label: "No" },
+                    ]}
+                />
+
+
             </div>
 
-            {/* Nueva Fila: Filtrar por Reservante */}
-            <div style={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
-                <div>
-                    <input
-                        type="checkbox"
-                        checked={filterEnabled.reservante}
-                        onChange={() => handleCheckboxChange("reservante")}
-                    />
-                    <label style={{ marginLeft: "5px" }}>Reservante</label>
-                    <input
-                        type="text"
-                        value={filters.reservante}
-                        onChange={(e) => handleFilterChange("reservante", e.target.value)}
-                        disabled={!filterEnabled.reservante}
-                        placeholder="Nombre del Reservante"
-                        style={{
-                            backgroundColor: filterEnabled.reservante ? "#fff" : "#e0e0e0",
-                            padding: "5px",
-                            marginLeft: "10px",
-                            border: "1px solid #ccc",
-                            borderRadius: "5px",
-                        }}
-                    />
-                </div>
-            </div>
-
+            {/* Resetear Filtros */}
             {filtersActive && (
                 <div style={{ textAlign: "center", marginTop: "20px" }}>
                     <button
@@ -294,6 +282,28 @@ function DateTimeFilter({
                     </button>
                 )}
             </div>
+        </div>
+    );
+}
+
+function TextFilter({ label, filterName, filterValue, enabled, onCheckboxChange, onFilterChange }) {
+    return (
+        <div>
+            <input type="checkbox" checked={enabled} onChange={onCheckboxChange} />
+            <label style={{ marginLeft: "5px" }}>{label}</label>
+            <input
+                type="text"
+                placeholder="Nombre del Reservante"
+                value={filterValue}
+                onChange={(e) => onFilterChange(filterName, e.target.value)}
+                disabled={!enabled}
+                style={{
+                    backgroundColor: enabled ? "#fff" : "#e0e0e0",
+                    padding: "5px",
+                    borderRadius: "5px",
+                    border: "1px solid #ccc",
+                }}
+            />
         </div>
     );
 }
