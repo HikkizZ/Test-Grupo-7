@@ -113,7 +113,7 @@ export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadi
                                 onClick={handleSaveEdit}
                                 disabled={loadingUpdate}
                                 style={{
-                                    backgroundColor: "#28a745",
+                                    backgroundColor: "#007bff",
                                     color: "#fff",
                                     border: "none",
                                     borderRadius: "5px",

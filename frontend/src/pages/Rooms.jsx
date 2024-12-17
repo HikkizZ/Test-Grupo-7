@@ -59,6 +59,8 @@ export default function Rooms() {
     return (
         <div>
             <br />
+            <br />
+            <br />
             <h1 style={{ textAlign: "center" }}>Salas</h1>
 
             {/* Buscar Sala */}

@@ -73,6 +73,8 @@ export default function Resources() {
     return (
         <div>
             <br />
+            <br />
+            <br />
             <h1 style={{ textAlign: "center" }}>Recursos</h1>
 
             {/* Buscar Recurso */}
