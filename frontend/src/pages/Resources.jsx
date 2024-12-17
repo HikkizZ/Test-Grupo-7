@@ -89,7 +89,7 @@ export default function Resources() {
             {/* Lista de Recursos */}
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
                 <h3>Lista de Recursos</h3>
-                {user?.role === "admin" && ( // Solo el admin puede ver el botón de crear
+                {["admin", "Encargado"].includes(user?.role) && ( // Solo el admin puede ver el botón de crear
                     <button
                         onClick={() => setShowCreateModal(true)}
                         style={{
