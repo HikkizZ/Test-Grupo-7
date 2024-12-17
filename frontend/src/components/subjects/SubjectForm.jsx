@@ -60,6 +60,7 @@ export default function SubjectForm({ onCreate, loading }) {
 
     const [subjectData, setsubjectData] = useState({
         name: '',
+        description: '',
         cursoCode: '',
         rutProfesor: '',
     });
@@ -67,6 +68,7 @@ export default function SubjectForm({ onCreate, loading }) {
     const handleCancel = () => {
         setsubjectData({
             name: '',
+            description: '',
             cursoCode: '',
             rutProfesor: '',
         });
@@ -104,6 +106,14 @@ export default function SubjectForm({ onCreate, loading }) {
                         placeholder='Nombre'
                         value={subjectData.name}
                         onChange={(e) => setsubjectData({ ...subjectData, name: e.target.value })}
+                        disabled={loading}
+                        style={styles.input}
+                    />
+                    <input
+                        type='text'
+                        placeholder='Descripción'
+                        value={subjectData.description}
+                        onChange={(e) => setsubjectData({ ...subjectData, description: e.target.value })}
                         disabled={loading}
                         style={styles.input}
                     />

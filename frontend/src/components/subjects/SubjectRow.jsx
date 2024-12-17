@@ -1,3 +1,46 @@
+export default function SubjectRow({ subject, onEdit, onDelete, onView, loadingUpdate, loadingDelete, loadingView }) {
+
+    const getButtonStyle = (baseStyle, isDisabled) => ({
+        ...styles.button,
+        ...baseStyle,
+        ...(isDisabled ? styles.disabledButton : {}),
+    });
+    
+    return (
+        <tr style={styles.tr}>
+            <td style={styles.td}>{subject.code}</td>
+            <td style={styles.td}>{subject.name}</td>
+            <td style={styles.td}>{subject.description || "Sin descripción"}</td>
+            <td style={styles.td}>{subject.curso.code}</td>
+            <td style={styles.td}>{subject.teacher.name}</td>
+            <td style={styles.td}>
+                <div style={styles.actionButtons}>
+                    <button
+                        style={getButtonStyle(styles.viewButton, false)}
+                        onClick={() => onView(subject)}
+                            disabled={loadingView}
+                    >
+                        {loadingView ? "Cargando..." : "Ver"}
+                    </button>
+                    <button
+                        style={getButtonStyle(styles.editButton, loadingUpdate)}
+                        onClick={() => onEdit(subject)}
+                        disabled={loadingUpdate}
+                    >
+                        {loadingUpdate ? "Cargando..." : "Editar"}
+                    </button>
+                    <button
+                        style={getButtonStyle(styles.deleteButton, loadingDelete)}
+                        onClick={() => onDelete(subject)}
+                        disabled={loadingDelete}
+                    >
+                        {loadingDelete ? "Cargando..." : "Eliminar"}
+                    </button>
+                </div>
+            </td>
+        </tr>
+    );
+}
 
 const styles = {
     tr: {
@@ -54,49 +97,3 @@ const styles = {
         subjectr: 'not-allowed',
     },
 };
-
-export default function SubjectRow({ subject, onEdit, onDelete, onView, loadingUpdate, loadingDelete, loadingView }) {
-
-    const getButtonStyle = (baseStyle, isDisabled) => ({
-        ...styles.button,
-        ...baseStyle,
-        ...(isDisabled ? styles.disabledButton : {}),
-    });
-
-    return (
-        <tr style={styles.tr}>
-            <td style={styles.td}>{subject.code}</td>
-            <td style={styles.td}>{subject.name}</td>
-            <td style={styles.td}>{subject.description || "Sin descripción"}</td>
-            <td style={styles.td}>{subject.curso.code}</td>
-            <td style={styles.td}>{subject.teacher.name}</td>
-            <td style={styles.td}>
-                <div style={styles.actionButtons}>
-                    <button
-                        style={getButtonStyle(styles.viewButton, false)}
-                        onClick={() => onView(subject)}
-                            disabled={loadingView}
-                    >
-                        Ver
-                        {loadingView ? "Cargando..." : "Ver"}
-                    </button>
-                    <button
-                        style={getButtonStyle(styles.editButton, loadingUpdate)}
-                        onClick={() => onEdit(subject)}
-                        disabled={loadingUpdate}
-                    >
-                        {loadingUpdate ? "Cargando..." : "Editar"}
-                    </button>
-                    <button
-                        style={getButtonStyle(styles.deleteButton, loadingDelete)}
-                        onClick={() => onDelete(subject)}
-                        disabled={loadingDelete}
-                    >
-                        {loadingDelete ? "Cargando..." : "Eliminar"}
-                    </button>
-                </div>
-            </td>
-        </tr>
-    );
-}
-

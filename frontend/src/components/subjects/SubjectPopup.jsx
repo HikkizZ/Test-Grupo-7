@@ -1,4 +1,4 @@
-import Form from '../Form';
+import SubjectFormPopup from './SubjectFormPopup';
 import '@styles/SubjectPopup.css';
 import CloseIcon from '@assets/XIcon.svg';
 
@@ -19,7 +19,7 @@ export default function PopupSubjects({ show, setShow, data, action }) {
                             <img src={CloseIcon} alt="Cerrar" />
                         </button>
                         {/* Formulario */}
-                        <Form
+                        <SubjectFormPopup
                             title={data ? "Editar asignatura" : "Nueva asignatura"}
                             fields={[
                                 {
