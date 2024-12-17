@@ -1,63 +1,64 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import styles from '@styles/foro.module.css';
 
-function ForoForm({ onCreate, loading }) {
+function ForoForm({ onCreate, loading, onCancel }) {
     const [titulo, setTitulo] = useState('');
-    const [nombreProfesor, setNombreProfesor] = useState('');
     const [categoria, setCategoria] = useState('');
-    const [fecha, setFecha] = useState('');
+    const [contenido, setContenido] = useState('');
+    const [level, setLevel] = useState('');
+    const [section, setSection] = useState('');
+    const [archivos, setArchivos] = useState([]);
 
-    const handleFechaChange = (event) => {
-        const selectedDate = event.target.value; // Formato recibido: YYYY-MM-DD
-        setFecha(selectedDate);
+    const handleFileChange = (event) => {
+        setArchivos(Array.from(event.target.files));
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        // Convertir fecha a DD/MM/YYYY antes de enviarla
-        const [year, month, day] = fecha.split("-");
-        const formattedDate = `${day}/${month}/${year}`;
+        const formData = new FormData();
+        formData.append('titulo', titulo);
+        formData.append('categoria', categoria);
+        formData.append('contenido', contenido);
+        formData.append('level', level);
+        formData.append('section', section);
 
-        // Datos a enviar
-        const foroData = {
-            titulo,
-            nombreProfesor,
-            categoria,
-            fecha: formattedDate,
-        };
+        archivos.forEach((archivo) => {
+            formData.append('archivos', archivo);
+        });
 
-        onCreate(foroData); // Llamada al método para crear el foro
+        onCreate(formData);
+        
+        // Reset form fields
+        setTitulo('');
+        setCategoria('');
+        setContenido('');
+        setLevel('');
+        setSection('');
+        setArchivos([]);
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label htmlFor="titulo">Título:</label>
+        <form onSubmit={handleSubmit} className={styles.foroForm}>
+            <div className={styles.formGroup}>
+                <label htmlFor="titulo" className={styles.formLabel}>Título:</label>
                 <input
                     id="titulo"
                     type="text"
                     value={titulo}
                     onChange={(e) => setTitulo(e.target.value)}
                     required
+                    className={styles.formInput}
                 />
             </div>
-            <div>
-                <label htmlFor="nombreProfesor">Nombre del Profesor:</label>
-                <input
-                    id="nombreProfesor"
-                    type="text"
-                    value={nombreProfesor}
-                    onChange={(e) => setNombreProfesor(e.target.value)}
-                    required
-                />
-            </div>
-            <div>
-                <label htmlFor="categoria">Categoría:</label>
+            <div className={styles.formGroup}>
+                <label htmlFor="categoria" className={styles.formLabel}>Categoría:</label>
                 <select
                     id="categoria"
                     value={categoria}
                     onChange={(e) => setCategoria(e.target.value)}
                     required
+                    className={styles.formSelect}
                 >
                     <option value="">--Seleccionar--</option>
                     <option value="Tarea">Tarea</option>
@@ -65,19 +66,68 @@ function ForoForm({ onCreate, loading }) {
                     <option value="Variedad">Variedad</option>
                 </select>
             </div>
-            <div>
-                <label htmlFor="fecha">Fecha:</label>
-                <input
-                    id="fecha"
-                    type="date"
-                    value={fecha}
-                    onChange={handleFechaChange}
+            <div className={styles.formGroup}>
+                <label htmlFor="contenido" className={styles.formLabel}>Contenido:</label>
+                <textarea
+                    id="contenido"
+                    value={contenido}
+                    onChange={(e) => setContenido(e.target.value)}
                     required
+                    className={styles.formTextarea}
                 />
             </div>
-            <button type="submit" disabled={loading}>
-                {loading ? 'Cargando...' : 'Crear Foro'}
-            </button>
+            <div className={styles.formGroup}>
+                <label htmlFor="level" className={styles.formLabel}>Nivel:</label>
+                <input
+                    id="level"
+                    type="number"
+                    min="1"
+                    max="4"
+                    value={level}
+                    onChange={(e) => setLevel(e.target.value)}
+                    required
+                    className={styles.formInput}
+                />
+            </div>
+            <div className={styles.formGroup}>
+                <label htmlFor="section" className={styles.formLabel}>Sección:</label>
+                <input
+                    id="section"
+                    type="text"
+                    maxLength="1"
+                    pattern="[A-Z]"
+                    value={section}
+                    onChange={(e) => setSection(e.target.value.toUpperCase())}
+                    required
+                    className={styles.formInput}
+                />
+            </div>
+            <div className={styles.formGroup}>
+                <label htmlFor="archivos" className={styles.formLabel}>Archivos adjuntos:</label>
+                <input
+                    id="archivos"
+                    type="file"
+                    onChange={handleFileChange}
+                    multiple
+                    className={styles.formFileInput}
+                />
+            </div>
+            <div className={styles.formActions}>
+                <button 
+                    type="button" 
+                    onClick={onCancel}
+                    className={`${styles.foroButton} ${styles.foroButtonCancel}`}
+                >
+                    Cancelar
+                </button>
+                <button 
+                    type="submit" 
+                    disabled={loading}
+                    className={`${styles.foroButton} ${styles.foroButtonSubmit}`}
+                >
+                    {loading ? 'Creando...' : 'Crear Foro'}
+                </button>
+            </div>
         </form>
     );
 }
