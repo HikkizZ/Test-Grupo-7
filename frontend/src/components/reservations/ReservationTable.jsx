@@ -1,34 +1,43 @@
 import ReservationRow from "./ReservationRow";
 import { parse } from "date-fns";
 
-export default function ReservationTable({ reservations, onUpdate, onDelete, loadingUpdate, loadingDelete, hideDevuelto, user }) {
+export default function ReservationTable({
+    reservations,
+    onUpdate,
+    onDelete,
+    loadingUpdate,
+    loadingDelete,
+    user,
+    hideDevuelto,
+}) {
     // Función para convertir fechaDesde en objeto Date
     const parseFechaDesde = (fecha) => {
         return parse(fecha, "dd-MM-yyyy HH:mm", new Date());
     };
 
-    // Ordenar reservaciones por fechaDesde (ascendente)
-    const sortedReservations = [...reservations]
-        .filter((reservation) => {
-            // Aplicar filtro especial solo para roles Profesor y Alumno
-            if (user?.role === "Profesor" || user?.role === "Alumno") {
-                const reservanteNombre = reservation.Reservante?.nombre || "-------";
-                const estado = reservation.estado;
+    // **Filtrado inicial**: Aplica la validación 1
+    const filteredReservations = reservations.filter((reservation) => {
+        const reservanteNombre = reservation.Reservante?.nombre || "-------";
 
-                if (
-                    reservanteNombre === "-------" &&
-                    (estado === "pendiente" || estado === "rechazada")
-                ) {
-                    return false; // No mostrar si nombre es "-------" y estado pendiente/rechazada
-                }
-            }
-            return true;
-        })
-        .sort((a, b) => {
-            const dateA = parseFechaDesde(a.fechaDesde); // Parsear fecha
-            const dateB = parseFechaDesde(b.fechaDesde);
-            return dateA - dateB; // Orden ascendente
-        });
+        // VALIDACIÓN 1: Excluir filas si el Reservante no coincide y estado es "pendiente" o "rechazada"
+        if (
+            (user?.role === "Profesor" || user?.role === "Alumno") &&
+            reservanteNombre !== user?.name &&
+            (reservation.estado === "pendiente" || reservation.estado === "rechazada")
+        ) {
+            console.log("Excluyendo reserva. Reservante:", reservanteNombre, "Estado:", reservation.estado);
+            return false; // Excluir la fila
+        }
+
+        return true; // Mantener la fila
+    });
+
+    // Ordenar reservaciones por fechaDesde (ascendente)
+    const sortedReservations = [...filteredReservations].sort((a, b) => {
+        const dateA = parseFechaDesde(a.fechaDesde);
+        const dateB = parseFechaDesde(b.fechaDesde);
+        return dateA - dateB;
+    });
 
     return (
         <table>
@@ -38,7 +47,7 @@ export default function ReservationTable({ reservations, onUpdate, onDelete, loa
                     <th>Fecha Hasta</th>
                     <th>Tipo Reserva</th>
                     <th>Estado</th>
-                    {!hideDevuelto && <th>Devuelto</th>} {/* Ocultar si hideDevuelto es true */}
+                    {!hideDevuelto && <th>Devuelto</th>}
                     <th>Reservante</th>
                     <th>Sala/Recurso</th>
                     <th>Acciones</th>
@@ -54,13 +63,15 @@ export default function ReservationTable({ reservations, onUpdate, onDelete, loa
                             onDelete={onDelete}
                             loadingUpdate={loadingUpdate}
                             loadingDelete={loadingDelete}
-                            user={user} // Pasar el usuario autenticado
+                            user={user}
                             hideDevuelto={hideDevuelto}
                         />
                     ))
                 ) : (
                     <tr>
-                        <td colSpan="8" style={{ textAlign: "center" }}>No se encontraron reservaciones.</td>
+                        <td colSpan="8" style={{ textAlign: "center" }}>
+                            No se encontraron reservaciones.
+                        </td>
                     </tr>
                 )}
             </tbody>

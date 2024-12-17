@@ -32,18 +32,11 @@ export default function ReservationRow({ reservation, onUpdate, onDelete, loadin
         setIsEditing(false);
     };
 
-    // Lógica corregida para mostrar el nombre del Reservante
-    let reservanteNombre = reservation.Reservante?.nombre || "No disponible";
-
-    // Log para depuración
-    console.log("Usuario logueado:", user?.name);
-    console.log("Reservante de la fila:", reservanteNombre);
+    // VALIDACIÓN 2: Reemplazar nombre si no coincide
+    let reservanteNombre = reservation.Reservante?.nombre || "-------";
 
     if ((user?.role === "Profesor" || user?.role === "Alumno") && reservanteNombre !== user?.name) {
-        console.log("No coincide. Se reemplaza por '-------'");
         reservanteNombre = "-------";
-    } else {
-        console.log("Coincide. Se muestra el nombre del Reservante.");
     }
 
     return (
