@@ -12,6 +12,7 @@
   "dependencies": {
     "@formkit/tempo": "^0.1.2",
     "axios": "^1.7.5",
+    "date-fns": "^4.1.0",
     "frontend": "file:",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
@@ -20,6 +21,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.0",
+    "react-modal": "^3.16.1",
     "react-router-dom": "^6.26.1",
     "react-tabulator": "^0.21.0",
     "rut.js": "^2.1.0",
@@ -35,6 +37,6 @@
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
-    "vite": "^5.4.1"
+    "vite": "^5.4.11"
   }
 }

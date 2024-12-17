@@ -10,10 +10,10 @@ router
     .use(authenticateJWT);
 
 router
-    .post("/solicitar", verifyRole(["Profesor", "Alumno"]), createReservationController) // Solicitar reserva
+    .post("/solicitar", verifyRole(["Profesor", "Alumno", "admin"]), createReservationController) // Solicitar reserva
     .get("/all", verifyRole (["Encargado", "admin", "Profesor", "Alumno"]), getReservationsController) // Listar reservas
     .get("/get", verifyRole (["Encargado", "admin", "Profesor", "Alumno"]), getReservationController) // Mostrar información de una reserva en particular
-    .patch("/update", verifyRole("Encargado"), updateReservationController) // Actualizar una reserva
+    .patch("/update", verifyRole(["Encargado", "admin"]), updateReservationController) // Actualizar una reserva
     .delete("/delete", verifyRole("admin"), deleteReservationController); // Eliminar una reserva
     
 export default router;

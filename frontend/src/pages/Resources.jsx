@@ -1,116 +1,118 @@
 import { useEffect, useState } from "react";
+import ResourceSearch from "../components/resources/ResourceSearch";
+import ResourceTable from "../components/resources/ResourceTable";
+import ResourceForm from "../components/resources/ResourceForm";
 import { useCreateResource } from "../hooks/resources/useCreateResource";
 import { useGetResources } from "../hooks/resources/useGetResources";
-import { useSearchResource } from "../hooks/resources/useSearchResource";
 import { useUpdateResource } from "../hooks/resources/useUpdateResource";
 import { useDeleteResource } from "../hooks/resources/useDeleteResource";
-import ResourceForm from "../components/resources/ResourceForm";
-import ResourceTable from "../components/resources/ResourceTable";
 
 export default function Resources() {
     const { resources, fetchResources, loading: loadingResources } = useGetResources();
     const { handleCreate, loading: loadingCreate } = useCreateResource(fetchResources);
     const { handleUpdate, loading: loadingUpdate } = useUpdateResource(fetchResources);
-
-    const [searchResults, setSearchResults] = useState(resources); // Estado de resultados de búsqueda
-
-    const {
-        searchQuery,
-        setSearchQuery,
-        searchFilter,
-        setSearchFilter,
-        searchResults: filteredResults,
-        loading: loadingSearch,
-        error: errorSearch,
-    } = useSearchResource(resources);
-
-    // Combinar resultados de búsqueda con el estado de eliminación
-    useEffect(() => {
-        setSearchResults(filteredResults);
-    }, [filteredResults]);
-
-    // Usar el hook de eliminación con los estados principales
     const { handleDelete, loading: loadingDelete } = useDeleteResource({
-        resources,
-        setResources: fetchResources, // Reutilizar la lógica de fetchResources para mantener la consistencia
-        searchResults,
-        setSearchResults,
+        setResources: fetchResources,
     });
+
+    const [filteredResources, setFilteredResources] = useState([]);
+    const [filters, setFilters] = useState({});
+    const [showCreateModal, setShowCreateModal] = useState(false);
 
     useEffect(() => {
         fetchResources();
     }, [fetchResources]);
 
-    // Determinar los mensajes correctos
-    const noResources = resources.length === 0; // No hay recursos registrados
-    const noSearchResults = searchResults.length === 0 && !noResources; // No coincidencias en la búsqueda
+    useEffect(() => {
+        let results = resources;
+
+        if (filters.name) {
+            results = results.filter((resource) =>
+                resource.name.toLowerCase().includes(filters.name.toLowerCase())
+            );
+        }
+        if (filters.brand) {
+            results = results.filter((resource) =>
+                resource.brand.toLowerCase().includes(filters.brand.toLowerCase())
+            );
+        }
+        if (filters.resourceType) {
+            results = results.filter((resource) => resource.resourceType === filters.resourceType);
+        }
+
+        setFilteredResources(results);
+    }, [filters, resources]);
+
+    const handleFilterUpdate = (filter, value) => {
+        setFilters((prev) => ({
+            ...prev,
+            [filter]: value.trim(),
+        }));
+    };
+
+    const handleResetFilters = () => {
+        setFilters({});
+        setFilteredResources(resources);
+    };
 
     return (
         <div>
             <br />
             <br />
             <br />
-            <br />
-            <h1>Recursos</h1>
+            <h1 style={{ textAlign: "center" }}>Recursos</h1>
 
-            {/* Crear recurso */}
-            <h3>Crear Recurso</h3>
-            <ResourceForm onCreate={handleCreate} loading={loadingCreate} />
-
-            {/* Buscar recurso */}
+            {/* Buscar Recurso */}
             <h3>Buscar Recurso</h3>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
-                <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={
-                        searchFilter === "id"
-                            ? "Buscar por ID"
-                            : searchFilter === "name"
-                            ? "Buscar por Nombre"
-                            : "Buscar recurso"
-                    }
-                    style={{ flex: "1" }}
-                />
-                <select
-                    value={searchFilter}
-                    onChange={(e) => setSearchFilter(e.target.value)}
+            <ResourceSearch
+                onSearch={(query) =>
+                    setFilteredResources(
+                        resources.filter((resource) =>
+                            `${resource.name.toLowerCase()} ${resource.brand.toLowerCase()} ${resource.resourceType.toLowerCase()}`.includes(
+                                query.toLowerCase()
+                            )
+                        )
+                    )
+                }
+                onFilterUpdate={handleFilterUpdate}
+                onReset={handleResetFilters}
+                loading={loadingResources}
+            />
+
+            {/* Lista de Recursos */}
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
+                <h3>Lista de Recursos</h3>
+                <button
+                    onClick={() => setShowCreateModal(true)} // Mostrar el modal
                     style={{
-                        maxWidth: "200px",
-                        minWidth: "150px",
                         height: "38px",
+                        backgroundColor: "#28a745", // Color verde
+                        color: "#fff", // Texto blanco
+                        border: "none",
                         borderRadius: "5px",
-                        border: "1px solid #ccc",
-                        padding: "5px",
+                        padding: "10px 15px",
+                        cursor: "pointer",
+                        fontSize: "14px",
                     }}
                 >
-                    <option value="">--Seleccionar filtro--</option>
-                    <option value="id">Buscar recurso por ID</option>
-                    <option value="name">Buscar recurso por Nombre</option>
-                </select>
+                    Crear Recurso
+                </button>
             </div>
 
-            {/* Lista de recursos */}
-            <h3>Lista de Recursos</h3>
-            {loadingSearch || loadingResources ? (
-                <p>Cargando recursos...</p>
-            ) : errorSearch ? (
-                <p style={{ color: "red" }}>{errorSearch}</p>
-            ) : noResources ? (
-                // Mostrar mensaje si no hay recursos
-                <p>No hay recursos registrados.</p>
-            ) : noSearchResults ? (
-                // Mostrar mensaje si no hay resultados de búsqueda
-                <p>No se encontraron recursos que coincidan con tu búsqueda.</p>
-            ) : (
-                // Mostrar la tabla de recursos
-                <ResourceTable
-                    resources={searchResults}
-                    onDelete={handleDelete}
-                    loadingDelete={loadingDelete}
-                    onUpdate={handleUpdate}
-                    loadingUpdate={loadingUpdate}
+            <ResourceTable
+                resources={filteredResources}
+                onUpdate={handleUpdate}
+                onDelete={handleDelete}
+                loadingUpdate={loadingUpdate}
+                loadingDelete={loadingDelete}
+            />
+
+            {/* Modal Crear Recurso */}
+            {showCreateModal && (
+                <ResourceForm
+                    onCreate={handleCreate}
+                    loading={loadingCreate}
+                    onClose={() => setShowCreateModal(false)}
                 />
             )}
         </div>

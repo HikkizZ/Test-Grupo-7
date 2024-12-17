@@ -1,20 +1,21 @@
 import { useState } from "react";
 
-export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, loading }) {
+export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading }) {
     const [query, setQuery] = useState("");
     const [filters, setFilters] = useState({
         name: "",
-        brand: "",
-        resourceType: "",
+        size: "",
+        roomType: "",
     });
 
     const [filterEnabled, setFilterEnabled] = useState({
         name: false,
-        brand: false,
-        resourceType: false,
+        size: false,
+        roomType: false,
     });
 
-    const [filtersActive, setFiltersActive] = useState(false); // Mostrar botón de reset dinámicamente
+    // Mostrar botón de reset dinámicamente
+    const [filtersActive, setFiltersActive] = useState(false);
 
     // Buscador General
     const handleSearch = (e) => {
@@ -49,8 +50,8 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
 
     // Resetear filtros y buscador
     const resetFilters = () => {
-        setFilters({ name: "", brand: "", resourceType: "" });
-        setFilterEnabled({ name: false, brand: false, resourceType: false });
+        setFilters({ name: "", size: "", roomType: "" });
+        setFilterEnabled({ name: false, size: false, roomType: false });
         setQuery("");
         setFiltersActive(false);
         onReset();
@@ -64,7 +65,7 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
                     type="text"
                     value={query}
                     onChange={handleSearch}
-                    placeholder="Buscar por Nombre, Marca o Tipo de Recurso"
+                    placeholder="Buscar por Nombre, Tamaño o Tipo de Sala"
                     style={{
                         width: "100%",
                         padding: "10px",
@@ -102,42 +103,42 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
                     />
                 </div>
 
-                {/* Marca */}
+                {/* Tamaño */}
                 <div>
                     <input
                         type="checkbox"
-                        checked={filterEnabled.brand}
-                        onChange={() => handleCheckboxChange("brand")}
+                        checked={filterEnabled.size}
+                        onChange={() => handleCheckboxChange("size")}
                     />
-                    <label>Marca</label>
+                    <label>Tamaño</label>
                     <input
-                        type="text"
-                        value={filters.brand}
-                        onChange={(e) => handleFilterChange("brand", e.target.value)}
-                        disabled={!filterEnabled.brand}
-                        placeholder="Marca"
-                        style={{ marginLeft: "5px", width: "150px" }}
+                        type="number"
+                        value={filters.size}
+                        onChange={(e) => handleFilterChange("size", e.target.value)}
+                        disabled={!filterEnabled.size}
+                        placeholder="Tamaño (m²)"
+                        style={{ marginLeft: "5px", width: "130px" }}
                     />
                 </div>
 
-                {/* Tipo de Recurso */}
+                {/* Tipo */}
                 <div>
                     <input
                         type="checkbox"
-                        checked={filterEnabled.resourceType}
-                        onChange={() => handleCheckboxChange("resourceType")}
+                        checked={filterEnabled.roomType}
+                        onChange={() => handleCheckboxChange("roomType")}
                     />
                     <label>Tipo</label>
                     <select
-                        value={filters.resourceType}
-                        onChange={(e) => handleFilterChange("resourceType", e.target.value)}
-                        disabled={!filterEnabled.resourceType}
+                        value={filters.roomType}
+                        onChange={(e) => handleFilterChange("roomType", e.target.value)}
+                        disabled={!filterEnabled.roomType}
                         style={{ marginLeft: "5px", width: "150px" }}
                     >
                         <option value="">Seleccionar</option>
-                        <option value="Tecnologia">Tecnología</option>
-                        <option value="Equipo de Sonido">Equipo de Sonido</option>
-                        <option value="Material Didactico">Material Didáctico</option>
+                        <option value="laboratorio">Laboratorio</option>
+                        <option value="computacion">Computación</option>
+                        <option value="clases">Clases</option>
                     </select>
                 </div>
             </div>
@@ -161,7 +162,7 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
                 </div>
             )}
 
-            {loading && <p>Cargando recursos...</p>}
+            {loading && <p>Cargando salas...</p>}
         </div>
     );
 }

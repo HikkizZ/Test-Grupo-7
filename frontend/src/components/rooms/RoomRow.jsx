@@ -1,13 +1,13 @@
-export default function ResourceRow({ resource, onSelect, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
+export default function RoomRow({ room, onSelect, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
     return (
         <tr>
-            <td>{resource.name}</td>
-            <td>{resource.brand}</td>
-            <td>{resource.resourceType}</td>
+            <td>{room.name}</td>
+            <td>{room.size}</td>
+            <td>{room.roomType}</td>
             <td>
                 {onSelect ? (
                     <button
-                        onClick={() => onSelect(resource)}
+                        onClick={() => onSelect(room)}
                         style={{
                             backgroundColor: "#28a745",
                             color: "#fff",
@@ -22,7 +22,7 @@ export default function ResourceRow({ resource, onSelect, onUpdate, onDelete, lo
                 ) : (
                     <>
                         <button
-                            onClick={() => onUpdate(resource.id)}
+                            onClick={() => onUpdate(room.id)}
                             disabled={loadingUpdate}
                             style={{
                                 backgroundColor: "#007bff",
@@ -37,7 +37,7 @@ export default function ResourceRow({ resource, onSelect, onUpdate, onDelete, lo
                             Modificar
                         </button>
                         <button
-                            onClick={() => onDelete(resource.id)}
+                            onClick={() => onDelete(room.id)}
                             disabled={loadingDelete}
                             style={{
                                 backgroundColor: "#d33",

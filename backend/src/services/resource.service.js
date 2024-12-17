@@ -1,4 +1,5 @@
 "use strict";
+
 import Resource from "../models/resource.model.js";
 import { AppDataSource } from "../config/configDB.js";
 
@@ -6,12 +7,18 @@ export async function createResourceService(req) {
     try {
         const resourceRepository = AppDataSource.getRepository(Resource);
 
+        // Verificar si ya existe un recurso con el mismo nombre
         const existingResource = await resourceRepository.findOne({ where: { name: req.body.name } });
 
-        if (existingResource) return [null, "El recurso ya existe"];
+        if (existingResource) {
+            return [null, "El recurso ya existe."];
+        }
 
+        // Crear un nuevo recurso
         const newResource = resourceRepository.create({
             name: req.body.name,
+            brand: req.body.brand,
+            resourceType: req.body.resourceType,
         });
 
         await resourceRepository.save(newResource);
@@ -20,65 +27,93 @@ export async function createResourceService(req) {
     } catch (error) {
         return [null, "Internal Server Error", error.message];
     }
-};
+}
 
 export async function getResourcesService() {
     try {
         const resourceRepository = AppDataSource.getRepository(Resource);
 
-        const resources = await resourceRepository.find();
+        // Obtener todos los recursos y ordenarlos por ID (de menor a mayor)
+        const resources = await resourceRepository.find({
+            order: {
+                id: "ASC", // Ordenar por ID
+            },
+        });
 
-        if (!resources || resources.length === 0) return [null, "No se encontraron recursos."];
+        if (!resources || resources.length === 0) {
+            return [null, "No se encontraron recursos."];
+        }
 
         return [resources, null];
     } catch (error) {
         return [null, "Internal Server Error", error.message];
     }
-};
+}
 
 export async function getResourceService(query) {
     try {
-        const {idResource, nameResource} = query;
+        const { id, name, brand, resourceType } = query;
 
         const resourceRepository = AppDataSource.getRepository(Resource);
 
-        const resourceFound = await resourceRepository.findOne({ 
-            where: [{ id: idResource }, { name: nameResource }]
-         });
+        // Crear un QueryBuilder para construir condiciones dinámicas
+        const queryBuilder = resourceRepository.createQueryBuilder("resource");
 
-        if (!resourceFound) return [null, "Recurso no encontrado."];
+        // Agregar condiciones dinámicas
+        if (id !== undefined) {
+            queryBuilder.andWhere("resource.id = :id", { id });
+        }
+        if (name) {
+            queryBuilder.andWhere("resource.name = :name", { name });
+        }
+        if (brand) {
+            queryBuilder.andWhere("resource.brand = :brand", { brand });
+        }
+        if (resourceType) {
+            queryBuilder.andWhere("resource.resourceType = :resourceType", { resourceType });
+        }
 
-        return [resourceFound, null];
+        // Ejecutar la consulta
+        const resourcesFound = await queryBuilder.getMany();
+
+        if (!resourcesFound || resourcesFound.length === 0) {
+            return [null, "No se encontraron recursos con los criterios especificados."];
+        }
+
+        return [resourcesFound, null];
     } catch (error) {
         return [null, "Internal Server Error", error.message];
     }
-};
+}
 
 export async function updateResourceService(query, body) {
     try {
-        const { idResource, nameResource } = query;
+        const { id, name } = query;
 
         const resourceRepository = AppDataSource.getRepository(Resource);
 
-        const resourceFound = await resourceRepository.findOne({ where: [{ id: idResource }, { name: nameResource }] });
+        const resourceFound = await resourceRepository.findOne({ where: [{ id }, { name }] });
 
         if (!resourceFound) return [null, "Recurso no encontrado."];
 
-        const resourceUpdated = await resourceRepository.update(resourceFound.id, body);
+        const updatedResource = await resourceRepository.save({
+            ...resourceFound,
+            ...body,
+        });
 
-        return [resourceUpdated, null];
+        return [updatedResource, null];
     } catch (error) {
         return [null, "Internal Server Error", error.message];
     }
-};
+}
 
 export async function deleteResourceService(query) {
     try {
-        const { idResource, nameResource } = query;
+        const { id, name } = query;
 
         const resourceRepository = AppDataSource.getRepository(Resource);
 
-        const resourceFound = await resourceRepository.findOne({ where: [{ id: idResource }, { name: nameResource }] });
+        const resourceFound = await resourceRepository.findOne({ where: [{ id }, { name }] });
 
         if (!resourceFound) return [null, "Recurso no encontrado."];
 
@@ -88,4 +123,4 @@ export async function deleteResourceService(query) {
     } catch (error) {
         return [null, "Internal Server Error", error.message];
     }
-};
+}
