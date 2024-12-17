@@ -32,7 +32,7 @@ export async function createCurso(req, res) { //* This function creates a course
 
         const [cursoCreated, errorCurso] = await createCursoService({ name, level, year, section }); //? Creating the course.
 
-        if (errorCurso) return handleErrorClient(res, 400, `${error.message}`,errorCurso); //? If an error occurred while creating the course, return a 400 error.
+        if (errorCurso) return handleErrorClient(res, 400, errorCurso); //? If an error occurred while creating the course, return a 400 error.
 
         handleSuccess(res, 201, "Curso creado exitosamente", cursoCreated); //? If the course is created, return the course.
     } catch (error) {
