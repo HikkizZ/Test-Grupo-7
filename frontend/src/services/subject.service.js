@@ -40,7 +40,6 @@ export async function getSubject(id) {
 export async function updateSubject(id, data) {
   try {
     const response = await axios.patch(`/subject/?id=${id}`, data); //* Verifica que esta sea la ruta correcta
-    console.log('response', response?.data?.message)
     return response.data;
   } catch (error) {
     console.log("Error al actualizar la asignatura: ", error.response?.data?.message || error)
