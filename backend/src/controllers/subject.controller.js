@@ -26,11 +26,11 @@ export async function createSubject(req, res) { //* This function creates a subj
 
         const { error } = createSubjectBodyValidation.validate({ name, description, cursoCode, rutProfesor }); //? Validating the body parameters.
 
-        if (error) return handleErrorClient(res, 400, error.message); //? If the body parameters are invalid, return a 400 error.
+        if (error) return handleErrorClient(res, 400, "Validation Error", [error.message]);
 
         const [subjectCreated, errorSubject] = await createSubjectService({ name, description, cursoCode, rutProfesor }); //? Creating the subject.
 
-        if (errorSubject) return handleErrorClient(res, 400, errorSubject); //? If an error occurred while creating the subject, return a 400 error.
+        if (errorSubject) return handleErrorClient(res, 400, "Error al crear la asignatura", errorSubject); //? If an error occurred while creating the subject, return a 400 error.
 
         handleSuccess(res, 201, "Asignatura creada exitosamente", subjectCreated); //? If the subject is created, return the subject.
     } catch (error) {
