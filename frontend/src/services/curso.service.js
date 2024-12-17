@@ -21,6 +21,7 @@ export async function getCursos(){ //? Función para mostrar todos los cursos
 }
 
 export async function deleteCurso(code){ //? Función para eliminar un curso
+    console.log('Delete: code:', code.code);
     try {
         const { data } = await axios.delete(`/curso/?code=${code.code}`);
         return data;
@@ -40,9 +41,10 @@ export async function createCurso(data){ //? Función para crear un curso
 
     try {
         const response = await axios.post('/curso', cursoData);
+        console.log('response:', response?.data);
         return response.data;
     } catch (error) {
-        return error.response.data.message || "Error desconocido al crear el curso";
+        return error.response?.data?.message || "Error desconocido al crear el curso";
     }
 }
 
@@ -56,7 +58,7 @@ export async function updateCurso(id, data){ //? Función para actualizar un cur
 
     try {
         const response = await axios.put(`/curso/?id=${id}`, cursoData);
-        return response.data.data;
+        return response.data;
     } catch (error) {
         return error.response.data.message || "Error desconocido al actualizar el curso";
     }
