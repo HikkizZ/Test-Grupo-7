@@ -15,21 +15,15 @@ export default function ReservationTable({
         return parse(fecha, "dd-MM-yyyy HH:mm", new Date());
     };
 
-    // **Filtrado inicial**: Aplica la validación 1
+    // Filtrado de reservaciones
     const filteredReservations = reservations.filter((reservation) => {
         const reservanteNombre = reservation.Reservante?.nombre || "-------";
-
-        // VALIDACIÓN 1: Excluir filas si el Reservante no coincide y estado es "pendiente" o "rechazada"
-        if (
-            (user?.role === "Profesor" || user?.role === "Alumno") &&
-            reservanteNombre !== user?.name &&
-            (reservation.estado === "pendiente" || reservation.estado === "rechazada")
-        ) {
-            console.log("Excluyendo reserva. Reservante:", reservanteNombre, "Estado:", reservation.estado);
-            return false; // Excluir la fila
+        if (user?.role === "Profesor" || user?.role === "Alumno") {
+            if (reservanteNombre.trim() === "-------" && reservation.estado !== "aprobada") {
+                return false;
+            }
         }
-
-        return true; // Mantener la fila
+        return true;
     });
 
     // Ordenar reservaciones por fechaDesde (ascendente)
@@ -38,6 +32,9 @@ export default function ReservationTable({
         const dateB = parseFechaDesde(b.fechaDesde);
         return dateA - dateB;
     });
+
+    // Determinar si se debe mostrar la columna Acciones
+    const hideActions = user?.role === "Profesor" || user?.role === "Alumno";
 
     return (
         <table>
@@ -50,7 +47,7 @@ export default function ReservationTable({
                     {!hideDevuelto && <th>Devuelto</th>}
                     <th>Reservante</th>
                     <th>Sala/Recurso</th>
-                    <th>Acciones</th>
+                    {!hideActions && <th>Acciones</th>} {/* Ocultar Acciones */}
                 </tr>
             </thead>
             <tbody>
@@ -65,6 +62,7 @@ export default function ReservationTable({
                             loadingDelete={loadingDelete}
                             user={user}
                             hideDevuelto={hideDevuelto}
+                            hideActions={hideActions} // Pasar la propiedad para la fila
                         />
                     ))
                 ) : (
