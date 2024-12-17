@@ -110,10 +110,11 @@ export async function updateCursoService(query, body) { //* This function update
         if (!cursoFound) return [null, "Curso no encontrado"]; //? If the course is not found, return null and a message.
 
         const existingCurso = await cursoRepository.findOne({ //? Finding the course by code and name.
-            where: [
-                { code: body.code, id: Not(cursoFound.id) },
-                { name: body.name, id: Not(cursoFound.id) }
-            ]
+            where: {
+                id: Not(cursoFound.id),
+                code: body.code,
+                name: body.name,
+            }
         });
 
         if (existingCurso) return [null, "Ya existe un curso con estos datos"]; //? If the course already exists, return null and a message.
