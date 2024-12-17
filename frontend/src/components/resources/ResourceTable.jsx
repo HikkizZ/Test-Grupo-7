@@ -1,7 +1,6 @@
 import ResourceRow from "./ResourceRow";
 
-export default function ResourceTable({ resources, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
-    // Ordenar por nombre de recurso alfabéticamente
+export default function ResourceTable({ resources, onSelect, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
     const sortedResources = [...resources].sort((a, b) => a.name.localeCompare(b.name));
 
     return (
@@ -9,16 +8,17 @@ export default function ResourceTable({ resources, onUpdate, onDelete, loadingUp
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>Marca</th>
-                    <th>Tipo de Recurso</th>
+                    <th>Marca/Modelo</th>
+                    <th>Tipo</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {sortedResources.map((resource) => (
                     <ResourceRow
-                        key={resource.id} // Usar el ID como clave
+                        key={resource.id}
                         resource={resource}
+                        onSelect={onSelect}
                         onUpdate={onUpdate}
                         onDelete={onDelete}
                         loadingUpdate={loadingUpdate}

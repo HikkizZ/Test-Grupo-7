@@ -23,9 +23,13 @@ import {
 
 export async function createReservationController(req, res) {
     try {
+        console.log("Datos recibidos en el backend:", req.body); // <-- Imprime el cuerpo recibido
         const { error } = reservationBodyValidation.validate(req.body);
 
-        if (error) return handleErrorClient(res, 400, "Validation Error", error.message);
+        if (error) {
+            console.log("Error de validación:", error.message); // <-- Imprime el error de validación exacto
+            return handleErrorClient(res, 400, "Validation Error", error.message);
+        }
 
         const [reservation, reservationError] = await createReservationService(req);
 
@@ -33,6 +37,7 @@ export async function createReservationController(req, res) {
 
         handleSuccess(res, 201, "Reservation created", reservation);
     } catch (error) {
+        console.error("Error en createReservationController:", error);
         handleErrorServer(res, 500, "Internal Server Error", error);
     }
 };
