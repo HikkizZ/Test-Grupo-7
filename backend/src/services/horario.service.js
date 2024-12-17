@@ -29,7 +29,10 @@ export async function getHorarioService(query) {
                     rut: horario.teacher.rut,
             },
             subject: horarioFound.subject.name,
-            curso: horarioFound.curso.name,
+            curso: {
+                name: horarioFound.curso.name,
+                code: horarioFound.curso.code, 
+            },
             classroom: horarioFound.room.name,
             dayOfWeek: horarioFound.dayOfWeek,
             period: {
@@ -63,7 +66,10 @@ export async function getHorariosService() {
                     rut: horario.teacher.rut,
                 },
                 subject: horario.subject.name,
-                curso: horario.curso.name,
+                curso: {
+                    name: horario.curso.name,
+                    code: horario.curso.code, 
+                },
                 classroom: horario.room.name,
                 dayOfWeek: horario.dayOfWeek,
                 period: {
@@ -154,7 +160,10 @@ export async function createHorarioService(body) {
             id: horarioWithRelations.id,
             teacher: horarioWithRelations.teacher.name,
             subject: horarioWithRelations.subject.name,
-            curso: horarioWithRelations.curso.name,
+            curso: {
+                name: horarioWithRelations.curso.name,
+                code: horarioWithRelations.curso.code,
+            },
             classroom: horarioWithRelations.room.name,
             dayOfWeek: horarioWithRelations.dayOfWeek,
             period: {
@@ -203,7 +212,10 @@ export async function updateHorarioService(query, body) {
         const responseData = {
             teacherName: updatedHorarioWithRelations.teacher.name,
             subjectName: updatedHorarioWithRelations.subject.name,
-            cursoName: updatedHorarioWithRelations.curso.name,
+            curso: {
+                name: updatedHorarioWithRelations.curso.name,
+                code: updatedHorarioWithRelations.curso.code,
+            },
             classroomName: updatedHorarioWithRelations.room.name,
             dayOfWeek: updatedHorarioWithRelations.dayOfWeek,
             period: {
@@ -239,7 +251,10 @@ export async function deleteHorarioService(query) {
         const responseData = {
             teacherName: horarioFound.teacher.name,
             subjectName: horarioFound.subject.name,
-            cursoName: horarioFound.curso.name,
+            curso: {
+                name: horarioFound.curso.name,
+                code: horarioFound.curso.code,
+            },
             classroomName: horarioFound.room.name,
             dayOfWeek: horarioFound.dayOfWeek,
             period: {
