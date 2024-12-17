@@ -4,6 +4,7 @@ import { AppDataSource } from '../config/configDB.js';
 import Curso from '../models/curso.model.js';
 import User from '../models/user.model.js';
 import { In } from 'typeorm';
+import { Not } from 'typeorm';
 
 export async function getCursoService(query) { //* This function gets a course by id, code, and name.
     try {
@@ -98,8 +99,6 @@ export async function createCursoService(body) { //* This function creates a cou
 };
 
 export async function updateCursoService(query, body) { //* This function updates a course by id, code, and name.
-    console.log("query:", query);
-    console.log("body:", body);
     try {
         const { idCurso, codeCurso } = query;
 
@@ -113,8 +112,8 @@ export async function updateCursoService(query, body) { //* This function update
 
         const existingCurso = await cursoRepository.findOne({ //? Finding the course by code and name.
             where: [
-                { code: body.code },
-                { name: body.name }
+                { code: body.code, id: Not(cursoFound.id) },
+                { name: body.name, id: Not(cursoFound.id) }
             ]
         });
 
@@ -122,7 +121,7 @@ export async function updateCursoService(query, body) { //* This function update
 
         const newCode = generatedSubjectCode(body.year, body.level, body.section); //? Generating the course code.
         
-        const existingCode = await cursoRepository.findOne({ where: { code: newCode } }); //? Finding the course by code.
+        const existingCode = await cursoRepository.findOne({ where: { code: newCode, id: Not(cursoFound.id) } }); //? Finding the course by code.
         if (existingCode) return [null, "Ya existe un curso con estos datos"]; //? If the course already exists, return null and a message.
 
         cursoFound.code = newCode; //? Updating the course code.
