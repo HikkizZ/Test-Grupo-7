@@ -78,7 +78,7 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      // Reservaciones: Acceso para encargado y admin (CRUD)
+      // Reservaciones: Acceso para admin (CRUD) y Encargado (RU)
       {
         path: '/reservations',
         element: (
