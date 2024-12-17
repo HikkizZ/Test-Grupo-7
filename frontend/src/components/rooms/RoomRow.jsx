@@ -1,7 +1,15 @@
 import { useState } from "react";
 import { showErrorAlert } from "../../utils/alerts";
 
-export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadingDelete, role }) {
+export default function RoomRow({
+    room,
+    onSelect,
+    onUpdate,
+    onDelete,
+    loadingUpdate,
+    loadingDelete,
+    role,
+}) {
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState({
         name: room.name,
@@ -34,19 +42,14 @@ export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadi
 
     // Guardar cambios
     const handleSaveEdit = () => {
-        // Validación del tamaño antes de actualizar
         if (!editData.size || parseFloat(editData.size) <= 0) {
-            showErrorAlert(
-                "Tamaño inválido",
-                "El tamaño debe ser un número válido mayor que 0."
-            );
-            return; // Detener ejecución si la validación falla
+            showErrorAlert("Tamaño inválido", "El tamaño debe ser un número válido mayor que 0.");
+            return;
         }
-    
-        // Si todo está bien, procede a actualizar
+
         onUpdate(room.id, {
             ...editData,
-            size: parseFloat(editData.size), // Convertir tamaño a número flotante
+            size: parseFloat(editData.size),
         });
         setIsEditing(false);
     };
@@ -104,13 +107,58 @@ export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadi
             </td>
 
             {/* Columna Acciones */}
-            {role !== "Profesor" && role !== "Alumno" && (
-                <td>
-                    {isEditing ? (
-                        <>
-                            {/* Botón Guardar */}
+            <td>
+                {onSelect ? (
+                    <button
+                        onClick={() => onSelect(room)}
+                        style={{
+                            backgroundColor: "#28a745",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "5px",
+                            padding: "5px 10px",
+                            cursor: "pointer",
+                        }}
+                    >
+                        Seleccionar
+                    </button>
+                ) : isEditing ? (
+                    <>
+                        <button
+                            onClick={handleSaveEdit}
+                            disabled={loadingUpdate}
+                            style={{
+                                backgroundColor: "#007bff",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "5px",
+                                padding: "5px 10px",
+                                marginRight: "5px",
+                                cursor: "pointer",
+                            }}
+                        >
+                            Guardar
+                        </button>
+                        <button
+                            onClick={handleCancelEdit}
+                            disabled={loadingUpdate}
+                            style={{
+                                backgroundColor: "#d33",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "5px",
+                                padding: "5px 10px",
+                                cursor: "pointer",
+                            }}
+                        >
+                            Cancelar
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        {onUpdate && (
                             <button
-                                onClick={handleSaveEdit}
+                                onClick={handleEditClick}
                                 disabled={loadingUpdate}
                                 style={{
                                     backgroundColor: "#007bff",
@@ -122,13 +170,14 @@ export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadi
                                     cursor: "pointer",
                                 }}
                             >
-                                Guardar
+                                Modificar
                             </button>
+                        )}
 
-                            {/* Botón Cancelar */}
+                        {onDelete && role === "admin" && (
                             <button
-                                onClick={handleCancelEdit}
-                                disabled={loadingUpdate}
+                                onClick={() => onDelete(room.id)}
+                                disabled={loadingDelete}
                                 style={{
                                     backgroundColor: "#d33",
                                     color: "#fff",
@@ -138,51 +187,12 @@ export default function RoomRow({ room, onUpdate, onDelete, loadingUpdate, loadi
                                     cursor: "pointer",
                                 }}
                             >
-                                Cancelar
+                                Eliminar
                             </button>
-                        </>
-                    ) : (
-                        <>
-                            {/* Botón Modificar */}
-                            {onUpdate && (
-                                <button
-                                    onClick={handleEditClick}
-                                    disabled={loadingUpdate}
-                                    style={{
-                                        backgroundColor: "#007bff",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "5px",
-                                        padding: "5px 10px",
-                                        marginRight: "5px",
-                                        cursor: "pointer",
-                                    }}
-                                >
-                                    Modificar
-                                </button>
-                            )}
-
-                            {/* Botón Eliminar */}
-                            {onDelete && role === "admin" && (
-                                <button
-                                    onClick={() => onDelete(room.id)}
-                                    disabled={loadingDelete}
-                                    style={{
-                                        backgroundColor: "#d33",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "5px",
-                                        padding: "5px 10px",
-                                        cursor: "pointer",
-                                    }}
-                                >
-                                    Eliminar
-                                </button>
-                            )}
-                        </>
-                    )}
-                </td>
-            )}
+                        )}
+                    </>
+                )}
+            </td>
         </tr>
     );
 }

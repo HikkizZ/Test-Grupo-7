@@ -27,7 +27,7 @@ const modalStyles = {
 };
 
 export default function ReservationForm({ onCreate, loading, onClose }) {
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(1); // Controla el paso del formulario
     const [formData, setFormData] = useState({
         fechaDesde: "",
         horaDesde: "",
@@ -37,17 +37,20 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
         recurso_id: null,
         sala_id: null,
     });
+
     const [selectedResource, setSelectedResource] = useState(null);
     const [selectedRoom, setSelectedRoom] = useState(null);
 
     const { rooms, fetchRooms, loading: loadingRooms } = useGetRooms();
     const { resources, fetchResources, loading: loadingResources } = useGetResources();
 
+    // Fetch de salas o recursos según el tipo de reserva
     useEffect(() => {
         if (formData.tipoReserva === "sala") fetchRooms();
         if (formData.tipoReserva === "recurso") fetchResources();
     }, [formData.tipoReserva, fetchRooms, fetchResources]);
 
+    // Cancelar y resetear el formulario
     const handleCancel = () => {
         setFormData({
             fechaDesde: "",
@@ -64,6 +67,7 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
         onClose();
     };
 
+    // Seleccionar sala o recurso
     const handleSelect = (type, item) => {
         if (type === "sala") {
             setSelectedRoom(item);
@@ -72,9 +76,10 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
             setSelectedResource(item);
             setFormData({ ...formData, recurso_id: item.id });
         }
-        setStep(2);
+        setStep(2); // Avanzar al paso 2
     };
 
+    // Formatear fecha y hora
     const formatDateTime = (date, time) => {
         if (!date || !time) return "";
         const [year, month, day] = date.split("-");
@@ -82,6 +87,7 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
         return `${day}-${month}-${year} ${hour}:${minute}`;
     };
 
+    // Enviar el formulario
     const handleSubmit = () => {
         const fechaDesde = formatDateTime(formData.fechaDesde, formData.horaDesde);
         const fechaHasta = formatDateTime(formData.fechaHasta, formData.horaHasta);
@@ -96,6 +102,7 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
             fechaDesde,
             fechaHasta,
         };
+
         delete finalData.horaDesde;
         delete finalData.horaHasta;
 
@@ -106,6 +113,8 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
     return (
         <Modal isOpen={true} onRequestClose={handleCancel} style={modalStyles} ariaHideApp={false}>
             <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Crear Reservación</h2>
+
+            {/* Paso 1: Selección de tipo de reserva y recursos/salas */}
             {step === 1 && (
                 <>
                     <select
@@ -118,21 +127,39 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
                         <option value="sala">Sala</option>
                     </select>
 
+                    {/* Tabla de Salas */}
                     {formData.tipoReserva === "sala" && (
                         <>
                             <h3>Seleccionar Sala</h3>
-                            {loadingRooms ? <p>Cargando salas...</p> : <RoomTable rooms={rooms} onSelect={(room) => handleSelect("sala", room)} />}
+                            {loadingRooms ? (
+                                <p>Cargando salas...</p>
+                            ) : (
+                                <RoomTable
+                                    rooms={rooms}
+                                    onSelect={(room) => handleSelect("sala", room)} // Asegura onSelect aquí
+                                />
+                            )}
                         </>
                     )}
+
+                    {/* Tabla de Recursos */}
                     {formData.tipoReserva === "recurso" && (
                         <>
                             <h3>Seleccionar Recurso</h3>
-                            {loadingResources ? <p>Cargando recursos...</p> : <ResourceTable resources={resources} onSelect={(resource) => handleSelect("recurso", resource)} />}
+                            {loadingResources ? (
+                                <p>Cargando recursos...</p>
+                            ) : (
+                                <ResourceTable
+                                    resources={resources}
+                                    onSelect={(resource) => handleSelect("recurso", resource)} // Asegura onSelect aquí
+                                />
+                            )}
                         </>
                     )}
                 </>
             )}
 
+            {/* Paso 2: Selección de fecha y hora */}
             {step === 2 && (
                 <>
                     <p style={{ textAlign: "center", fontWeight: "bold", marginBottom: "20px" }}>

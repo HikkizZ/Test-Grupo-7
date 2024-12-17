@@ -1,6 +1,6 @@
 import RoomRow from "./RoomRow";
 
-export default function RoomTable({ rooms, onUpdate, onDelete, loadingUpdate, loadingDelete, role }) {
+export default function RoomTable({ rooms, onUpdate, onDelete, loadingUpdate, loadingDelete, role, onSelect }) {
     const sortedRooms = [...rooms].sort((a, b) => a.name.localeCompare(b.name));
 
     return (
@@ -23,6 +23,7 @@ export default function RoomTable({ rooms, onUpdate, onDelete, loadingUpdate, lo
                         loadingUpdate={loadingUpdate}
                         loadingDelete={loadingDelete}
                         role={role} // Pasar el rol
+                        onSelect={onSelect}
                     />
                 ))}
             </tbody>

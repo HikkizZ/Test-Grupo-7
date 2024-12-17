@@ -3,20 +3,21 @@ import { showErrorAlert } from "../../utils/alerts";
 
 export default function ResourceRow({
     resource,
+    onSelect,
     onUpdate,
     onDelete,
     loadingUpdate,
     loadingDelete,
     role,
 }) {
-    const [isEditing, setIsEditing] = useState(false); // Estado para habilitar edición
+    const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState({
         name: resource.name,
         brand: resource.brand,
         resourceType: resource.resourceType,
     });
 
-    // Manejar cambios en los inputs
+    // Manejar cambios en inputs
     const handleChange = (field, value) => {
         setEditData((prev) => ({ ...prev, [field]: value }));
     };
@@ -76,7 +77,7 @@ export default function ResourceRow({
                 )}
             </td>
 
-            {/* Tipo de recurso */}
+            {/* Tipo */}
             <td>
                 {isEditing ? (
                     <select
@@ -94,12 +95,58 @@ export default function ResourceRow({
             </td>
 
             {/* Acciones */}
-            {role !== "Profesor" && role !== "Alumno" && (
-                <td>
-                    {isEditing ? (
-                        <>
+            <td>
+                {onSelect ? (
+                    <button
+                        onClick={() => onSelect(resource)}
+                        style={{
+                            backgroundColor: "#28a745",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "5px",
+                            padding: "5px 10px",
+                            cursor: "pointer",
+                        }}
+                    >
+                        Seleccionar
+                    </button>
+                ) : isEditing ? (
+                    <>
+                        <button
+                            onClick={handleSaveEdit}
+                            disabled={loadingUpdate}
+                            style={{
+                                backgroundColor: "#007bff",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "5px",
+                                padding: "5px 10px",
+                                marginRight: "5px",
+                                cursor: "pointer",
+                            }}
+                        >
+                            Guardar
+                        </button>
+                        <button
+                            onClick={handleCancelEdit}
+                            disabled={loadingUpdate}
+                            style={{
+                                backgroundColor: "#d33",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "5px",
+                                padding: "5px 10px",
+                                cursor: "pointer",
+                            }}
+                        >
+                            Cancelar
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        {onUpdate && (
                             <button
-                                onClick={handleSaveEdit}
+                                onClick={handleEditClick}
                                 disabled={loadingUpdate}
                                 style={{
                                     backgroundColor: "#007bff",
@@ -111,11 +158,13 @@ export default function ResourceRow({
                                     cursor: "pointer",
                                 }}
                             >
-                                Guardar
+                                Modificar
                             </button>
+                        )}
+                        {onDelete && role === "admin" && (
                             <button
-                                onClick={handleCancelEdit}
-                                disabled={loadingUpdate}
+                                onClick={() => onDelete(resource.id)}
+                                disabled={loadingDelete}
                                 style={{
                                     backgroundColor: "#d33",
                                     color: "#fff",
@@ -125,48 +174,12 @@ export default function ResourceRow({
                                     cursor: "pointer",
                                 }}
                             >
-                                Cancelar
+                                Eliminar
                             </button>
-                        </>
-                    ) : (
-                        <>
-                            {onUpdate && (
-                                <button
-                                    onClick={handleEditClick}
-                                    disabled={loadingUpdate}
-                                    style={{
-                                        backgroundColor: "#007bff",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "5px",
-                                        padding: "5px 10px",
-                                        marginRight: "5px",
-                                        cursor: "pointer",
-                                    }}
-                                >
-                                    Modificar
-                                </button>
-                            )}
-                            {onDelete && role === "admin" && (
-                                <button
-                                    onClick={() => onDelete(resource.id)}
-                                    disabled={loadingDelete}
-                                    style={{
-                                        backgroundColor: "#d33",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "5px",
-                                        padding: "5px 10px",
-                                        cursor: "pointer",
-                                    }}
-                                >
-                                    Eliminar
-                                </button>
-                            )}
-                        </>
-                    )}
-                </td>
-            )}
+                        )}
+                    </>
+                )}
+            </td>
         </tr>
     );
 }
