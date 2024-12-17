@@ -74,7 +74,6 @@ export async function createCursoService(body) { //* This function creates a cou
 
         const cursoExist = await cursoRepository.findOne({ //? Finding the course by name or code.
             where: [
-                { name: body.name },
                 { code: generatedSubjectCode(body.year, body.level, body.section) }
             ]
         }); 
