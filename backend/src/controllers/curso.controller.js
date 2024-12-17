@@ -74,9 +74,8 @@ export async function updateCurso(req, res) { //* This function updates a course
     try {
         
         const { id, code } = req.query; //? Getting the query parameters: id, code, name.
-        console.log("id:", id, "code:", code);
+
         const { name, level, year, section } = req.body; //? Getting the body parameters: name, level, year, section.
-        console.log("name:", name, "level:", level, "year:", year, "section:", section);
 
         const { error } = cursoQueryValidation.validate({ id, code, name }); //? Validating the query parameters.
 
@@ -115,7 +114,6 @@ export async function deleteCurso(req, res) { //* This function deletes a course
 };
 
 export async function addStudentsToCurso(req, res){
-    console.log(req.body);
     try {
         const {cursoCode, studentsRut} = req.body;
         const [cursoUpdated, errorCurso] = await addStudentsToCursoService(cursoCode, studentsRut);
