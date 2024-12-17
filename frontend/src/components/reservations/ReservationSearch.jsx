@@ -88,7 +88,9 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
     return (
         <div>
             <h3>Buscar Reservación</h3>
-            <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "nowrap" }}>
+
+            {/* Primera fila de filtros */}
+            <div style={{ display: "flex", gap: "20px", justifyContent: "center", marginBottom: "10px" }}>
                 <FilterSection
                     label="Devuelto"
                     filterName="devuelto"
@@ -131,7 +133,10 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
                         { value: "rechazada", label: "Rechazada" },
                     ]}
                 />
+            </div>
 
+            {/* Segunda fila de filtros */}
+            <div style={{ display: "flex", gap: "20px", justifyContent: "center", marginTop: "10px" }}>
                 <DateTimeFilter
                     label="Fecha Desde"
                     dateValue={filters.fechaDesde}
