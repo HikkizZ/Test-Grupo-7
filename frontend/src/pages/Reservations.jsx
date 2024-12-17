@@ -10,7 +10,7 @@ import ReservationForm from "../components/reservations/ReservationForm";
 import ReservationSearch from "../components/reservations/ReservationSearch";
 
 export default function Reservations() {
-    const { user } = useAuth(); // Obtén el rol del usuario autenticado
+    const { user } = useAuth(); // Obtén el usuario autenticado
     const { reservations, fetchReservations, loading: loadingReservations } = useGetReservations();
     const { handleCreate, loading: loadingCreate } = useCreateReservation(fetchReservations);
     const { handleUpdate, loading: loadingUpdate } = useUpdateReservation(fetchReservations);
@@ -18,6 +18,8 @@ export default function Reservations() {
         reservations,
         setReservations: fetchReservations,
     });
+
+    console.log("Usuario obtenido desde AuthContext:", user);
 
     const { updateFilter, resetFilters, searchResults: filteredResults, loading: loadingSearch } =
         useSearchReservation(reservations);
@@ -30,6 +32,9 @@ export default function Reservations() {
 
     const noReservations = reservations.length === 0;
     const noSearchResults = filteredResults.length === 0 && !noReservations;
+
+    // Verificar si el usuario es Profesor o Alumno
+    const isProfesorOrAlumno = user?.role === "Profesor" || user?.role === "Alumno";
 
     return (
         <div>
@@ -60,7 +65,6 @@ export default function Reservations() {
                 )}
             </div>
 
-
             {/* Tabla de reservaciones */}
             {loadingSearch || loadingReservations ? (
                 <p>Cargando reservaciones...</p>
@@ -71,10 +75,12 @@ export default function Reservations() {
             ) : (
                 <ReservationTable
                     reservations={filteredResults}
-                    onUpdate={user?.role === "admin" || user?.role === "Encargado" ? handleUpdate : null} // Admin y encargado pueden modificar
+                    onUpdate={user?.role === "admin" || user?.role === "Encargado" ? handleUpdate : null} // Admin y Encargado pueden modificar
                     onDelete={user?.role === "admin" ? handleDelete : null} // Solo admin puede eliminar
                     loadingDelete={loadingDelete}
                     loadingUpdate={loadingUpdate}
+                    hideDevuelto={isProfesorOrAlumno} // Ocultar Devuelto si es Profesor/Alumno
+                    user={user} // Pasar el usuario autenticado
                 />
             )}
 
