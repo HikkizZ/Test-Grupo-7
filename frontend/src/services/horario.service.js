@@ -51,7 +51,7 @@ export async function deleteHorario(id) {
 // Actualizar un horario por ID
 export async function updateHorario(id, updateData) {
     try {
-        const { data } = await axios.patch(`/horario/update/?id=${id}`, updateData);
+        const { data } = await axios.patch(`/horario?id=${id}`, updateData)
         return data.data; // Retornar solo los datos relevantes
     } catch (error) {
         console.error("Error updating horario:", error.response?.data?.message || error.message);
