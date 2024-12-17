@@ -11,7 +11,7 @@ import {
 import { authenticateJWT } from "../middlewares/authentication.middleware.js";
 import { verifyRole } from "../middlewares/authorization.middleware.js";
 
-const router = express.Router();
+const router = Router();
 
 // Aplicar autenticación JWT a todas las rutas
 router.use(authenticateJWT);
