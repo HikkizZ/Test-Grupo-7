@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createHorario } from "@services/horario.service";
 import { showSuccessAlert } from "../../utils/alerts";
+import { showErrorAlert } from "../../helpers/sweetAlert"
 
 export function useCreateHorario(fetchHorarios) {
     const [loading, setLoading] = useState(false);
@@ -12,7 +13,8 @@ export function useCreateHorario(fetchHorarios) {
             showSuccessAlert("¡Horario creado!", "El horario ha sido registrado correctamente.");
             fetchHorarios(); // Vuelve a cargar la lista de horarios
         } catch (error) {
-            alert("Error al crear el horario: " + error.message);
+            showErrorAlert("Error al crear el horario", error);
+            //alert("Error al crear el horario: " + error);
         } finally {
             setLoading(false);
         }
