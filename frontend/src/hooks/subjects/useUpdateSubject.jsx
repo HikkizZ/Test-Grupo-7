@@ -9,8 +9,8 @@ export function useUpdateSubject(fetchSubjects) {
         try {
             setLoading(true);
             const updatedSubject = await updateSubject(id, subjectData);
-            
-            if (updatedSubject === "Asignatura actualizada exitosamente") {
+                        
+            if (updatedSubject.message === "Asignatura actualizada exitosamente") {
                 showSuccessAlert('¡Actualizado!', 'La asignatura ha sido actualizado correctamente.');
                 fetchSubjects((prevSubjects) => 
                     prevSubjects.map((subject) => 

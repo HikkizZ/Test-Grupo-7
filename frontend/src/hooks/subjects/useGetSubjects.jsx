@@ -10,7 +10,7 @@ export function useGetSubjects() {
         try {
             setLoading(true);
             const response = await getSubjects();
-            setSubjects(response.subjects || response);
+            setSubjects(response || []);
             setLoading(false);
         } catch (err) {
             setLoading(false);
