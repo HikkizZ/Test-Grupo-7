@@ -43,20 +43,23 @@ export default function Reservations() {
             {/* Lista de reservaciones y botón Crear */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px" }}>
                 <h3>Lista de Reservaciones</h3>
-                <button
-                    onClick={() => setShowCreateModal(true)}
-                    style={{
-                        backgroundColor: "#007bff",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: "5px",
-                        padding: "5px 10px",
-                        cursor: "pointer",
-                    }}
-                >
-                    Crear Reservación
-                </button>
+                {(user?.role === "admin" || user?.role === "Profesor" || user?.role === "Alumno") && (
+                    <button
+                        onClick={() => setShowCreateModal(true)}
+                        style={{
+                            backgroundColor: "#007bff",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "5px",
+                            padding: "5px 10px",
+                            cursor: "pointer",
+                        }}
+                    >
+                        Crear Reservación
+                    </button>
+                )}
             </div>
+
 
             {/* Tabla de reservaciones */}
             {loadingSearch || loadingReservations ? (
