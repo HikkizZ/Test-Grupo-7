@@ -35,10 +35,10 @@ const Users = () => {
   }, [setDataUser]);
 
   const columns = [
-    { title: "Nombre", field: "nombreCompleto", width: 350, responsive: 0 },
+    { title: "Nombre", field: "name", width: 350, responsive: 0 },
     { title: "Correo electrónico", field: "email", width: 300, responsive: 3 },
     { title: "Rut", field: "rut", width: 150, responsive: 2 },
-    { title: "Rol", field: "rol", width: 200, responsive: 2 },
+    { title: "Rol", field: "role", width: 200, responsive: 2 },
     { title: "Creado", field: "createdAt", width: 200, responsive: 2 }
   ];
 
@@ -70,7 +70,7 @@ const Users = () => {
           columns={columns}
           filter={filterRut}
           dataToFilter={'rut'}
-          initialSortName={'nombreCompleto'}
+          initialSortName={'name'}
           onSelectionChange={handleSelectionChange}
         />
       </div>

@@ -1,38 +1,38 @@
 "use strict";
 import { EntitySchema } from "typeorm";
 
-const ScheduleSchema = new EntitySchema({
-    name: "Schedule",
-    tableName: "schedules",
+const HorarioSchema = new EntitySchema({
+    name: "Horario",
+    tableName: "horarios",
     columns: {
         id: {
             type: "int",
             primary: true,
             generated: true,
         },
-        cursoId: {
-            type: "int",
-            nullable: false,  
-        },
         teacherId: {
-            type: "int",
-            nullable: false,
-        },
-        classroomId: {
-            type: "int",
+            type: "varchar",
             nullable: false,
         },
         subjectId: {
-            type: "int",
+            type: "varchar",
             nullable: false,
         },
-        period: {
-            type: "int",
+        cursoId: {
+            type: "varchar",
+            nullable: false,  
+        },
+        classroomId: {
+            type: "varchar",
             nullable: false,
         },
         dayOfWeek: {
             type: "enum",
             enum: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"],
+            nullable: false,
+        },
+        periodId: {
+            type: "varchar",
             nullable: false,
         },
     },
@@ -68,10 +68,11 @@ const ScheduleSchema = new EntitySchema({
             target: "User",  
             type: "many-to-one",  
             joinColumn: { name: "teacherId" },
-            inverseSide: "schedules",
+            nullable: false,
+            inverseSide: "horarios",
             onDelete: "CASCADE", 
         }
     }
 });
 
-export default ScheduleSchema;
+export default HorarioSchema;
