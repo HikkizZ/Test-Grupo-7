@@ -5,10 +5,11 @@ import { useAssignCalificaciones } from '../../hooks/calificacion/useAssignCalif
 import { useConfigCalificacion } from '../../hooks/calificacion/useConfigCalificacion';
 import { useUpdateConfigCalificacion } from '../../hooks/calificacion/useUpdateConfigCalificacion';
 import { useEditNameCalificacion } from '../../hooks/calificacion/useEditNameCalificacion';
+import { useNavigate } from 'react-router-dom';
 
 import '@styles/SubjectViewPopup.css';
 
-export default function SubjectViewPopup({ active, setActive, data }) {
+export default function SubjectViewPopup({ active, setActive, data, subject }) {
     const [cantidadCalificaciones, setCantidadCalificaciones] = useState(2);
     const { calificaciones, loading, fetchCalificaciones } = useGetCalificaciones();
     const { handleAssign, loading: loadingAssign } = useAssignCalificaciones(fetchCalificaciones);
@@ -18,6 +19,8 @@ export default function SubjectViewPopup({ active, setActive, data }) {
     const { handleEditNameCalificacion } = useEditNameCalificacion();
     const [editingCalificacion, setEditingCalificacion] = useState(false);
     const [newName, setNewName] = useState('');
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (active && data?.code && !hasFetched) {
@@ -68,8 +71,14 @@ export default function SubjectViewPopup({ active, setActive, data }) {
         fetchCalificaciones(data.code);
     }
 
+    const handleGoToNotas = () => {
+        console.log("Go to notas");
+        navigate('/cursos');
+    }
+
     if (!active) return null;
 
+    console.log(subject)
     return (
         <div className="subject-view-popup-bg">
             <div className="subject-view-popup">
@@ -175,14 +184,25 @@ export default function SubjectViewPopup({ active, setActive, data }) {
 
                     {/* Columna derecha */}
                     <div className="right-column">
-                        <h2 className="section-title">Asignar Calificaciones</h2>
-                        <button
-                            onClick={handleAssignCalificaciones}
-                            className="assign-button"
-                            disabled={loadingAssign}
-                        >
-                            {loadingAssign ? "Asignando..." : "Asignar Calificaciones a Alumnos"}
-                        </button>
+                        <div>
+                            <h2 className="section-title">Asignar Calificaciones</h2>
+                            <button
+                                onClick={handleAssignCalificaciones}
+                                className="assign-button"
+                                disabled={loadingAssign}
+                            >
+                                {loadingAssign ? "Asignando..." : "Asignar Calificaciones a Alumnos"}
+                            </button>
+                        </div>
+                        <div>
+                            <h2 className="section-title">¿Desea colocar calificaciones?</h2>
+                                <button
+                                    onClick={handleGoToNotas}
+                                    className="assign-button"
+                                >
+                                    Calificar Alumnos
+                                </button>
+                        </div>
                     </div>
                 </div>
             </div>

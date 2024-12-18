@@ -9,7 +9,8 @@ import {
     getCalificaciones,
     assignGradesStudents,
     calificarAlumno,
-    editNameCalificaciones
+    editNameCalificaciones,
+    getNotasAlumno
 } from "../controllers/calificacion.controller.js";
 
 const router = Router();
@@ -23,6 +24,7 @@ router
     .patch('/edit/', verifyRole(['admin', 'profesor']), editNameCalificaciones)
     .get('/', verifyRole(['admin', 'profesor', 'alumno']), getCalificaciones)
     .post('/assign/', verifyRole(['admin', 'profesor']), assignGradesStudents)
-    .patch('/calificar/', verifyRole(['admin', 'profesor']), calificarAlumno);
+    .patch('/calificar/', verifyRole(['admin', 'profesor']), calificarAlumno)
+    .get('/notas/', verifyRole(['admin', 'profesor', 'alumno']), getNotasAlumno);
 
 export default router;

@@ -23,6 +23,7 @@ import Foro from '@pages/Foro';
 
 import Cursos from '@pages/Cursos';
 import Subjects from './pages/Subjects';
+import Calificar from './pages/Calificar';
 
 // Configuración de rutas con ProtectedRoute
 const router = createBrowserRouter([
@@ -121,6 +122,10 @@ const router = createBrowserRouter([
       {
         path: '/subjects',
         element: <Subjects />
+      },
+      {
+        path: '/calificar',
+        element: <Calificar />
       },
       {
         path: '/posts',
