@@ -9,7 +9,7 @@ export default function Calificar() {
     const { handleCalificar, loading: loadingCalificar } = useCalificar(fetchNotas);
     
     useEffect(() => {
-        fetchNotas(); // Llama al hook para cargar las notas iniciales
+        fetchNotas(); 
     }, [fetchNotas]);
 
     const noNotas = !notas || notas.length === 0;
