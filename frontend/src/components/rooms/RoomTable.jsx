@@ -20,7 +20,6 @@ export default function RoomTable({
                     <tr>
                         <th>Nombre</th>
                         <th>Capacidad de Alumnos</th>
-                        <th>Tamaño (m²)</th>
                         <th>Tipo de Sala</th>
                         {role !== "Profesor" && role !== "Alumno" && <th>Acciones</th>}
                     </tr>

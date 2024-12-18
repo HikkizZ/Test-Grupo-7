@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "../../styles/around.css"; 
-import "../../styles/around.css"; 
 
 export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading }) {
     const [query, setQuery] = useState("");
@@ -62,11 +61,7 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
                     type="text"
                     value={query}
                     onChange={handleSearch}
-
                     placeholder="Buscar por Nombre, Capacidad o Tipo de Sala"
-
-                    placeholder="Buscar por Nombre, Tamaño o Tipo de Sala"
-
                     className="search-input"
                 />
             </div>
@@ -91,9 +86,7 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
                     />
                 </div>
 
-
                 {/* Capacidad */}
-
                 <div className="filter-item">
                     <input
                         type="checkbox"
@@ -107,10 +100,6 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
                         onChange={(e) => handleFilterChange("capacity", e.target.value)}
                         disabled={!filterEnabled.capacity}
                         placeholder="Capacidad de Alumnos"
-                        value={filters.size}
-                        onChange={(e) => handleFilterChange("size", e.target.value)}
-                        disabled={!filterEnabled.size}
-                        placeholder="Tamaño (m²)"
                         className="filter-input"
                     />
                 </div>
