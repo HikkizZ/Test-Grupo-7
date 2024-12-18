@@ -8,6 +8,7 @@ import { useUpdateResource } from "../hooks/resources/useUpdateResource";
 import { useDeleteResource } from "../hooks/resources/useDeleteResource";
 import { useAuth } from "../context/AuthContext";
 import "../styles/around.css"; 
+import "../styles/around.css"; 
 
 export default function Resources() {
     const { user } = useAuth(); 
@@ -82,6 +83,9 @@ export default function Resources() {
                 <h3 className="around-subtitle">Buscar Recurso</h3>
                 <ResourceSearch
                     onSearch={handleSearch}
+                    onFilterUpdate={handleFilterUpdate} 
+                    onReset={handleResetFilters} 
+                    onSearch={handleSearch} 
                     onFilterUpdate={handleFilterUpdate} 
                     onReset={handleResetFilters} 
                     loading={loadingResources}

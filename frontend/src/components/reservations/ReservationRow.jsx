@@ -15,6 +15,7 @@ export default function ReservationRow({
     const [editDevuelto, setEditDevuelto] = useState(reservation.devuelto ? "Sí" : "No");
 
     useEffect(() => {
+      
         if (editState === "pendiente") setEditDevuelto("No");
         else if (editState === "rechazada") setEditDevuelto("Sí");
     }, [editState]);

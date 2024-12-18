@@ -8,6 +8,7 @@ import { useUpdateRoom } from "../hooks/rooms/useUpdateRoom";
 import { useDeleteRoom } from "../hooks/rooms/useDeleteRoom";
 import { useAuth } from "../context/AuthContext";
 import "../styles/around.css";
+import "../styles/around.css"; 
 
 export default function Rooms() {
     const { user } = useAuth();
@@ -73,6 +74,7 @@ export default function Rooms() {
                     onSearch={(query) => {
                         const filtered = rooms.filter((room) =>
                             `${room.name.toLowerCase()} ${room.capacity} ${room.roomType.toLowerCase()}`.includes(
+                            `${room.name.toLowerCase()} ${room.size} ${room.roomType.toLowerCase()}`.includes(
                                 query.toLowerCase()
                             )
                         );

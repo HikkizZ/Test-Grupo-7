@@ -1,5 +1,7 @@
 import ResourceRow from "./ResourceRow";
 import "../../styles/around.css";
+import "../../styles/around.css";
+
 
 export default function ResourceTable({
     resources,

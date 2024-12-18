@@ -1,5 +1,6 @@
 import RoomRow from "./RoomRow";
 import "../../styles/around.css"; 
+import "../../styles/around.css"; 
 
 export default function RoomTable({
     rooms,
@@ -19,6 +20,7 @@ export default function RoomTable({
                     <tr>
                         <th>Nombre</th>
                         <th>Capacidad de Alumnos</th>
+                        <th>Tamaño (m²)</th>
                         <th>Tipo de Sala</th>
                         {role !== "Profesor" && role !== "Alumno" && <th>Acciones</th>}
                     </tr>
