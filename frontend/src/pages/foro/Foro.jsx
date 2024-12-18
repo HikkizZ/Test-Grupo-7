@@ -6,7 +6,7 @@ import { useSearchForo } from "@hooks/foro/useSearchForo";
 import { useUpdateForo } from "@hooks/foro/useUpdateForo";
 import ForoForm from "@components/Foro/ForoForm";
 import ForoTable from "@components/Foro/ForoTable";
-import ForoView from "@components/Foro/foroview";
+import ForoView from "@components/Foro/foroView";
 import SearchForm from "@components/Foro/SearchFormForo";
 import UpdateForoForm from "@components/Foro/UpdateForoForm";
 import styles from '@styles/foro.module.css';
