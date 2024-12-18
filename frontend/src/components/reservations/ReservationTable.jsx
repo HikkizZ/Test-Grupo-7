@@ -16,8 +16,14 @@ export default function ReservationTable({
         return parse(fecha, "dd-MM-yyyy HH:mm", new Date());
     };
 
+
     const filteredReservations = reservations.filter((reservation) => {
         const reservanteNombre = reservation.Reservante?.nombre || "-------";
+
+
+    const filteredReservations = reservations.filter((reservation) => {
+        const reservanteNombre = reservation.Reservante?.nombre || "-------";
+
 
         if (filters?.fechaDesde && !reservation.fechaDesde.startsWith(filters.fechaDesde)) {
             return false;

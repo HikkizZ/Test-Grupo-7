@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "../../styles/around.css"; 
+import "../../styles/around.css"; 
 
 export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, loading }) {
     const [query, setQuery] = useState("");
