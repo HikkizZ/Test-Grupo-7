@@ -79,3 +79,323 @@
     font-size: 1.2rem;
     color: #555;
 }
+
+/* Tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th,
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Inputs y Select */
+.around-input,
+.around-select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+/* Botones */
+.btn {
+    padding: 6px 12px;
+    margin-right: 5px;
+    border-radius: 5px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-success {
+    background-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+.btn-primary {
+    background-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-warning {
+    background-color: #cc8400;
+}
+
+.btn-warning:hover {
+    background-color: #b37600;
+}
+
+.btn-danger {
+    background-color: #d33;
+}
+
+.btn-danger:hover {
+    background-color: #bd2130;
+}
+
+.btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Acciones */
+.around-actions {
+    display: flex;
+    gap: 5px;
+}
+
+/* Estilos contenedor general */
+.search-container {
+    max-width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Buscador General */
+.general-search .search-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+/* Contenedor de filtros */
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filter-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.filter-input,
+.filter-select {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    width: 150px;
+}
+
+.reset-container {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.reset-button {
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.reset-button:hover {
+    background-color: #0056b3;
+}
+
+.loading-text {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #555;
+    margin-top: 20px;
+}
+
+/* Estilos generales de la tabla */
+.around-table-container {
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 90%;
+}
+
+.around-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+}
+
+.around-table th,
+.around-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.around-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.around-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Botones de acciones */
+.around-table button {
+    padding: 6px 12px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.around-table button.modificar {
+    background-color: #cc8400;
+    color: white;
+}
+
+.around-table button.modificar:hover {
+    background-color: #b37400;
+}
+
+.around-table button.eliminar {
+    background-color: #d33;
+    color: white;
+}
+
+.around-table button.eliminar:hover {
+    background-color: #b30000;
+}
+
+/* Botón Crear Sala */
+.create-button {
+    height: 38px;
+    background-color: #28a745; /* Color verde */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.create-button:hover {
+    background-color: #218838; /* Verde más oscuro al pasar el mouse */
+}
+
+/* Contenedor del botón Crear Sala */
+.create-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+/* Modal - Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscurecido */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal - Contenido */
+.modal-content {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    padding: 30px;
+    width: 400px;
+    max-width: 90%;
+    text-align: center;
+    z-index: 1001;
+}
+
+/* Encabezado del modal */
+.modal-header {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Campos del modal */
+.modal-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+/* Botones del modal */
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.modal-button-save {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal-button-save:hover {
+    background-color: #0056b3;
+}
+
+.modal-button-cancel {
+    background-color: #d33;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal-button-cancel:hover {
+    background-color: #b52d2d;
+}

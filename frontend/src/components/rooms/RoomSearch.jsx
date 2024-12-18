@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "../../styles/around.css"; // Importar el archivo de estilos
 
 export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading }) {
     const [query, setQuery] = useState("");
@@ -58,35 +59,22 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
     };
 
     return (
-        <div>
+        <div className="search-container">
             {/* Buscador General */}
-            <div>
+            <div className="general-search">
                 <input
                     type="text"
                     value={query}
                     onChange={handleSearch}
                     placeholder="Buscar por Nombre, Tamaño o Tipo de Sala"
-                    style={{
-                        width: "100%",
-                        padding: "10px",
-                        marginBottom: "15px",
-                        borderRadius: "5px",
-                        border: "1px solid #ccc",
-                    }}
+                    className="search-input"
                 />
             </div>
 
             {/* Filtros específicos */}
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    flexWrap: "wrap",
-                    gap: "10px",
-                }}
-            >
+            <div className="filter-container">
                 {/* Nombre */}
-                <div>
+                <div className="filter-item">
                     <input
                         type="checkbox"
                         checked={filterEnabled.name}
@@ -99,12 +87,12 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
                         onChange={(e) => handleFilterChange("name", e.target.value)}
                         disabled={!filterEnabled.name}
                         placeholder="Nombre"
-                        style={{ marginLeft: "5px", width: "150px" }}
+                        className="filter-input"
                     />
                 </div>
 
                 {/* Tamaño */}
-                <div>
+                <div className="filter-item">
                     <input
                         type="checkbox"
                         checked={filterEnabled.size}
@@ -117,12 +105,12 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
                         onChange={(e) => handleFilterChange("size", e.target.value)}
                         disabled={!filterEnabled.size}
                         placeholder="Tamaño (m²)"
-                        style={{ marginLeft: "5px", width: "130px" }}
+                        className="filter-input"
                     />
                 </div>
 
                 {/* Tipo */}
-                <div>
+                <div className="filter-item">
                     <input
                         type="checkbox"
                         checked={filterEnabled.roomType}
@@ -133,7 +121,7 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
                         value={filters.roomType}
                         onChange={(e) => handleFilterChange("roomType", e.target.value)}
                         disabled={!filterEnabled.roomType}
-                        style={{ marginLeft: "5px", width: "150px" }}
+                        className="filter-select"
                     >
                         <option value="">Seleccionar</option>
                         <option value="laboratorio">Laboratorio</option>
@@ -145,24 +133,14 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
 
             {/* Reset Filters */}
             {filtersActive && (
-                <div style={{ marginTop: "15px", textAlign: "center" }}>
-                    <button
-                        onClick={resetFilters}
-                        style={{
-                            padding: "5px 10px",
-                            borderRadius: "5px",
-                            backgroundColor: "#007bff",
-                            color: "#fff",
-                            border: "none",
-                            cursor: "pointer",
-                        }}
-                    >
+                <div className="reset-container">
+                    <button onClick={resetFilters} className="reset-button">
                         Resetear Búsqueda
                     </button>
                 </div>
             )}
 
-            {loading && <p>Cargando salas...</p>}
+            {loading && <p className="loading-text">Cargando salas...</p>}
         </div>
     );
 }

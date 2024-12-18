@@ -16,24 +16,21 @@ export default function ReservationTable({
         return parse(fecha, "dd-MM-yyyy HH:mm", new Date());
     };
 
-    // Función para filtrar las reservaciones
+    // Filtrado de reservaciones basado en filtros aplicados
     const filteredReservations = reservations.filter((reservation) => {
         const reservanteNombre = reservation.Reservante?.nombre || "-------";
-    
+
         // Filtrar por Fecha Desde
-        if (filters?.fechaDesde) {
-            if (!reservation.fechaDesde.startsWith(filters.fechaDesde)) return false;
-        }
-    
-        // Filtrar por Fecha Hasta
-        if (filters?.fechaHasta) {
-            if (!reservation.fechaHasta.startsWith(filters.fechaHasta)) return false;
-        }
-    
-        // Resto de filtros
-        if (filters?.id && !reservation.id.toString().includes(filters.id)) {
+        if (filters?.fechaDesde && !reservation.fechaDesde.startsWith(filters.fechaDesde)) {
             return false;
         }
+
+        // Filtrar por Fecha Hasta
+        if (filters?.fechaHasta && !reservation.fechaHasta.startsWith(filters.fechaHasta)) {
+            return false;
+        }
+
+        // Filtrar por otros campos
         if (filters?.devuelto && reservation.devuelto.toString() !== filters.devuelto) {
             return false;
         }
@@ -43,14 +40,17 @@ export default function ReservationTable({
         if (filters?.estado && reservation.estado !== filters.estado) {
             return false;
         }
-        if (filters?.reservante && !reservanteNombre.toLowerCase().includes(filters.reservante.toLowerCase())) {
+        if (
+            filters?.reservante &&
+            !reservanteNombre.toLowerCase().includes(filters.reservante.toLowerCase())
+        ) {
             return false;
         }
-    
-        return true;
-    });    
 
-    // Ordenar reservaciones por fechaDesde (ascendente)
+        return true;
+    });
+
+    // Ordenar reservaciones por fechaDesde de forma ascendente
     const sortedReservations = [...filteredReservations].sort((a, b) => {
         const dateA = parseFechaDesde(a.fechaDesde);
         const dateB = parseFechaDesde(b.fechaDesde);
@@ -58,7 +58,7 @@ export default function ReservationTable({
     });
 
     return (
-        <table>
+        <table style={tableStyle}>
             <thead>
                 <tr>
                     <th>Fecha Desde</th>
@@ -96,3 +96,10 @@ export default function ReservationTable({
         </table>
     );
 }
+
+// ESTILOS
+const tableStyle = {
+    width: "100%",
+    borderCollapse: "collapse",
+    marginTop: "20px",
+};
