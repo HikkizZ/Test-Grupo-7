@@ -6,10 +6,11 @@ export const useUpdateConfigCalificacion = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const handleUpdateConfigCalificacion = async (data) => {
+    const handleUpdateConfigCalificacion = async (codeSubject, calificaciones) => {
         try {
             setLoading(true);
-            const response = await updateCalificaciones(data);
+            const cantidad = parseInt(calificaciones);
+            const response = await updateCalificaciones(codeSubject, cantidad);
             if (response?.message === "Calificaciones actualizadas") {
                 showSuccessAlert('¡Actualizadas!', 'Las calificaciones han sido actualizadas correctamente.');
             } else {
