@@ -86,6 +86,7 @@ export async function getHorariosService() {
 
 export async function createHorarioService(body) {
     try {
+        console.log("Cuerpo recibido en el backend:", body);
         const horarioRepository = AppDataSource.getRepository(Horario);
         const userRepository = AppDataSource.getRepository(User);
         const cursoRepository = AppDataSource.getRepository(Curso);
