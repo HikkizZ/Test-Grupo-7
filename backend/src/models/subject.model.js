@@ -64,6 +64,7 @@ const SubjectSchema = new EntitySchema({
                     referencedColumnName: "rut"
                 },
             },
+            onDelete: "CASCADE",
         },
         calificaciones: { //? Relation with the Calificacion entity. A subject has many qualifications.
             target: "Calificacion",

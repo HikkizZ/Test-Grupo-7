@@ -41,6 +41,7 @@ const CursoSchema = new EntitySchema({
             target: "Subject",
             type: "one-to-many",
             inverseSide: "curso", //? This is the name of the property that the Subject entity has to relate to the Course entity.
+            onDelete: "CASCADE",
         },
         schedules: { // Relación con Schedule
             target: "Schedule", 
