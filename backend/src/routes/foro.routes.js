@@ -4,12 +4,11 @@ import {
     getForos,
     getForo,
     updateForo,
-    deleteForo,
-    getForosByCurso,
-    downloadFile
+    deleteForo
 } from "../controllers/foro.controller.js";
 import { authenticateJWT } from "../middlewares/authentication.middleware.js";
 import { verifyRole } from "../middlewares/authorization.middleware.js";
+import { upload, handleFileSizeLimit } from "../middlewares/uploadArchive.middleware.js";
 
 const router = Router();
 
@@ -18,12 +17,10 @@ router.use(authenticateJWT);
 
 // Definición de rutas para foros
 router
-    .post("/", verifyRole(["Profesor","admin"]), createForo) // Crear un foro
-    .get("/all", verifyRole(["Profesor", "Alumno","admin","administrador"]), getForos) // Obtener todos los foros
-    .get("/curso/:cursoCode", verifyRole(["Profesor", "Alumno","admin"]), getForosByCurso) // Obtener foros por curso
-    .get("/:id", verifyRole(["Profesor", "Alumno","admin"]), getForo) // Obtener un foro por ID
-    .patch("/:id", verifyRole(["Profesor","admin","Encargado"]), updateForo) // Actualizar un foro
-    .delete("/:id", verifyRole(["Profesor","admin"]), deleteForo) // Eliminar un foro
-    .get("/:foroId/download/:fileName", verifyRole(["Profesor", "Alumno"]), downloadFile); // Descargar archivo adjunto
+    .post("/", verifyRole(["profesor","admin"]), upload.array('archivos'), handleFileSizeLimit, createForo)
+    .get("/all", verifyRole(["profesor", "Alumno","admin","administrador"]), getForos)
+    .get("/:id", verifyRole(["profesor", "Alumno","admin"]), getForo)
+    .patch("/:id", verifyRole(["profesor","admin","Encargado"]), upload.array('archivos'), handleFileSizeLimit, updateForo)
+    .delete("/:id", verifyRole(["profesor","admin"]), deleteForo)
 
 export default router;

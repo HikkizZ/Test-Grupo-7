@@ -1,30 +1,40 @@
 import React, { useState, useEffect } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import styles from '@styles/foro.module.css';
 
 function UpdateForoForm({ foro, onUpdate, onCancel, loading }) {
+    // Estados para cada campo del formulario
     const [titulo, setTitulo] = useState(foro.titulo);
     const [contenido, setContenido] = useState(foro.contenido);
-    const [categoria,setCategoria] = useState(foro.categoria);
+    const [categoria, setCategoria] = useState(foro.categoria);
     const [archivo, setArchivo] = useState(null);
     const [level, setLevel] = useState(foro.level);
-    const [section,setSection] = useState (foro.state);
+    const [section, setSection] = useState(foro.section);
 
+    // Efecto para actualizar los estados cuando cambia el foro
     useEffect(() => {
         setTitulo(foro.titulo);
         setContenido(foro.contenido);
+        setCategoria(foro.categoria);
+        setLevel(foro.level);
+        setSection(foro.section);
     }, [foro]);
 
+    // Handler para cambios en el archivo
     const handleFileChange = (e) => {
         setArchivo(e.target.files[0]);
     };
 
+    // Handler para el envío del formulario
     const handleSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData();
         formData.append('titulo', titulo);
         formData.append('contenido', contenido);
         formData.append('categoria', categoria);
-        formData.append('level', level );
-        formData.append('section', section)
+        formData.append('level', level);
+        formData.append('section', section);
         if (archivo) {
             formData.append('archivos', archivo);
         }
@@ -33,80 +43,107 @@ function UpdateForoForm({ foro, onUpdate, onCancel, loading }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-                <label htmlFor="titulo" className="block text-sm font-medium text-gray-700">Título:</label>
+        <form onSubmit={handleSubmit} className={styles.foroForm}>
+            {/* Campo de título */}
+            <div className={styles.formGroup}>
+                <label htmlFor="titulo" className={styles.formLabel}>Título:</label>
                 <input
                     id="titulo"
                     type="text"
                     value={titulo}
                     onChange={(e) => setTitulo(e.target.value)}
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className={styles.formInput}
+                    style={{ maxWidth: '400px' }}
                 />
             </div>
             
-            <div>
-                <label htmlFor="categoria" className="block text-sm font-medium text-gray-700">Categoria:</label>
-                <textarea
+            {/* Campo de categoría */}
+            <div className={styles.formGroup}>
+                <label htmlFor="categoria" className={styles.formLabel}>Categoría:</label>
+                <select
                     id="categoria"
                     value={categoria}
                     onChange={(e) => setCategoria(e.target.value)}
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                />
+                    className={styles.formSelect}
+                    style={{ maxWidth: '200px' }}
+                >
+                    <option value="">--Seleccionar--</option>
+                    <option value="Tarea">Tarea</option>
+                    <option value="Contenido">Contenido</option>
+                    <option value="Variedad">Variedad</option>
+                </select>
             </div>
-            <div>
-                <label htmlFor="level" className="block text-sm font-medium text-gray-700">Nivel:</label>
-                <textarea
+
+            {/* Campo de nivel */}
+            <div className={styles.formGroup}>
+                <label htmlFor="level" className={styles.formLabel}>Nivel:</label>
+                <input
                     id="level"
+                    type="number"
+                    min="1"
+                    max="4"
                     value={level}
                     onChange={(e) => setLevel(e.target.value)}
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className={styles.formInput}
+                    style={{ maxWidth: '100px' }}
                 />
             </div>
-            <div>
-                <label htmlFor="section" className="block text-sm font-medium text-gray-700">Seccion:</label>
-                <textarea
+
+            {/* Campo de sección */}
+            <div className={styles.formGroup}>
+                <label htmlFor="section" className={styles.formLabel}>Sección:</label>
+                <input
                     id="section"
+                    type="text"
+                    maxLength="1"
+                    pattern="[A-Z]"
                     value={section}
-                    onChange={(e) => setSection(e.target.value)}
+                    onChange={(e) => setSection(e.target.value.toUpperCase())}
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className={styles.formInput}
+                    style={{ maxWidth: '100px' }}
                 />
             </div>
-            <div>
-                <label htmlFor="contenido" className="block text-sm font-medium text-gray-700">Contenido:</label>
-                <textarea
-                    id="contenido"
+
+            {/* Campo de contenido usando ReactQuill */}
+            <div className={styles.formGroup}>
+                <label htmlFor="contenido" className={styles.formLabel}>Contenido:</label>
+                <ReactQuill
+                    theme="snow"
                     value={contenido}
-                    onChange={(e) => setContenido(e.target.value)}
-                    required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    onChange={setContenido}
+                    className={styles.formQuill}
+                    style={{ height: '200px', marginBottom: '50px' }}
                 />
             </div>
-            <div>
-                <label htmlFor="archivo" className="block text-sm font-medium text-gray-700">Archivo adjunto:</label>
+
+            {/* Campo de archivo adjunto */}
+            <div className={styles.formGroup}>
+                <label htmlFor="archivo" className={styles.formLabel}>Archivo adjunto:</label>
                 <input
                     id="archivo"
                     type="file"
                     onChange={handleFileChange}
-                    className="mt-1 block w-full"
+                    className={styles.formFileInput}
                 />
             </div>
-            <div className="flex justify-end space-x-2">
+
+            {/* Botones de acción */}
+            <div className={styles.formActions}>
                 <button 
                     type="submit"
                     disabled={loading}
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50"
+                    className={`${styles.foroButton} ${styles.foroButtonSubmit}`}
                 >
                     {loading ? 'Actualizando...' : 'Actualizar'}
                 </button>
                 <button 
                     type="button" 
                     onClick={onCancel}
-                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+                    className={`${styles.foroButton} ${styles.foroButtonCancel}`}
                 >
                     Cancelar
                 </button>
@@ -116,4 +153,3 @@ function UpdateForoForm({ foro, onUpdate, onCancel, loading }) {
 }
 
 export default UpdateForoForm;
-

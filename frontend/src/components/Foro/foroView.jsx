@@ -17,7 +17,8 @@ const ForoView = ({ foro, onClose }) => {
       <div className={styles.foroViewContent}>
         <h2 className={styles.foroViewTitle}>{foro.titulo}</h2>
         <div className={styles.foroViewMeta}>
-          <p>Profesor: {foro.profesor?.nombre || 'No asignado'}</p>
+          <p>Profesor: {foro.profesorNombre || 'No asignado'}</p>
+          <p>RUT del Profesor: {foro.profesorRut || 'No disponible'}</p>
           <p>Categoría: {foro.categoria}</p>
           <p>Nivel: {foro.level}</p>
           <p>Sección: {foro.section}</p>

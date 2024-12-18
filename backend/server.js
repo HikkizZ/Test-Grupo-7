@@ -82,6 +82,7 @@ async function setupServer() { //* Función para configurar el servidor.
         passportJWTSetup(); //* Configurar la autenticación de usuarios.
 
         app.use('/api/', indexRoutes); //* Usar las rutas de la API.
+        app.use('/src/upload', express.static(uploadDir));
 
         app.listen(PORT, () => { //* Escuchar en el puerto especificado.
             console.log(`Server running on: http://${HOST}:${PORT}/api`);

@@ -16,4 +16,3 @@ function SearchNews({ searchQuery, setSearchQuery }) {
 }
 
 export default SearchNews;
-

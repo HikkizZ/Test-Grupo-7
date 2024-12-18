@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-// Esquema de validación para las noticias
+// Validaciones para las noticias
 export const newsValidation = Joi.object({
     tituloNews: Joi.string()
         .min(3)

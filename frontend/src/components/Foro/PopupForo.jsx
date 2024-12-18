@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { createForo, updateForo } from '@services/foro.service';
-import '@styles/popup.css';
+import styles from '@styles/popup.css';
 import CloseIcon from '@assets/XIcon.svg';
 
-export default function PopupForo({ show, setShow, foro, onSubmit }) {
+export default function PopupForo({ isOpen, onClose, foro, onSubmit }) {
   const [formData, setFormData] = useState({
     titulo: '',
     categoria: '',
@@ -15,7 +15,7 @@ export default function PopupForo({ show, setShow, foro, onSubmit }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (show && foro) {
+    if (isOpen && foro) {
       setFormData({
         titulo: foro.titulo || '',
         categoria: foro.categoria || '',
@@ -24,10 +24,10 @@ export default function PopupForo({ show, setShow, foro, onSubmit }) {
         section: foro.section || '',
         archivos: []
       });
-    } else if (show) {
+    } else if (isOpen) {
       resetForm();
     }
-  }, [show, foro]);
+  }, [isOpen, foro]);
 
   const resetForm = () => {
     setFormData({
@@ -77,7 +77,7 @@ export default function PopupForo({ show, setShow, foro, onSubmit }) {
         result = await createForo(foroData);
       }
       onSubmit(result);
-      setShow(false);
+      onClose();
     } catch (error) {
       console.error('Error al enviar el formulario:', error);
     } finally {
@@ -85,20 +85,20 @@ export default function PopupForo({ show, setShow, foro, onSubmit }) {
     }
   };
 
-  if (!show) return null;
+  if (!isOpen) return null;
 
   return (
-    <div className="bg">
-      <div className="popup">
-        <button className="close" onClick={() => setShow(false)}>
+    <div className={styles.bg}>
+      <div className={styles.popup}>
+        <button className={styles.close} onClick={onClose}>
           <img src={CloseIcon} alt="Cerrar" />
         </button>
-        <form onSubmit={handleSubmit} className="form">
-          <h2 className="title">{foro && foro.id ? 'Editar Foro' : 'Nuevo Foro'}</h2>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <h2 className={styles.title}>{foro && foro.id ? 'Editar Foro' : 'Nuevo Foro'}</h2>
           
-          <div className="container_inputs">
+          <div className={styles.container_inputs}>
             <label htmlFor="titulo">Título del foro</label>
-            <div className="input-container">
+            <div className={styles.input_container}>
               <input
                 type="text"
                 id="titulo"
@@ -107,19 +107,21 @@ export default function PopupForo({ show, setShow, foro, onSubmit }) {
                 onChange={handleChange}
                 required
                 placeholder="Ingrese el título del foro"
+                className={styles.input}
               />
             </div>
           </div>
 
-          <div className="container_inputs">
+          <div className={styles.container_inputs}>
             <label htmlFor="categoria">Categoría</label>
-            <div className="input-container">
+            <div className={styles.input_container}>
               <select
                 id="categoria"
                 name="categoria"
                 value={formData.categoria}
                 onChange={handleChange}
                 required
+                className={styles.select}
               >
                 <option value="">--Seleccionar--</option>
                 <option value="Tarea">Tarea</option>
@@ -129,9 +131,9 @@ export default function PopupForo({ show, setShow, foro, onSubmit }) {
             </div>
           </div>
 
-          <div className="container_inputs">
+          <div className={styles.container_inputs}>
             <label htmlFor="contenido">Contenido</label>
-            <div className="input-container">
+            <div className={styles.input_container}>
               <textarea
                 id="contenido"
                 name="contenido"
@@ -139,13 +141,14 @@ export default function PopupForo({ show, setShow, foro, onSubmit }) {
                 onChange={handleChange}
                 required
                 placeholder="Escriba el contenido del foro aquí..."
+                className={styles.textarea}
               />
             </div>
           </div>
 
-          <div className="container_inputs">
+          <div className={styles.container_inputs}>
             <label htmlFor="level">Nivel</label>
-            <div className="input-container">
+            <div className={styles.input_container}>
               <input
                 type="number"
                 id="level"
@@ -156,13 +159,14 @@ export default function PopupForo({ show, setShow, foro, onSubmit }) {
                 min="1"
                 max="4"
                 placeholder="Ingrese el nivel (1-4)"
+                className={styles.input}
               />
             </div>
           </div>
 
-          <div className="container_inputs">
+          <div className={styles.container_inputs}>
             <label htmlFor="section">Sección</label>
-            <div className="input-container">
+            <div className={styles.input_container}>
               <input
                 type="text"
                 id="section"
@@ -173,26 +177,28 @@ export default function PopupForo({ show, setShow, foro, onSubmit }) {
                 maxLength="1"
                 pattern="[A-Z]"
                 placeholder="Ingrese la sección (A-Z)"
+                className={styles.input}
               />
             </div>
           </div>
 
-          <div className="container_inputs">
+          <div className={styles.container_inputs}>
             <label htmlFor="archivos">Archivos adjuntos</label>
-            <div className="input-container">
+            <div className={styles.input_container}>
               <input
                 type="file"
                 id="archivos"
                 name="archivos"
                 onChange={handleChange}
                 multiple
+                className={styles.file_input}
               />
             </div>
           </div>
 
           <button
             type="submit"
-            className="submit-button"
+            className={styles.submit_button}
             disabled={loading}
           >
             {loading ? 'Guardando...' : (foro && foro.id ? 'Actualizar Foro' : 'Crear Foro')}
@@ -202,4 +208,3 @@ export default function PopupForo({ show, setShow, foro, onSubmit }) {
     </div>
   );
 }
-

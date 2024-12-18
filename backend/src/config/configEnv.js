@@ -21,3 +21,8 @@ export const DB_USERNAME = process.env.DB_USERNAME;
 export const DB_PASSWORD = process.env.DB_PASSWORD;
 export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET; //* ACCESS_TOKEN_SECRET is used to sign the JWT.
 export const cookieKey = process.env.cookieKey; //* cookieKey is used to sign the session ID cookie.
+export const emailConfig = {
+    service: "gmail",
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAL_PASS,
+};

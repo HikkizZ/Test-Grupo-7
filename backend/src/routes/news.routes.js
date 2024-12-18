@@ -16,7 +16,7 @@ router.use(authenticateJWT);
 
 // rutas de acceso
 router
-    .post("/", verifyRole(["user","admin", "profesor", "encargado"]), createNews) // Crear
+    .post("/", verifyRole(["profesor", "admin", "encargado"]), createNews) // Crear
     .get("/all", verifyRole(["user","encargado", "admin", "profesor", "alumno"]), getNews) // Listar todas
     .get("/:id", verifyRole(["user","encargado", "admin", "profesor", "alumno"]), getNewsId) // Por ID
     .patch("/:id", verifyRole(["user","encargado", "admin", "profesor"]), updateNews) // Actualizar

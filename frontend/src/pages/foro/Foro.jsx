@@ -9,8 +9,10 @@ import ForoTable from "@components/Foro/ForoTable";
 import ForoView from "@components/Foro/ForoView";
 import SearchForm from "@components/Foro/SearchFormForo";
 import UpdateForoForm from "@components/Foro/UpdateForoForm";
+import styles from '@styles/foro.module.css';
 
 export default function Foros() {
+    // Hooks personalizados para manejar operaciones CRUD y búsqueda
     const { foros, fetchForos, loading: loadingForos } = useGetForos();
     const { handleCreate, loading: loadingCreate } = useCreateForo(fetchForos);
     const { handleDelete, loading: loadingDelete } = useDeleteForo(fetchForos);
@@ -23,14 +25,17 @@ export default function Foros() {
         searchResults 
     } = useSearchForo(foros);
 
+    // Estados locales para manejar la interfaz de usuario
     const [selectedForo, setSelectedForo] = useState(null);
     const [isUpdating, setIsUpdating] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
 
+    // Efecto para cargar los foros al montar el componente
     useEffect(() => {
         fetchForos();
     }, [fetchForos]);
 
+    // Handlers para diferentes acciones de usuario
     const handleView = (foro) => {
         setSelectedForo(foro);
         setIsUpdating(false);
@@ -68,27 +73,30 @@ export default function Foros() {
     };
     
     return (
-        <div className="foros-container p-4">
-            <h1 className="text-3xl font-bold mb-6">Foros</h1>
+        <div className={styles.forosContainer}>
+            <h1 className={styles.forosTitle}>Foros</h1>
     
-            <div className="mb-8">
-                <div className="flex justify-between items-center mb-4">
+            <div className={styles.forosActions}>
+                <div className={styles.searchAndCreateContainer}>
+                    {/* Formulario de búsqueda */}
                     <SearchForm 
                         searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}
                         searchFilter={searchFilter}
                         setSearchFilter={setSearchFilter}
                     />
+                    {/* Botón para crear nuevo foro */}
                     <button 
                         onClick={() => setIsCreating(!isCreating)}
-                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                        className={`${styles.foroButton} ${styles.foroButtonCreate}`}
                     >
                         {isCreating ? 'Cancelar' : 'Crear Foro'}
                     </button>
                 </div>
+                {/* Formulario de creación de foro */}
                 {isCreating && (
-                    <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
-                        <h2 className="text-2xl font-semibold mb-4">Crear Foro</h2>
+                    <div className={styles.createForoContainer}>
+                        <h2 className={styles.createForoTitle}>Crear Foro</h2>
                         <ForoForm 
                             onCreate={handleCreateSubmit} 
                             loading={loadingCreate} 
@@ -98,10 +106,24 @@ export default function Foros() {
                 )}
             </div>
     
-            <section>
-                <h2 className="text-2xl font-semibold mb-4">Lista de Foros</h2>
+            {/* Formulario de actualización de foro */}
+            {selectedForo && isUpdating && (
+                <div className={styles.updateForoContainer}>
+                    <h2 className={styles.updateForoTitle}>Actualizar Foro</h2>
+                    <UpdateForoForm 
+                        foro={selectedForo} 
+                        onUpdate={handleUpdateSubmit} 
+                        onCancel={handleCloseView}
+                        loading={loadingUpdate}
+                    />
+                </div>
+            )}
+
+            {/* Sección de lista de foros */}
+            <section className={styles.forosListSection}>
+                <h2 className={styles.forosListTitle}>Lista de Foros</h2>
                 {loadingForos ? (
-                    <p>Cargando foros...</p>
+                    <p className={styles.loadingText}>Cargando foros...</p>
                 ) : (
                     <ForoTable
                         foros={searchResults}
@@ -113,17 +135,9 @@ export default function Foros() {
                 )}
             </section>
 
+            {/* Vista detallada de un foro */}
             {selectedForo && !isUpdating && (
                 <ForoView foro={selectedForo} onClose={handleCloseView} />
-            )}
-
-            {selectedForo && isUpdating && (
-                <UpdateForoForm 
-                    foro={selectedForo} 
-                    onUpdate={handleUpdateSubmit} 
-                    onCancel={handleCloseView}
-                    loading={loadingUpdate}
-                />
             )}
         </div>
     );

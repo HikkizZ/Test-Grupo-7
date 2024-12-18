@@ -208,3 +208,165 @@
   cursor: not-allowed;
 }
 
+/* Estilos existentes ... */
+
+/* Estilos para la página de detalle del foro */
+.foroDetailContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Estilo para la tarjeta de detalle del foro */
+.foroDetailCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Estilo para el contenido principal del foro */
+.foroDetailContent {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+/* Estilo para el título del contenido */
+.foroContentTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+/* Estilo para la sección de archivos adjuntos */
+.foroAttachments {
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+/* Estilo para el título de archivos adjuntos */
+.foroAttachmentsTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1rem;
+}
+
+/* Estilo para la lista de archivos adjuntos */
+.attachmentsList {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Estilo para el botón de volver */
+.backButton {
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+/* Estilo para los botones de descarga */
+.downloadButton {
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+}
+/* Estilos para el contenedor principal de foros */
+.forosContainer {
+  padding: 1rem;
+}
+
+/* Estilo para el título principal de la página de foros */
+.forosTitle {
+  font-size: 1.875rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+/* Estilos para la sección de acciones (búsqueda y creación) */
+.forosActions {
+  margin-bottom: 2rem;
+}
+
+/* Contenedor para el formulario de búsqueda y el botón de crear */
+.searchAndCreateContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Estilo para el botón de crear foro */
+.foroButtonCreate {
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.foroButtonCreate:hover {
+  background-color: #2563eb;
+}
+
+/* Estilos para los contenedores de creación y actualización de foros */
+.createForoContainer, .updateForoContainer {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  margin-bottom: 1.5rem;
+}
+
+/* Estilos para los títulos de creación y actualización de foros */
+.createForoTitle, .updateForoTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Estilos para la sección de lista de foros */
+.forosListSection {
+  margin-top: 2rem;
+}
+
+.forosListTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Estilo para el texto de carga */
+.loadingText {
+  font-style: italic;
+  color: #6b7280;
+}
+
+/* Estilos para el formulario de búsqueda */
+.searchForm {
+  display: flex;
+  align-items: center;
+}
+
+/* Estilo para el campo de entrada de búsqueda */
+.searchInput {
+  width: 200px;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  margin-right: 0.5rem;
+}
+
+/* Estilo para el selector de filtro de búsqueda */
+.searchSelect {
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  background-color: white;
+}

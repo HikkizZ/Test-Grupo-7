@@ -15,9 +15,21 @@ const ForoSchema = new EntitySchema({
             length: 255,
             nullable: false,
         },
-        // ID del profesor asociado al foro
+        // ID del profesor que creó el foro
         profesorId: {
             type: 'int',
+        },
+        // Nombre del profesor que creó el foro
+        profesorNombre: {
+            type: 'varchar',
+            length: 255,
+            nullable: true,
+        },
+        // RUT del profesor que creó el foro
+        profesorRut: {
+            type: 'varchar',
+            length: 20,
+            nullable: true,
         },
         // Categoría del foro
         categoria: {
@@ -31,18 +43,18 @@ const ForoSchema = new EntitySchema({
             length: 10000,
             nullable: false,
         },
-        // Fecha de creación del foro (AUTOMATICA)
+        // Fecha de creación del foro (se genera automáticamente)
         fechaCreacion: {
             type: 'timestamp',
             createDate: true,
         },
-        // Fecha de última actualización del foro (AUTOMATICA)
+        // Fecha de última actualización del foro (se actualiza automáticamente)
         fechaActualizacion: {
             type: 'timestamp',
             createDate: true,
             updateDate: true,
         },
-        // Archivos adjuntos al foro (opcional)
+        // Archivos adjuntos al foro (almacenados como JSON)
         archivosAdjuntos: {
             type: 'simple-json',
             nullable: true,
@@ -68,7 +80,7 @@ const ForoSchema = new EntitySchema({
                 name: "profesorId",
                 referencedColumnName: "id"
             },
-            where: { role: 'Profesor' } // Asegura que solo los usuarios con rol 'profesor' puedan crear foros
+            where: { role: 'Profesor' }
         },
         // Relación con el curso
         curso: {

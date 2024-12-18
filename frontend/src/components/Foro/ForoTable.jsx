@@ -16,7 +16,7 @@ export default function ForoTable({ foros, onDelete, loadingDelete, onUpdate }) 
                     <div className={styles.foroHeader}>
                         <div className={styles.foroTitleContainer}>
                             <h3 className={styles.foroTitle}>{foro.titulo}</h3>
-                            <span className={styles.foroProfessor}>{foro.profesor?.nombre || 'Profesor no asignado'}</span>
+                            <span className={styles.foroProfessor}>{foro.profesorNombre || 'Profesor no asignado'}</span>
                         </div>
                         <div className={styles.foroMeta}>
                             <span className={styles.foroCategory}>{foro.categoria}</span>
@@ -63,4 +63,3 @@ export default function ForoTable({ foros, onDelete, loadingDelete, onUpdate }) 
         </div>
     );
 }
-

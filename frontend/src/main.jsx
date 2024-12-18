@@ -19,6 +19,7 @@ import NewsId from '@pages/News.id'
 //? Import services Felipe
 import Cursos from './pages/Cursos';
 import Subjects from './pages/Subjects';
+import ForoDetail from './pages/foro/ForoId';
 
 // Configuración de rutas con ProtectedRoute
 const router = createBrowserRouter([
@@ -119,8 +120,8 @@ const router = createBrowserRouter([
         element: <Foro/>,
       },
       {
-        path: '/post/:id',
-        element: <foroDetail/>,
+        path: '/foro/:id',
+        element: <ForoDetail/>,
       },
       
       

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import styles from '@styles/foro.module.css';
 
 function ForoForm({ onCreate, loading, onCancel }) {
+    // Estados para cada campo del formulario
     const [titulo, setTitulo] = useState('');
     const [categoria, setCategoria] = useState('');
     const [contenido, setContenido] = useState('');
@@ -9,10 +12,12 @@ function ForoForm({ onCreate, loading, onCancel }) {
     const [section, setSection] = useState('');
     const [archivos, setArchivos] = useState([]);
 
+    // Hnadle para cambios en los archivos adjuntos
     const handleFileChange = (event) => {
         setArchivos(Array.from(event.target.files));
     };
 
+    // handler para el envío del formulario
     const handleSubmit = (event) => {
         event.preventDefault();
 
@@ -23,13 +28,15 @@ function ForoForm({ onCreate, loading, onCancel }) {
         formData.append('level', level);
         formData.append('section', section);
 
+        // Agregar cada archivo al FormData
         archivos.forEach((archivo) => {
             formData.append('archivos', archivo);
         });
 
+        // Llamar a la función onCreate pasada como prop
         onCreate(formData);
         
-        // Reset form fields
+        // Reiniciar los campos del formulario
         setTitulo('');
         setCategoria('');
         setContenido('');
@@ -40,6 +47,7 @@ function ForoForm({ onCreate, loading, onCancel }) {
 
     return (
         <form onSubmit={handleSubmit} className={styles.foroForm}>
+            {/* Campo de título */}
             <div className={styles.formGroup}>
                 <label htmlFor="titulo" className={styles.formLabel}>Título:</label>
                 <input
@@ -49,8 +57,11 @@ function ForoForm({ onCreate, loading, onCancel }) {
                     onChange={(e) => setTitulo(e.target.value)}
                     required
                     className={styles.formInput}
+                    style={{ maxWidth: '400px' }}
                 />
             </div>
+
+            {/* Campo de categoría */}
             <div className={styles.formGroup}>
                 <label htmlFor="categoria" className={styles.formLabel}>Categoría:</label>
                 <select
@@ -59,6 +70,7 @@ function ForoForm({ onCreate, loading, onCancel }) {
                     onChange={(e) => setCategoria(e.target.value)}
                     required
                     className={styles.formSelect}
+                    style={{ maxWidth: '200px' }}
                 >
                     <option value="">--Seleccionar--</option>
                     <option value="Tarea">Tarea</option>
@@ -66,16 +78,20 @@ function ForoForm({ onCreate, loading, onCancel }) {
                     <option value="Variedad">Variedad</option>
                 </select>
             </div>
+
+            {/* Campo de contenido usando ReactQuill */}
             <div className={styles.formGroup}>
                 <label htmlFor="contenido" className={styles.formLabel}>Contenido:</label>
-                <textarea
-                    id="contenido"
+                <ReactQuill
+                    theme="snow"
                     value={contenido}
-                    onChange={(e) => setContenido(e.target.value)}
-                    required
-                    className={styles.formTextarea}
+                    onChange={setContenido}
+                    className={styles.formQuill}
+                    style={{ height: '200px', marginBottom: '50px' }}
                 />
             </div>
+
+            {/* Campo de nivel */}
             <div className={styles.formGroup}>
                 <label htmlFor="level" className={styles.formLabel}>Nivel:</label>
                 <input
@@ -87,8 +103,11 @@ function ForoForm({ onCreate, loading, onCancel }) {
                     onChange={(e) => setLevel(e.target.value)}
                     required
                     className={styles.formInput}
+                    style={{ maxWidth: '100px' }}
                 />
             </div>
+
+            {/* Campo de sección */}
             <div className={styles.formGroup}>
                 <label htmlFor="section" className={styles.formLabel}>Sección:</label>
                 <input
@@ -100,8 +119,11 @@ function ForoForm({ onCreate, loading, onCancel }) {
                     onChange={(e) => setSection(e.target.value.toUpperCase())}
                     required
                     className={styles.formInput}
+                    style={{ maxWidth: '100px' }}
                 />
             </div>
+
+            {/* Campo de archivos adjuntos */}
             <div className={styles.formGroup}>
                 <label htmlFor="archivos" className={styles.formLabel}>Archivos adjuntos:</label>
                 <input
@@ -112,6 +134,8 @@ function ForoForm({ onCreate, loading, onCancel }) {
                     className={styles.formFileInput}
                 />
             </div>
+
+            {/* Botones de acción */}
             <div className={styles.formActions}>
                 <button 
                     type="button" 

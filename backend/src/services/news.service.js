@@ -1,6 +1,19 @@
 import { AppDataSource } from "../config/configDB.js";
 import News from "../models/news.models.js";
 import User from "../models/user.model.js";
+import { sendEmail } from "../services/email.service.js";
+
+//obtiene todos los correos electronicos registrados en la bd
+async function getRecipientEmails() {
+    try {
+        const userRepository = AppDataSource.getRepository(User);
+        const users = await userRepository.find();
+        return users.map(user => user.email);
+    } catch (error) {
+        console.error("Error al obtener los correos de los usuarios:", error);
+        return [];
+    }
+}
 
 // Servicio para crear una nueva noticia
 export async function createNewsService({tituloNews, autorId, contenido, imagenPortada}) {
@@ -8,13 +21,13 @@ export async function createNewsService({tituloNews, autorId, contenido, imagenP
         const newsRepository = AppDataSource.getRepository(News);
         const userRepository = AppDataSource.getRepository(User);
         
-        // Buscamos al usuario por su ID
+        //  al usuario por su ID
         const autor = await userRepository.findOne({ where: { id: autorId } });
         if (!autor) {
             return [null, "Usuario no encontrado"];
         }
 
-        // Creamos la nueva noticia con los datos proporcionados
+        // Crea la nueva noticia con los datos proporcionados
         const news = newsRepository.create({
             tituloNews,
             autor,
@@ -24,18 +37,44 @@ export async function createNewsService({tituloNews, autorId, contenido, imagenP
         
         // Guardamos la noticia en la base de datos
         await newsRepository.save(news);
+
+        // Enviamos el correo electrónico
+        const emailSubject = "Nueva noticia publicada";
+        const emailText = `Se ha publicado una nueva noticia:
+        Título: ${tituloNews}
+        Autor: ${autor.nombre}
+        Fecha de publicación: ${news.fechaPublicacion}`;
+        const emailHtml = `
+        <h1>Nueva noticia publicada</h1>
+        <p><strong>Título:</strong> ${tituloNews}</p>
+        <p><strong>Autor:</strong> ${autor.nombre}</p>
+        <p><strong>Fecha de publicación:</strong> ${news.fechaPublicacion}</p>
+        `;
+
+        // Obtiene la lista de correos electrónicos de todos los usuarios registrados
+        const recipientEmails = await getRecipientEmails();
+
+        // Envia el correo a todos los usuarios registrados
+        for (const email of recipientEmails) {
+            try {
+                await sendEmail(email, emailSubject, emailText, emailHtml);
+            } catch (error) {
+                console.error(`Error al enviar correo a ${email}:`, error);
+                // Continua con el siguiente correo si hay un error
+            }
+        }
+
         return [news, null];
     } catch (error) {
         console.error("No se pudo crear la noticia", error);
         return [null, "Error al crear la noticia"];
     }
 }
-
 // Servicio para obtener todas las noticias
 export async function getNewsService() {
     try {
         const newsRepository = AppDataSource.getRepository(News);
-        // Obtenemos todas las noticias de la base de datos, incluyendo la información del autor
+        // Obtiene todas las noticias de la base de datos, incluyendo la información del autor
         const news = await newsRepository.find({
             relations: ["autor"]
         });
@@ -50,7 +89,7 @@ export async function getNewsService() {
 export async function getNewService(id) {
     try {
         const newsRepository = AppDataSource.getRepository(News);
-        // Buscamos una noticia específica por su ID, incluyendo la información del autor
+        // Busca una noticia específica por su ID, incluyendo la información del autor
         const news = await newsRepository.findOne({ 
             where: { id },
             relations: ["autor"]
@@ -68,29 +107,29 @@ export async function updateNewService(id, { tituloNews, contenido, imagenPortad
     try {
       const newsRepository = AppDataSource.getRepository(News);
   
-      // Buscamos la noticia por su ID, incluyendo la relación con el autor
+      // Busca la noticia por su ID, incluyendo la relación con el autor
       const news = await newsRepository.findOne({ 
         where: { id },
         relations: ["autor"]
       });
       if (!news) return [null, "La noticia no existe."];
       
-      // Verificamos si el usuario que intenta actualizar es el autor de la noticia
+      // Verifica si el usuario que intenta actualizar es el autor de la noticia
       if (news.autor.id !== userId) {
         return [null, "No tienes permiso para editar esta noticia."];
       }
   
-      // Actualizamos los campos de la noticia
+      // Actualiza los campos de la noticia
       news.tituloNews = tituloNews || news.tituloNews;
       news.contenido = contenido || news.contenido;
       if (imagenPortada) {
         news.imagenPortada = imagenPortada;
       }
   
-      // Actualizamos la fecha de modificación
+      // Actualiza la fecha de modificación
       news.fechaUpdate = new Date();
   
-      // Guardamos los cambios en la base de datos
+      // Guarda los cambios en la base de datos
       const newsActualizada = await newsRepository.save(news);
       return [newsActualizada, null];
     } catch (error) {
@@ -103,19 +142,19 @@ export async function updateNewService(id, { tituloNews, contenido, imagenPortad
 export async function deleteNewService(id, userId) {
     try {
         const newsRepository = AppDataSource.getRepository(News);
-        // Buscamos la noticia por su ID, incluyendo la relación con el autor
+        // Busca la noticia por su ID, incluyendo la relación con el autor
         const news = await newsRepository.findOne({ 
           where: { id },
           relations: ["autor"]
         });
         if (!news) return [null, "Noticia no encontrada."];
         
-        // Verificamos si el usuario que intenta eliminar es el autor de la noticia
+        // Verifica si el usuario que intenta eliminar es el autor de la noticia
         if (news.autor.id !== userId) {
           return [null, "No tienes permiso para eliminar esta noticia."];
         }
         
-        // Eliminamos la noticia de la base de datos
+        // Elimina la noticia de la base de datos
         await newsRepository.remove(news);
         return [news, null];
     } catch (error) {

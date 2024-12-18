@@ -29,4 +29,3 @@ export function useGetForos() {
 
     return { foros, fetchForos, loading };
 }
-
