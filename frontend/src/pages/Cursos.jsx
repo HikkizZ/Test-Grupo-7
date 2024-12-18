@@ -54,6 +54,9 @@ export default function Cursos() {
 
     return (
         <div>
+            <br></br>
+            <br></br>
+            <br></br>
             <section>
                 <h1>Cursos</h1>
             </section>
