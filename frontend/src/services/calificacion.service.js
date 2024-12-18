@@ -18,9 +18,9 @@ export async function getCalificaciones(codeSubject) {
     }
 }
 
-export async function updateCalificaciones(codeSubject) {
+export async function updateCalificaciones(codeSubject, cantidad) {
     try {
-        const response = await axios.put(`/calificacion/detail/?codeSubject=${codeSubject}`, codeSubject);
+        const response = await axios.patch(`/calificacion/detail/?codeSubject=${codeSubject}`, { cantidad });
         return response.data;
     } catch (error) {
         return error.response?.data?.message || error.message;
@@ -39,6 +39,15 @@ export async function assignGradesStudents(codeSubject) {
 export async function calificarAlumno(data) {
     try {
         const response = await axios.post("/calificacion/calificar", data);
+        return response.data;
+    } catch (error) {
+        return error.response?.data?.message || error.message;
+    }
+}
+
+export async function editNameCalificacion(idCalificacion, newName) {
+    try {
+        const response = await axios.patch(`/calificacion/edit/?idCalificacion=${idCalificacion}`, { newName });
         return response.data;
     } catch (error) {
         return error.response?.data?.message || error.message;
