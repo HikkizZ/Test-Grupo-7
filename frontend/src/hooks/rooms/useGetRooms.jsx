@@ -10,13 +10,21 @@ export function useGetRooms() {
         try {
             setLoading(true);
             const response = await getRooms();
-            setRooms(response);
+            console.log("Salas obtenidas:", response); // <-- Verifica la respuesta
+    
+            const formattedRooms = response.map((room) => ({
+                ...room,
+                size: room.size.endsWith("m²") ? room.size : `${room.size} m²`,
+            }));
+    
+            setRooms(formattedRooms);
             setLoading(false);
         } catch (err) {
             setLoading(false);
             setError(err.message || "Error al obtener las salas");
+            console.error("Error al obtener salas:", err); // <-- Log para depuración
         }
-    }, []); // useCallback asegura que la referencia de la función no cambie
+    }, []);    
 
     return { rooms, fetchRooms, loading, error };
 }

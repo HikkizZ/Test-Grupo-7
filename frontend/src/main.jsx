@@ -12,32 +12,39 @@ import Period from '@pages/period';
 import Rooms from '@pages/Rooms';
 import Reservations from '@pages/Reservations';
 
+
 //import ProtectedRoute from '@components/ProtectedRoute';
 //import '@styles/styles.css';
 //import Hallam
+import ProtectedRoute from '@components/ProtectedRoute';
+import '@styles/styles.css';
+
 import Foro from '@pages/Foro';
-//? Import services Felipe
-import Cursos from './pages/Cursos';
+
+import Cursos from '@pages/Cursos';
 import Subjects from './pages/Subjects';
 
+// Configuración de rutas con ProtectedRoute
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Root/>,
-    errorElement: <Error404/>,
+    element: <Root />,
+    errorElement: <Error404 />,
     children: [
+      // Ruta de Home: Todos pueden acceder
       {
         path: '/home',
-        element: <Home/>
+        element: <Home />
       },
+      // Rutas protegidas solo para admin
       {
         path: '/users',
         element: (
-          <Users/>
-        // <ProtectedRoute allowedRoles={['administrador']}>
-        //   <Users />
-        // </ProtectedRoute>
+          <ProtectedRoute allowedRoles={['admin']}>
+            <Users />
+          </ProtectedRoute>
         ),
+
     },
     {
       path: '/horario',
@@ -48,41 +55,90 @@ const router = createBrowserRouter([
       element: <Period /> 
     },
     {
-        path: '/resources',
-        element: <Resources/>
+
       },
+      
+      // Recursos: Encargados y admin pueden ver, crear y modificar (sólo admin puede eliminar sala)
+      {
+
+        path: '/resources',
+        element: (
+          <ProtectedRoute allowedRoles={['Encargado', 'admin']}>
+            <Resources />
+          </ProtectedRoute>
+        ),
+      },
+      // Recursos (solo lectura para profesores y alumnos)
+      {
+        path: '/resources/view',
+        element: (
+          <ProtectedRoute allowedRoles={['Profesor', 'Alumno']}>
+            <Resources />
+          </ProtectedRoute>
+        ),
+      },
+      // Salas: Encargados y admin pueden ver y modificar (sólo admin puede crear y eliminar sala)
       {
         path: '/rooms',
-        element: <Rooms/>
+        element: (
+          <ProtectedRoute allowedRoles={['Encargado', 'admin']}>
+            <Rooms />
+          </ProtectedRoute>
+        ),
       },
+      // Salas (solo lectura para profesores y alumnos)
+      {
+        path: '/rooms/view',
+        element: (
+          <ProtectedRoute allowedRoles={['Profesor', 'Alumno']}>
+            <Rooms />
+          </ProtectedRoute>
+        ),
+      },
+      // Reservaciones: Acceso para admin (CRUD) y Encargado (RU)
       {
         path: '/reservations',
-        element: <Reservations/>
+        element: (
+          <ProtectedRoute allowedRoles={['Encargado', 'admin']}>
+            <Reservations />
+          </ProtectedRoute>
+        ),
       },
+      // Reservaciones (Profesores y alumnos solo creación y lectura)
+      {
+        path: '/reservations/my',
+        element: (
+          <ProtectedRoute allowedRoles={['Profesor', 'Alumno']}>
+            <Reservations />
+          </ProtectedRoute>
+        ),
+      },
+      // Otras rutas
       {
         path: '/cursos',
-        element: <Cursos/>
+        element: <Cursos />
       },
       {
-        path: 'subjects',
-        element: <Subjects/>
+        path: '/subjects',
+        element: <Subjects />
       },
       {
         path: '/posts',
-        element: <Foro/>,
+        element: <Foro />,
       }
     ]
   },
   {
     path: '/auth',
-    element: <Login/>
+    element: <Login />
   },
   {
     path: '/register',
-    element: <Register/>
+    element: <Register />
   }
-])
+]);
 
+// Renderización de la aplicación con RouterProvider
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <RouterProvider router={router}/>
-)
+  <RouterProvider router={router} />
+);

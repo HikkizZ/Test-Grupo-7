@@ -1,5 +1,6 @@
 "use strict";
 import { EntitySchema } from "typeorm";
+import { JoinAttribute } from "typeorm/query-builder/JoinAttribute.js";
 
 const UserSchema = new EntitySchema({
     name: "User",
@@ -56,6 +57,34 @@ const UserSchema = new EntitySchema({
             inverseSide: "teacher", 
             onDelete: "CASCADE",
         },
+    },
+    relations:{
+        curso: { //? Relation with the Curso entity. A user belongs to a course.
+            target: "Curso",
+            type: "many-to-one",
+            joinColumn: true,
+            onDelete: "SET NULL",
+        },
+        subjects: { //? Relation with the Subject entity. A user has many subjects.
+            target: "Subject",
+            type: "many-to-many",
+            joinTable: {
+                name: "student_subjects",
+                joinColumn: {
+                    name: "student_rut",
+                    referencedColumnName: "rut",
+                },
+                inverseJoinColumn: {
+                    name: "subject_id",
+                    referencedColumnName: "id",
+                },
+            },
+        },
+        notas: {
+            target: "UserNotas",
+            type: "one-to-many",
+            inverseSide: "student_id",
+        }
     },
     indices: [ //? Indexes of the table to optimize the search.
         {

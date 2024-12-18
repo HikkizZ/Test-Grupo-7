@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { updateRoom } from "@services/room.service";
-import { showSuccessAlert } from "../../utils/alerts";
+import { showSuccessAlert, showErrorAlert } from "../../utils/alerts";
 
 export function useUpdateRoom(fetchRooms) {
     const [loading, setLoading] = useState(false);
@@ -8,11 +8,19 @@ export function useUpdateRoom(fetchRooms) {
     const handleUpdate = async (id, updatedData) => {
         try {
             setLoading(true);
+
+            // Validar que al menos un campo sea enviado para actualizar
+            if (!Object.keys(updatedData).length) {
+                throw new Error("Debe proporcionar al menos un campo para actualizar.");
+            }
+
+            // Llamada al servicio con el ID correcto
             const updatedRoom = await updateRoom(id, updatedData);
+
             if (updatedRoom) {
                 showSuccessAlert(
                     "¡Sala modificada!",
-                    `La sala con ID ${id} ha sido modificada correctamente.`
+                    "La sala ha sido modificada correctamente."
                 );
                 fetchRooms((prevRooms) =>
                     prevRooms.map((room) =>
@@ -21,7 +29,10 @@ export function useUpdateRoom(fetchRooms) {
                 );
             }
         } catch (error) {
-            console.error("Error al modificar la sala:", error);
+            showErrorAlert(
+                "Error al modificar la sala",
+                error.message || "Hubo un problema al modificar la sala."
+            );
         } finally {
             setLoading(false);
         }

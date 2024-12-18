@@ -4,11 +4,13 @@ import { useGetReservations } from "../hooks/reservations/useGetReservations";
 import { useSearchReservation } from "../hooks/reservations/useSearchReservation";
 import { useUpdateReservation } from "../hooks/reservations/useUpdateReservation";
 import { useDeleteReservation } from "../hooks/reservations/useDeleteReservation";
+import { useAuth } from "../context/AuthContext";
 import ReservationTable from "../components/reservations/ReservationTable";
 import ReservationForm from "../components/reservations/ReservationForm";
 import ReservationSearch from "../components/reservations/ReservationSearch";
 
 export default function Reservations() {
+    const { user } = useAuth(); // Obtén el usuario autenticado
     const { reservations, fetchReservations, loading: loadingReservations } = useGetReservations();
     const { handleCreate, loading: loadingCreate } = useCreateReservation(fetchReservations);
     const { handleUpdate, loading: loadingUpdate } = useUpdateReservation(fetchReservations);
@@ -17,54 +19,70 @@ export default function Reservations() {
         setReservations: fetchReservations,
     });
 
-    const {
-        //searchFilters,
-        updateFilter,
-        resetFilters,
-        searchResults: filteredResults,
-        loading: loadingSearch,
-    } = useSearchReservation(reservations);
+    const { resetFilters, searchResults: filteredResults, loading: loadingSearch } =
+        useSearchReservation(reservations);
 
     const [showCreateModal, setShowCreateModal] = useState(false);
+
+    // Estado adicional para manejar los filtros
+    const [filters, setFilters] = useState({});
 
     useEffect(() => {
         fetchReservations();
     }, [fetchReservations]);
 
+    const handleFilterUpdate = (filterName, value) => {
+        setFilters((prevFilters) => ({ ...prevFilters, [filterName]: value }));
+    };
+
+    const handleResetFilters = () => {
+        setFilters({});
+        resetFilters(); // Resetea los filtros generales
+    };
+
     const noReservations = reservations.length === 0;
     const noSearchResults = filteredResults.length === 0 && !noReservations;
 
+    // Verificar si el usuario es Profesor o Alumno
+    const isProfesorOrAlumno = user?.role === "Profesor" || user?.role === "Alumno";
+
     return (
         <div>
+            <br />
             <br />
             <br />
             <h1>Reservaciones</h1>
 
             {/* Buscar reservaciones */}
             <ReservationSearch
-                onFilterUpdate={updateFilter}
-                onReset={resetFilters}
+                onFilterUpdate={handleFilterUpdate}
+                onReset={handleResetFilters}
                 loading={loadingSearch}
             />
 
             {/* Lista de reservaciones y botón Crear */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px" }}>
                 <h3>Lista de Reservaciones</h3>
-                <button
-                    onClick={() => setShowCreateModal(true)}
-                    style={{
-                        backgroundColor: "#007bff",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: "5px",
-                        padding: "5px 10px",
-                        cursor: "pointer",
-                    }}
-                >
-                    Crear Reservación
-                </button>
+                {(user?.role === "admin" || user?.role === "Profesor" || user?.role === "Alumno") && (
+                    <button
+                        onClick={() => setShowCreateModal(true)}
+                        style={{
+                            height: "38px",
+                            backgroundColor: "#28a745",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "5px",
+                            padding: "10px 15px",
+                            cursor: "pointer",
+                            fontSize: "14px",
+                        }}
+                    >
+                        Crear Reservación
+                    </button>
+                )}
             </div>
 
+            {/* Tabla de reservaciones */}
             {loadingSearch || loadingReservations ? (
                 <p>Cargando reservaciones...</p>
             ) : noReservations ? (
@@ -74,10 +92,13 @@ export default function Reservations() {
             ) : (
                 <ReservationTable
                     reservations={filteredResults}
-                    onDelete={handleDelete}
+                    onUpdate={user?.role === "admin" || user?.role === "Encargado" ? handleUpdate : null}
+                    onDelete={user?.role === "admin" ? handleDelete : null}
                     loadingDelete={loadingDelete}
-                    onUpdate={handleUpdate}
                     loadingUpdate={loadingUpdate}
+                    hideDevuelto={isProfesorOrAlumno}
+                    user={user}
+                    filters={filters} // Pasamos los filtros al componente ReservationTable
                 />
             )}
 

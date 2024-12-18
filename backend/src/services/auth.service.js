@@ -21,12 +21,16 @@ export async function loginService(user){
 
         if (!isMatch) return [null, createErrorMessage({ password }, "The password is incorrect.")]; //? If the password is incorrect, return null and an error message.
 
+        console.log("Usuario encontrado en BD:", userFound);
+
         const payload = { //? Creating the payload. Un payload es un objeto que contiene la información que se va a codificar en el token.
             name: userFound.name,
             email: userFound.email,
             role: userFound.role,
             rut: userFound.rut
         };
+
+        console.log("JWT Payload:", payload);
 
         const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: "1d" }); //? Creating the access token.
 

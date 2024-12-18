@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function CalendarEvent({ post, onClick, onDelete }) {
     return (
         <div className="calendar-event">

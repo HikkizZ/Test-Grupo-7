@@ -2,21 +2,23 @@ import ResourceRow from "./ResourceRow";
 
 export default function ResourceTable({
     resources,
+    onSelect,
     onUpdate,
     onDelete,
     loadingUpdate,
     loadingDelete,
+    role, // Agregar rol del usuario
 }) {
-    // Ordenar los recursos por ID de menor a mayor
-    const sortedResources = [...resources].sort((a, b) => a.id - b.id);
+    const sortedResources = [...resources].sort((a, b) => a.name.localeCompare(b.name));
 
     return (
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Nombre</th>
-                    <th>Acciones</th>
+                    <th>Marca/Modelo</th>
+                    <th>Tipo</th>
+                    {role !== "Profesor" && role !== "Alumno" && <th>Acciones</th>}
                 </tr>
             </thead>
             <tbody>
@@ -24,10 +26,12 @@ export default function ResourceTable({
                     <ResourceRow
                         key={resource.id}
                         resource={resource}
+                        onSelect={onSelect}
                         onUpdate={onUpdate}
                         onDelete={onDelete}
                         loadingUpdate={loadingUpdate}
                         loadingDelete={loadingDelete}
+                        role={role} // Pasar rol del usuario
                     />
                 ))}
             </tbody>
