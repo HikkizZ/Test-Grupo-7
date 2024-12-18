@@ -1,17 +1,17 @@
 import { useState } from "react";
 
 export default function HorarioSearch({ onSearch, onReset, loading }) {
-    const [query, setQuery] = useState("");
-    const [filter, setFilter] = useState("");
+    const [query, setQuery] = useState(""); 
+    const [filter, setFilter] = useState(""); 
 
     const handleSearch = (e) => {
         setQuery(e.target.value);
-        onSearch(e.target.value, filter);
+        onSearch(e.target.value, filter); 
     };
 
     const handleFilterChange = (e) => {
         setFilter(e.target.value);
-        onSearch(query, e.target.value);
+        onSearch(query, e.target.value); 
     };
 
     return (
@@ -21,9 +21,11 @@ export default function HorarioSearch({ onSearch, onReset, loading }) {
                 <label>
                     Selecciona un filtro:
                     <select value={filter} onChange={handleFilterChange}>
-                        <option value="">Buscar por ID y Curso</option>
-                        <option value="id">Buscar por ID</option>
-                        <option value="curso">Buscar por Curso</option>
+                        <option value="">Buscar por Profesor y Curso</option>
+                        <option value="teacherRut">Buscar RUT del Profesor</option>
+                        <option value="teacherName">Buscar Nombre del Profesor</option>
+                        <option value="cursoName">Buscar Nombre del Curso</option>
+                        <option value="cursoCode">Buscar Código del Curso</option>
                     </select>
                 </label>
             </div>
@@ -33,11 +35,15 @@ export default function HorarioSearch({ onSearch, onReset, loading }) {
                 value={query}
                 onChange={handleSearch}
                 placeholder={
-                    filter === "id"
-                        ? "Ingresa el ID del horario"
-                        : filter === "curso"
-                        ? "Ingresa el Curso"
-                        : "Buscar por ID y Curso"
+                    filter === "teacherRut"
+                        ? "Ingresa el RUT del profesor"
+                        : filter === "teacherName"
+                        ? "Ingresa el nombre del profesor"
+                        : filter === "cursoName"
+                        ? "Ingresa el nombre del curso"
+                        : filter === "cursoCode"
+                        ? "Ingresa el código del curso"
+                        : "Buscar por Profesor y Curso"
                 }
             />
             {query && (
