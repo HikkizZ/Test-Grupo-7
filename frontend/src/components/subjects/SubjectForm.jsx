@@ -1,60 +1,6 @@
 import { useState } from 'react';
 import { showErrorAlert } from '../../helpers/sweetAlert';
 
-const styles = {
-    container: {
-        fontFamily: 'Arial, sans-serif',
-        maxWidth: '500px',
-        margin: '10px',
-        padding: '20px',
-        backgroundColor: '#fff',
-        borderRadius: '8px',
-        boxShadow: '0 0 20px rgba(0, 0, 0, 0.1)',
-    },
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '15px',
-    },
-    input: {
-        padding: '12px',
-        fontSize: '14px',
-        border: '1px solid #ddd',
-        borderRadius: '4px',
-        width: '100%',
-    },
-    select: {
-        padding: '12px',
-        fontSize: '14px',
-        border: '1px solid #ddd',
-        borderRadius: '4px',
-        width: '100%',
-        backgroundColor: 'white',
-    },
-    button: {
-        padding: '12px 15px',
-        fontSize: '14px',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer',
-        transition: 'background-color 0.3s',
-    },
-    createButton: {
-        backgroundColor: '#007bff',
-        color: 'white',
-    },
-    cancelButton: {
-        backgroundColor: '#dc3545',
-        color: 'white',
-    },
-    buttonGroup: {
-        display: 'flex',
-        justifyContent: 'flex-end',
-        gap: '10px',
-        marginTop: '15px',
-    },
-};
-
 export default function SubjectForm({ onCreate, loading }) {
     const [showForm, setShowForm] = useState(false);
 
@@ -153,4 +99,58 @@ export default function SubjectForm({ onCreate, loading }) {
             )}
         </div>
     );
+};
+
+const styles = {
+    container: {
+        fontFamily: 'Arial, sans-serif',
+        maxWidth: '500px',
+        margin: '10px',
+        padding: '20px',
+        backgroundColor: '#fff',
+        borderRadius: '8px',
+        boxShadow: '0 0 20px rgba(0, 0, 0, 0.1)',
+    },
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '15px',
+    },
+    input: {
+        padding: '12px',
+        fontSize: '14px',
+        border: '1px solid #ddd',
+        borderRadius: '4px',
+        width: '100%',
+    },
+    select: {
+        padding: '12px',
+        fontSize: '14px',
+        border: '1px solid #ddd',
+        borderRadius: '4px',
+        width: '100%',
+        backgroundColor: 'white',
+    },
+    button: {
+        padding: '12px 15px',
+        fontSize: '14px',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        transition: 'background-color 0.3s',
+    },
+    createButton: {
+        backgroundColor: '#007bff',
+        color: 'white',
+    },
+    cancelButton: {
+        backgroundColor: '#dc3545',
+        color: 'white',
+    },
+    buttonGroup: {
+        display: 'flex',
+        justifyContent: 'flex-end',
+        gap: '10px',
+        marginTop: '15px',
+    },
 };

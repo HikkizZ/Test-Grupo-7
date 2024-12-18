@@ -2,7 +2,7 @@ import { useState } from "react";
 import SubjectRow from "./SubjectRow";
 import PopupSubjects from "./SubjectPopup";
 
-export default function SubjectTable({ subjects, onDelete, onUpdate }) {
+export default function SubjectTable({ subjects, onDelete, onUpdate, fetchSubjects }) {
     const [showPopup, setShowPopup] = useState(false);
     const [selectedSubject, setSelectedSubject] = useState(null);
 
@@ -40,6 +40,7 @@ export default function SubjectTable({ subjects, onDelete, onUpdate }) {
                                 onDelete={onDelete}
                                 loadingUpdate={false}
                                 loadingDelete={false}
+                                fetchSubjects={fetchSubjects}
                             />
                         ))}
                     </tbody>

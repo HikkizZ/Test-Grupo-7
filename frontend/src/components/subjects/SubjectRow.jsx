@@ -1,44 +1,62 @@
-export default function SubjectRow({ subject, onEdit, onDelete, onView, loadingUpdate, loadingDelete, loadingView }) {
+import { useState } from "react";
+import SubjectViewPopup from "./SubjectViewPopup";
+
+export default function SubjectRow({ subject, onEdit, onDelete, loadingUpdate, loadingDelete, fetchSubjects }) {
+    const [showPopup, setShowPopup] = useState(false);
+    const [selectedSubject, setSelectedSubject] = useState(null);
 
     const getButtonStyle = (baseStyle, isDisabled) => ({
         ...styles.button,
         ...baseStyle,
         ...(isDisabled ? styles.disabledButton : {}),
     });
-    
+
+    const handleViewClick = (subject) => {
+        setSelectedSubject(subject);
+        console.log(subject);
+        setShowPopup(true);
+    }
+
     return (
-        <tr style={styles.tr}>
-            <td style={styles.td}>{subject.code}</td>
-            <td style={styles.td}>{subject.name}</td>
-            <td style={styles.td}>{subject.description || "Sin descripción"}</td>
-            <td style={styles.td}>{subject.curso.code}</td>
-            <td style={styles.td}>{subject.teacher.name}</td>
-            <td style={styles.td}>
-                <div style={styles.actionButtons}>
-                    <button
-                        style={getButtonStyle(styles.viewButton, false)}
-                        onClick={() => onView(subject)}
-                            disabled={loadingView}
-                    >
-                        {loadingView ? "Cargando..." : "Ver"}
-                    </button>
-                    <button
-                        style={getButtonStyle(styles.editButton, loadingUpdate)}
-                        onClick={() => onEdit(subject)}
-                        disabled={loadingUpdate}
-                    >
-                        {loadingUpdate ? "Cargando..." : "Editar"}
-                    </button>
-                    <button
-                        style={getButtonStyle(styles.deleteButton, loadingDelete)}
-                        onClick={() => onDelete(subject)}
-                        disabled={loadingDelete}
-                    >
-                        {loadingDelete ? "Cargando..." : "Eliminar"}
-                    </button>
-                </div>
-            </td>
-        </tr>
+        <>
+            <tr style={styles.tr}>
+                <td style={styles.td}>{subject.code}</td>
+                <td style={styles.td}>{subject.name}</td>
+                <td style={styles.td}>{subject.description || "Sin descripción"}</td>
+                <td style={styles.td}>{subject.curso.code}</td>
+                <td style={styles.td}>{subject.teacher.name}</td>
+                <td style={styles.td}>
+                    <div style={styles.actionButtons}>
+                        <button
+                            style={getButtonStyle(styles.viewButton, false)}
+                            onClick={() => handleViewClick(subject)}
+                        >   
+                            Ver
+                        </button>
+                        <button
+                            style={getButtonStyle(styles.editButton, loadingUpdate)}
+                            onClick={() => onEdit(subject)}
+                            disabled={loadingUpdate}
+                        >
+                            {loadingUpdate ? "Cargando..." : "Editar"}
+                        </button>
+                        <button
+                            style={getButtonStyle(styles.deleteButton, loadingDelete)}
+                            onClick={() => onDelete(subject)}
+                            disabled={loadingDelete}
+                        >
+                            {loadingDelete ? "Cargando..." : "Eliminar"}
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            <SubjectViewPopup
+                active={showPopup}
+                setActive={setShowPopup}
+                data={selectedSubject}
+                fetchSubjects={fetchSubjects}
+            />
+        </>
     );
 }
 
