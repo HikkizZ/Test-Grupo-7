@@ -48,6 +48,9 @@ export default function Subjects() {
 
   return (
     <div>
+      <br></br> {/* Esto es solo para que se vea mejor en el navegador */}
+      <br></br>
+      <br></br>
       <section>
         <h1>Asignaturas</h1>
       </section>

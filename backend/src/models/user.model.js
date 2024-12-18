@@ -79,6 +79,7 @@ const UserSchema = new EntitySchema({
                     referencedColumnName: "id",
                 },
             },
+            onDelete: "CASCADE",
         },
         notas: {
             target: "UserNotas",

@@ -24,8 +24,8 @@ export default function Popup({ show, setShow, data, action }) {
                         fields={[
                             {
                                 label: "Nombre completo",
-                                name: "nombreCompleto",
-                                defaultValue: userData.nombreCompleto || "",
+                                name: "name",
+                                defaultValue: userData.name || "",
                                 placeholder: 'Diego Alexis Salazar Jara',
                                 fieldType: 'input',
                                 type: "text",
@@ -61,14 +61,16 @@ export default function Popup({ show, setShow, data, action }) {
                             },
                             {
                                 label: "Rol",
-                                name: "rol",
+                                name: "role",
                                 fieldType: 'select',
                                 options: [
-                                    { value: 'administrador', label: 'Administrador' },
-                                    { value: 'usuario', label: 'Usuario' },
+                                    { value: 'admin', label: 'Administrador' },
+                                    { value: 'user', label: 'Usuario' },
+                                    { value: 'profesor', label: 'Profesor' },
+                                    { value: 'alumno', label: 'Estudiante' },
                                 ],
                                 required: true,
-                                defaultValue: userData.rol || "",
+                                defaultValue: userData.role || "",
                             },
                             {
                                 label: (

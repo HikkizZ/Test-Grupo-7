@@ -35,6 +35,7 @@ const UserNotasSchema = new EntitySchema({
             type: "many-to-one",
             joinColumn: true,
             nullable: false,
+            onDelete: "CASCADE",
         }
     }
 });
