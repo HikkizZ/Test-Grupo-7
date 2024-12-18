@@ -58,48 +58,43 @@ export default function ReservationTable({
     });
 
     return (
-        <table style={tableStyle}>
-            <thead>
-                <tr>
-                    <th>Fecha Desde</th>
-                    <th>Fecha Hasta</th>
-                    <th>Tipo Reserva</th>
-                    <th>Estado</th>
-                    {!hideDevuelto && <th>Devuelto</th>}
-                    <th>Reservante</th>
-                    <th>Sala/Recurso</th>
-                    {onUpdate || onDelete ? <th>Acciones</th> : null}
-                </tr>
-            </thead>
-            <tbody>
-                {sortedReservations.length > 0 ? (
-                    sortedReservations.map((reservation) => (
-                        <ReservationRow
-                            key={reservation.id}
-                            reservation={reservation}
-                            onUpdate={onUpdate}
-                            onDelete={onDelete}
-                            loadingUpdate={loadingUpdate}
-                            loadingDelete={loadingDelete}
-                            user={user}
-                            hideDevuelto={hideDevuelto}
-                        />
-                    ))
-                ) : (
+        <div className="around-table-container">
+            <table className="around-table">
+                <thead>
                     <tr>
-                        <td colSpan="8" style={{ textAlign: "center" }}>
-                            No se encontraron reservaciones.
-                        </td>
+                        <th>Fecha Desde</th>
+                        <th>Fecha Hasta</th>
+                        <th>Tipo Reserva</th>
+                        <th>Estado</th>
+                        {!hideDevuelto && <th>Devuelto</th>}
+                        <th>Reservante</th>
+                        <th>Sala/Recurso</th>
+                        {onUpdate || onDelete ? <th>Acciones</th> : null}
                     </tr>
-                )}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {sortedReservations.length > 0 ? (
+                        sortedReservations.map((reservation) => (
+                            <ReservationRow
+                                key={reservation.id}
+                                reservation={reservation}
+                                onUpdate={onUpdate}
+                                onDelete={onDelete}
+                                loadingUpdate={loadingUpdate}
+                                loadingDelete={loadingDelete}
+                                user={user}
+                                hideDevuelto={hideDevuelto}
+                            />
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="8" style={{ textAlign: "center" }}>
+                                No se encontraron reservaciones.
+                            </td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
     );
 }
-
-// ESTILOS
-const tableStyle = {
-    width: "100%",
-    borderCollapse: "collapse",
-    marginTop: "20px",
-};

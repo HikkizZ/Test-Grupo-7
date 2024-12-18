@@ -91,7 +91,6 @@ export default function ReservationSearch({ onFilterUpdate, onReset, loading }) 
 
     return (
         <div>
-            <h3>Buscar Reservación</h3>
 
             {/* Primera Fila */}
             <div style={filterRowStyle}>
@@ -248,7 +247,6 @@ function TextFilter({ label, filterName, filterValue, enabled, onCheckboxChange,
         </div>
     );
 }
-
 // ESTILOS
 const filterRowStyle = {
     display: "flex",

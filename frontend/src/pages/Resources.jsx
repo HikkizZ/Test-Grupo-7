@@ -73,8 +73,13 @@ export default function Resources() {
 
     return (
         <div className="around-container">
-            {/* Título principal */}
-            <h1 className="around-title">Recursos</h1>
+        {/* Título principal centrado */}
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+            <h1 className="around-header">
+                <br />
+                <br />
+                Recursos</h1>
+        </div>
 
             {/* Buscar Recurso */}
             <div className="around-section">

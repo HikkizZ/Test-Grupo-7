@@ -58,9 +58,14 @@ export default function Rooms() {
     };
 
     return (
-        <div className="around-container">
-            {/* Título principal */}
-            <h1 className="around-title">Salas</h1>
+            <div className="around-container">
+                {/* Título principal centrado */}
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+                    <h1 className="around-header">
+                        <br />
+                        <br />
+                        Salas</h1>
+                </div>
 
             {/* Buscar Sala */}
             <div className="around-section">
