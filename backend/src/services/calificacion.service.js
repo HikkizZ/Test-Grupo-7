@@ -1,6 +1,5 @@
 "use strict";
 
-import { ca } from "date-fns/locale";
 import { AppDataSource } from "../config/configDB.js";
 import Calificacion from "../models/calificacion.model.js";
 import Subject from "../models/subject.model.js";
