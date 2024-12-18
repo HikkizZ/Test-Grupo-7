@@ -8,23 +8,22 @@ export default function HorarioRow({ horario, onUpdate, onDelete, loadingUpdate,
     const [editData, setEditData] = useState({ ...horario });
     const [periods, setPeriods] = useState([]); // Almacena los períodos
     
-    // Obtine los períodos desde la base de datos
-        useEffect(() => {
-            const fetchPeriods = async () => {
-                try {
-                    const periodsData = await getPeriods();
-                    if (Array.isArray(periodsData)) {
-                        setPeriods(periodsData);
-                    } else {
-                        showErrorAlert("Los períodos no cumplen con el formato esperado.");
-                    }
-                } catch (error) {
-                    console.error("Error al cargar los períodos:", error.message);
-                    showErrorAlert("Error al cargar períodos", error);
-                }
-            };
-            fetchPeriods();
-        }, []);
+    //Carga los valores de periodo de la base de datos
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [periodsData] = await Promise.all([
+                    getPeriods(),
+                ]);
+                setPeriods(periodsData || []);
+
+            } catch (error) {
+                console.error("Error al cargar datos:", error.message);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const handleEditClick = () => {
         setIsEditing(true);
@@ -37,20 +36,48 @@ export default function HorarioRow({ horario, onUpdate, onDelete, loadingUpdate,
     };
 
     const handleSaveEdit = () => {
+        // Extrae los valores de editData
+        const { curso, teacher, classroom, subject, period, dayOfWeek } = editData;
+    
+        // Construye los valores formateados
         const formattedData = {
-            teacherId: editData.teacher?.rut, // Enviar solo el RUT del profesor
-            subjectId: editData.subject, // El nombre de la asignatura
-            cursoId: editData.curso?.code, // Solo el código del curso
-            classroomId: editData.classroom, // El nombre de la sala
-            dayOfWeek: editData.dayOfWeek, // Día seleccionado
-            periodId: editData.period?.name || "", // Nombre del período
+            teacherId: teacher?.rut?.trim() || "",
+            subjectId: subject?.trim() || "",
+            cursoId: curso?.code?.trim() || "",
+            classroomId: classroom?.trim() || "",
+            dayOfWeek: dayOfWeek || "",
+            periodId: period?.name?.trim() || "",
         };
-        console.log("Valor de periodId:", editData.period?.name);
+    
+        // Validaciones de campos obligatorios
+        if (!formattedData.cursoId) return showErrorAlert("El campo 'Curso' es obligatorio.");
+        if (!formattedData.teacherId) return showErrorAlert("El campo 'RUT del Profesor' es obligatorio.");
+        if (!formattedData.classroomId) return showErrorAlert("El campo 'Sala' es obligatorio.");
+        if (!formattedData.subjectId) return showErrorAlert("El campo 'Asignatura' es obligatorio.");
+        if (!formattedData.periodId) return showErrorAlert("El campo 'Periodo' es obligatorio.");
+        if (!formattedData.dayOfWeek) return showErrorAlert("El campo 'Día' es obligatorio.");
+    
+        // Validación del formato RUT
+        const rutVal = /^\d{1,2}(\.\d{3}){2}-[\dkK]$/;
+        if (!rutVal.test(formattedData.teacherId)) return showErrorAlert("Rut no valido\nNo cumple formato: XX.XXX.XXX-X");
+        
+    
+        const cursoCodeVal = /^[0-9A-Z-]+$/;
+        if (!cursoCodeVal.test(formattedData.cursoId)) return showErrorAlert("El código del curso no es válido.");
+        
+    
+        const nameVal = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/;
+        if (!nameVal.test(formattedData.subjectId)) return showErrorAlert("Asignatura no valida\nNo se permiten caracteres especiales\n@?¡-#$");
+        if (!nameVal.test(formattedData.classroomId)) return showErrorAlert("Sala no valida\nNo se permiten caracteres especiales\n@?¡-#$");
+        
         console.log("Cuerpo formateado para el backend:", formattedData);
     
         onUpdate(horario.id, formattedData);
         setIsEditing(false);
     };
+    
+
+    
 
     return (
         <tr>
