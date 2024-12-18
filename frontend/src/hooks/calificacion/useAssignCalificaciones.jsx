@@ -7,11 +7,13 @@ export function useAssignCalificaciones(fetchCalificaciones) {
     const [loading, setLoading] = useState(false);
 
     const handleAssign = async (calificacionesData) => {
+        console.log("useAssign -> calificacionesData", calificacionesData)  
         try {
             setLoading(true);
-            const response = await assignGradesStudents(calificacionesData);
 
-            if (response?.message === "Calificaciones asignadas correctamente") {
+            const { codeSubject } = calificacionesData
+            const response = await assignGradesStudents(codeSubject);
+            if (response?.message === "Notas asignadas exitosamente") {
                 showSuccessAlert('¡Asignadas!', 'Las calificaciones han sido asignadas correctamente.');
                 fetchCalificaciones();
             } else {

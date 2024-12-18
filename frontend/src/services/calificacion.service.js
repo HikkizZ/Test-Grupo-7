@@ -29,7 +29,7 @@ export async function updateCalificaciones(codeSubject, cantidad) {
 
 export async function assignGradesStudents(codeSubject) {
     try {
-        const response = await axios.post(`/calificacion/assign/?codeSubject=${codeSubject}`, codeSubject);
+        const response = await axios.post(`/calificacion/assign/?codeSubject=${codeSubject}`);
         return response.data;
     } catch (error) {
         return error.response?.data?.message || error.message;
