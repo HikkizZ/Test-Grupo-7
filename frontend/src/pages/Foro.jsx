@@ -8,7 +8,7 @@ import ForoTable from "@components/ForoTable";  // Tabla para foros
 
 //IMPORT CSS
 
-import '../styles/Foro.css';  // Ajusta la ruta según la ubicación de tu archivo
+//import '../styles/Foro.css';  // Ajusta la ruta según la ubicación de tu archivo
 
 
 export default function Foros() {
