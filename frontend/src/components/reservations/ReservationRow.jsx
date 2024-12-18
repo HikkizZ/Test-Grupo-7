@@ -104,11 +104,30 @@ export default function ReservationRow({
                             <button
                                 onClick={handleSaveEdit}
                                 disabled={loadingUpdate}
-                                style={{ marginRight: "5px" }}
+                                style={{
+                                    backgroundColor: "#007bff",
+                                    color: "#fff",
+                                    border: "none",
+                                    borderRadius: "5px",
+                                    padding: "5px 10px",
+                                    marginRight: "5px",
+                                    cursor: "pointer",
+                                }}
                             >
                                 Guardar
                             </button>
-                            <button onClick={handleCancelEdit} disabled={loadingUpdate}>
+                            <button 
+                            onClick={handleCancelEdit} 
+                            disabled={loadingUpdate}
+                            style={{
+                                backgroundColor: "#d33",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "5px",
+                                padding: "5px 10px",
+                                cursor: "pointer",
+                            }}
+                            >
                                 Cancelar
                             </button>
                         </>
