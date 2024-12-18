@@ -1,8 +1,6 @@
 "use strict";
 
 import { EntitySchema } from "typeorm";
-import { format } from "date-fns";
-import { es } from "date-fns/locale"; // Para el formato en español
 
 const CalificacionSchema = new EntitySchema({
     name: "Calificacion",
@@ -22,16 +20,6 @@ const CalificacionSchema = new EntitySchema({
             type: "decimal",
             nullable: false,
             precision: 3,
-        },
-        fecha: {
-            type: "timestamp with time zone",
-            nullable: false,
-            default: () => "CURRENT_TIMESTAMP",
-            onUpdate: "CURRENT_TIMESTAMP",
-            transformer: {
-                to: (value) => value, // Lo dejamos tal cual al guardar en la base de datos
-                from: (value) => format(new Date(value), "dd-MM-yyyy", { locale: es }), // Convierte a formato latino al obtener
-            }
         }
     },
     relations: {
