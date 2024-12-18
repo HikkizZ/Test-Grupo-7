@@ -1,8 +1,10 @@
+// Importaciones necesarias
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ensureFullImageUrl } from '@services/news.service';
 import styles from '@styles/News.module.css';
 
+// Componente para mostrar la lista de noticias
 export default function ListNews({ searchResults, onEdit, loading, error }) {
   const navigate = useNavigate();
 
@@ -16,6 +18,7 @@ export default function ListNews({ searchResults, onEdit, loading, error }) {
   if (error) return <div className="text-center py-4 text-red-500">{error}</div>;
   if (searchResults.length === 0) return <div className="text-center py-4">No hay noticias disponibles.</div>;
 
+  // Renderizado de la lista de noticias
   return (
     <div className={styles.newsGrid}>
       {searchResults.sort((a, b) => new Date(b.fechaPublicacion) - new Date(a.fechaPublicacion))
@@ -41,7 +44,7 @@ export default function ListNews({ searchResults, onEdit, loading, error }) {
           </div>
           <div className={styles.newsContent}>
             <h2 className={styles.newsTitle}>{item.tituloNews}</h2>
-            <p className={styles.newsAuthor}>Por {item.nombreAutor}</p>
+            <p className={styles.newsAuthor}>Por {item.autor ? item.autor.name : 'Autor desconocido'}</p>
             <p className={styles.newsDate}>
               Publicado el {new Date(item.fechaPublicacion).toLocaleDateString()}
             </p>
@@ -52,4 +55,3 @@ export default function ListNews({ searchResults, onEdit, loading, error }) {
     </div>
   );
 }
-

@@ -14,11 +14,6 @@ const newsSchema = new EntitySchema({
       length: 100,
       nullable: false,
     },
-    nombreAutor: {
-      type: 'varchar',
-      length: 60,
-      nullable: false,
-    },
     contenido: {
       type: 'text',
       nullable: true
@@ -39,6 +34,18 @@ const newsSchema = new EntitySchema({
       nullable: false,
     },
   },
+  // Definimos la relación entre la noticia y el usuario (autor)
+  relations: {
+    autor: {
+      target: "User", // Apunta a la entidad User
+      type: "many-to-one", // Muchas noticias pueden pertenecer a un usuario
+      joinColumn: {
+        name: "autorId" // Nombre de la columna que almacenará el ID del autor
+      },
+      cascade: true // Las operaciones en la noticia afectarán al autor relacionado
+    }
+  },
+  // Definimos índices para optimizar las búsquedas
   indices: [
     {
       name: "IDX_NEWS_TITLE",

@@ -1,3 +1,4 @@
+// Importaciones necesarias
 import { useState, useEffect, useRef } from 'react';
 import { getNewsById } from '@services/news.service';
 import ReactQuill from 'react-quill';
@@ -5,6 +6,7 @@ import 'react-quill/dist/quill.snow.css';
 import '@styles/popup.css';
 import CloseIcon from '@assets/XIcon.svg';
 
+// Componente de ventana emergente para crear o editar noticias
 export default function PopupNews({ show, setShow, id, onSubmit }) {
   // Referencia para el editor de texto enriquecido
   const quillRef = useRef(null);
@@ -12,21 +14,18 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
   // Estado para almacenar los datos del formulario
   const [formData, setFormData] = useState({
     tituloNews: '',
-    nombreAutor: '',
     contenido: '',
     imagenPortada: null
   });
 
-  // Estado para controlar si se está cargando algo
+  // Estado para controlar el estado de carga
   const [loading, setLoading] = useState(false);
 
-  // Efecto que se ejecuta cuando cambia el estado de 'show' o 'id'
+  // Efecto para cargar los datos de la noticia si se está editando
   useEffect(() => {
     if (show && id && id !== 'new') {
-      // Si se está mostrando el popup y hay un id válido, obtener los datos de la noticia
       fetchNews(id);
     } else if (show && id === 'new') {
-      // Si se está creando una nueva noticia, reiniciar el formulario
       resetForm();
     }
   }, [show, id]);
@@ -35,7 +34,6 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
   const resetForm = () => {
     setFormData({
       tituloNews: '',
-      nombreAutor: '',
       contenido: '',
       imagenPortada: null
     });
@@ -47,7 +45,6 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
       const data = await getNewsById(newsId);
       setFormData({
         tituloNews: data.tituloNews,
-        nombreAutor: data.nombreAutor,
         contenido: data.contenido,
         imagenPortada: null
       });
@@ -60,13 +57,11 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === 'imagenPortada' && files[0]) {
-      // Si se selecciona una imagen, actualizar el estado
       setFormData(prevState => ({
         ...prevState,
         [name]: files[0]
       }));
     } else {
-      // Para otros campos, simplemente actualizar el estado
       setFormData(prevState => ({
         ...prevState,
         [name]: value
@@ -84,18 +79,14 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
     e.preventDefault();
     setLoading(true);
     try {
-      // Crear un objeto FormData para enviar los datos, incluyendo la imagen
       const newsData = new FormData();
       newsData.append('tituloNews', formData.tituloNews);
-      newsData.append('nombreAutor', formData.nombreAutor);
       newsData.append('contenido', formData.contenido);
       
-      // Solo agregar la imagen si se ha seleccionado una nueva
       if (formData.imagenPortada instanceof File) {
         newsData.append('imagenPortada', formData.imagenPortada);
       }
 
-      // Llamar a la función onSubmit pasada como prop
       await onSubmit(newsData);
     } catch (error) {
       console.error('Error al enviar el formulario:', error);
@@ -122,15 +113,12 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
   return (
     <div className="bg">
       <div className="popup">
-        {/* Botón para cerrar el popup */}
         <button className="close" onClick={() => setShow(false)}>
           <img src={CloseIcon} alt="Cerrar" />
         </button>
         <form onSubmit={handleSubmit} className="form">
-          {/* Título del formulario */}
           <h2 className="title">{id && id !== 'new' ? 'Editar Noticia' : 'Nueva Noticia'}</h2>
           
-          {/* Campo para el título de la noticia */}
           <div className="container_inputs">
             <label htmlFor="tituloNews">Título de la noticia</label>
             <div className="input-container">
@@ -146,23 +134,6 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
             </div>
           </div>
 
-          {/* Campo para el nombre del autor */}
-          <div className="container_inputs">
-            <label htmlFor="nombreAutor">Autor</label>
-            <div className="input-container">
-              <input
-                type="text"
-                id="nombreAutor"
-                name="nombreAutor"
-                value={formData.nombreAutor}
-                onChange={handleChange}
-                required
-                placeholder="Nombre del autor"
-              />
-            </div>
-          </div>
-
-          {/* Editor de texto enriquecido para el contenido */}
           <div className="container_inputs">
             <label htmlFor="contenido">Contenido</label>
             <ReactQuill
@@ -175,7 +146,6 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
             />
           </div>
 
-          {/* Campo para subir la imagen de portada */}
           <div className="container_inputs">
             <label htmlFor="imagenPortada">Imagen de Portada</label>
             <div className="input-container">
@@ -189,7 +159,6 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
             </div>
           </div>
 
-          {/* Botón para enviar el formulario */}
           <button
             type="submit"
             className="submit-button"
@@ -202,4 +171,3 @@ export default function PopupNews({ show, setShow, id, onSubmit }) {
     </div>
   );
 }
-

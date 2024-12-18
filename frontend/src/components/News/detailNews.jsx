@@ -1,7 +1,9 @@
+// Importaciones necesarias
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getNewsById, ensureFullImageUrl } from '@services/news.service';
 
+// Componente para mostrar el detalle de una noticia
 export default function NewsDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -9,6 +11,7 @@ export default function NewsDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Efecto para cargar los datos de la noticia
   useEffect(() => {
     const fetchNews = async () => {
       try {
@@ -24,15 +27,17 @@ export default function NewsDetail() {
     fetchNews();
   }, [id]);
 
+  // Renderizado condicional basado en el estado de carga y error
   if (loading) return <div className="flex justify-center items-center h-screen">Cargando...</div>;
   if (error) return <div className="flex justify-center items-center h-screen text-red-500">{error}</div>;
   if (!news) return <div className="flex justify-center items-center h-screen">Noticia no encontrada</div>;
 
+  // Renderizado del detalle de la noticia
   return (
     <div className="max-w-4xlmx-auto p-6 bg-white rounded-lg shadow-lg">
       <h1 className="text-3xl font-bold mb-4">{news.tituloNews}</h1>
       <div className="flex items-center text-gray-600 mb-6">
-        <span>Por {news.nombreAutor}</span>
+        <span>Por {news.autor ? news.autor.name : 'Autor desconocido'}</span>
         <span className="mx-2">•</span>
         <span>{new Date(news.fechaPublicacion).toLocaleDateString()}</span>
       </div>
@@ -53,4 +58,3 @@ export default function NewsDetail() {
     </div>
   );
 }
-

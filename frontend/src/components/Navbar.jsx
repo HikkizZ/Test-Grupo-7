@@ -48,7 +48,7 @@ const Navbar = () => {
         { path: '/resources', name: 'Recursos' },
         { path: '/cursos', name: 'Cursos' },
         { path: '/subjects', name: 'Asignaturas' },
-        { path: '/posts', name: 'Foro' },
+        { path: '/foro', name: 'Foro' },
     ];
 
     return (

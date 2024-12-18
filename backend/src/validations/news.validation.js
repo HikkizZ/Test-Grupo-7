@@ -13,17 +13,6 @@ export const newsValidation = Joi.object({
             "any.required": "El título de la noticia es obligatorio."
         }),
         
-    nombreAutor: Joi.string()
-        .min(3)
-        .max(60)
-        .required()
-        .messages({
-            "string.base": "El nombre del autor debe ser una cadena de texto.",
-            "string.min": "El nombre del autor debe tener al menos 3 caracteres.",
-            "string.max": "El nombre del autor debe tener como máximo 60 caracteres.",
-            "any.required": "El nombre del autor es obligatorio."
-        }),
-
     contenido: Joi.string()
         .min(1)
         .max(20000)

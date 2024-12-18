@@ -16,10 +16,10 @@ router.use(authenticateJWT);
 
 // rutas de acceso
 router
-    .post("/", verifyRole(["admin", "Profesor", "Encargado"]), createNews) // Crear
-    .get("/all", verifyRole(["Encargado", "admin", "Profesor", "Alumno"]), getNews) // Listar todas
-    .get("/:id", verifyRole(["Encargado", "admin", "Profesor", "Alumno"]), getNewsId) // Por ID
-    .patch("/:id", verifyRole(["Encargado", "admin", "Profesor"]), updateNews) // Actualizar
-    .delete("/:id", verifyRole(["admin"]), deleteNews); // Eliminar
+    .post("/", verifyRole(["user","admin", "profesor", "encargado"]), createNews) // Crear
+    .get("/all", verifyRole(["user","encargado", "admin", "profesor", "alumno"]), getNews) // Listar todas
+    .get("/:id", verifyRole(["user","encargado", "admin", "profesor", "alumno"]), getNewsId) // Por ID
+    .patch("/:id", verifyRole(["user","encargado", "admin", "profesor"]), updateNews) // Actualizar
+    .delete("/:id", verifyRole(["user","admin"]), deleteNews); // Eliminar
 
 export default router;

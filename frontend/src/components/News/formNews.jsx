@@ -1,30 +1,33 @@
+// Importaciones necesarias
 import { useState, useEffect } from 'react';
 import { createNews, updateNews, getNewsById } from '@services/news.service';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
+// Componente de formulario para crear o editar noticias
 export default function FormNews({ id, onSubmit, onCancel }) {
+  // Estado para almacenar los datos del formulario
   const [formData, setFormData] = useState({
     tituloNews: '',
-    nombreAutor: '',
     contenido: '',
     imagenPortada: null
   });
   const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
 
+  // Efecto para cargar los datos de la noticia si se está editando
   useEffect(() => {
     if (id) {
       fetchNews(id);
     }
   }, [id]);
 
+  // Función para obtener los datos de una noticia existente
   const fetchNews = async (newsId) => {
     try {
       const data = await getNewsById(newsId);
       setFormData({
         tituloNews: data.tituloNews,
-        nombreAutor: data.nombreAutor,
         contenido: data.contenido,
         imagenPortada: null
       });
@@ -34,6 +37,7 @@ export default function FormNews({ id, onSubmit, onCancel }) {
     }
   };
 
+  // Manejador de cambios en los campos del formulario
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === 'imagenPortada' && files[0]) {
@@ -50,10 +54,12 @@ export default function FormNews({ id, onSubmit, onCancel }) {
     }
   };
 
+  // Manejador de cambios en el editor de texto enriquecido
   const handleQuillChange = (content) => {
     setFormData(prevState => ({ ...prevState, contenido: content }));
   };
 
+  // Manejador del envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -83,6 +89,7 @@ export default function FormNews({ id, onSubmit, onCancel }) {
     }
   };
 
+  // Configuración de la barra de herramientas del editor de texto enriquecido
   const modules = {
     toolbar: [
       [{ 'header': [1, 2, false] }],
@@ -93,6 +100,7 @@ export default function FormNews({ id, onSubmit, onCancel }) {
     ],
   };
 
+  // Formatos permitidos en el editor de texto enriquecido
   const formats = [
     'header',
     'bold', 'italic', 'underline', 'strike', 'blockquote',
@@ -100,6 +108,7 @@ export default function FormNews({ id, onSubmit, onCancel }) {
     'link', 'image'
   ];
 
+  // Renderizado del formulario
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-2xl font-bold">{id ? 'Editar Noticia' : 'Crear Nueva Noticia'}</h2>
@@ -110,18 +119,6 @@ export default function FormNews({ id, onSubmit, onCancel }) {
           id="tituloNews"
           name="tituloNews"
           value={formData.tituloNews}
-          onChange={handleChange}
-          required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-        />
-      </div>
-      <div>
-        <label htmlFor="nombreAutor" className="block text-sm font-medium text-gray-700">Autor</label>
-        <input
-          type="text"
-          id="nombreAutor"
-          name="nombreAutor"
-          value={formData.nombreAutor}
           onChange={handleChange}
           required
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -180,4 +177,3 @@ export default function FormNews({ id, onSubmit, onCancel }) {
     </form>
   );
 }
-

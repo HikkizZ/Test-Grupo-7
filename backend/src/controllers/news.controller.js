@@ -6,24 +6,24 @@ import multer from 'multer';
 
 // Controlador para crear una nueva noticia
 export async function createNews(req, res) {
+    // Utilizamos el middleware de carga de archivos para manejar la imagen de portada
     upload.single('imagenPortada')(req, res, async function(err) {
         if (err) {
             return handleErrorClient(res, 400, `Error en la subida de imagen: ${err.message}`);
         }
 
         try {
-            const { tituloNews, nombreAutor, contenido } = req.body;
+            const { tituloNews, contenido } = req.body;
             let imagenPortada = null;
 
+            // Si se subió una imagen, guardamos su ruta
             if (req.file) {
-                // Convertir la ruta del archivo a una URL relativa
                 imagenPortada = `src/upload/images/${req.file.filename}`;
             }
 
-            // Valida los datos de la noticia
+            // Validamos los datos de la noticia
             const { error } = newsValidation.validate({
                 tituloNews,
-                nombreAutor,
                 contenido,
                 imagenPortada,
             });
@@ -32,10 +32,10 @@ export async function createNews(req, res) {
                 return handleErrorClient(res, 400, error.message);
             }
 
-            // Llama al servicio para crear la noticia
+            // Creamos la noticia utilizando el servicio
             const [news, errorService] = await createNewsService({
                 tituloNews,
-                nombreAutor,
+                autorId: req.user.id, // Usamos el ID del usuario autenticado como autor
                 contenido,
                 imagenPortada,
             });
@@ -51,8 +51,7 @@ export async function createNews(req, res) {
         }
     });
 }
-
-// Controlador para obtener todas las noticias
+// Controlador para obtener todas las noticias (usada en front y backend)
 export async function getNews(req, res) {
     try {
         const [news, error] = await getNewsService();
@@ -68,7 +67,7 @@ export async function getNews(req, res) {
     }
 }
 
-// Controlador para obtener una noticia específica por ID
+// Controlador para obtener una noticia por su ID (especifica para backend)
 export async function getNewsId(req, res) {
     try {
         const { id } = req.params;
@@ -81,48 +80,43 @@ export async function getNewsId(req, res) {
         handleErrorServer(res, 500, "Error interno del servidor.", error.message);
     }
 }
-// Controlador para actualizar una noticia existente
+// Controlador update
 export async function updateNews(req, res) {
+  // Utilizamos el middleware de carga de archivos para manejar la imagen de portada
+  upload.single('imagenPortada')(req, res, async function(err) {
+    if (err) {
+      return handleErrorClient(res, 400, `Error en la subida de imagen: ${err.message}`);
+    }
+
     try {
       const { id } = req.params;
-      const { tituloNews, nombreAutor, contenido } = req.body;
-      let updateData = { tituloNews, nombreAutor, contenido };
-  
-      // Verifica si se ha subido una nueva imagen
+      const { tituloNews, contenido } = req.body;
+      let updateData = { tituloNews, contenido };
+
+      // Si se subió una nueva imagen, actualizamos su ruta
       if (req.file) {
         updateData.imagenPortada = `src/upload/images/${req.file.filename}`;
       }
-  
-      // Valida los datos de actualización
+
+      // Validamos los datos de actualización
       const { error } = newsValidation.validate(updateData);
       if (error) {
         return handleErrorClient(res, 400, error.message);
       }
-  
-      // Obtén la noticia existente
-      const [existingNews, getError] = await getNewService(id);
-      if (getError) {
-        return handleErrorClient(res, 404, getError);
-      }
-  
-      // Si no se subió una nueva imagen, mantenemos la imagen que ya está
-      if (!updateData.imagenPortada) {
-        updateData.imagenPortada = existingNews.imagenPortada;
-      }
-  
-      // Actualiza la noticia
-      const [newsActualizada, errorService] = await updateNewService(id, updateData);
+
+      // Actualizamos la noticia utilizando el servicio
+      const [newsActualizada, errorService] = await updateNewService(id, updateData, req.user.id);
       if (errorService) {
-        return handleErrorServer(res, 400, errorService);
+        return handleErrorClient(res, 403, errorService);
       }
-  
+
       handleSuccess(res, 200, "Noticia actualizada correctamente", newsActualizada);
     } catch (error) {
       console.error("Error al actualizar la noticia:", error);
       handleErrorServer(res, 500, "Error interno del servidor.", error.message);
     }
-  }
-  
+  });
+}
 // Controlador para eliminar una noticia
 export async function deleteNews(req, res) {
     try {
