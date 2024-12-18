@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import ListNews from '@components/News/ListNews';
-import FormNews from '@components/News/FormNews';
-import SearchNews from '@components/News/SearchNews'; // Cambiado de SearchForm a SearchNews
+import ListNews from '@components/News/listNews';
+import FormNews from '@components/News/formNews';
+import SearchNews from '@components/News/searchNews'; // Cambiado de SearchForm a SearchNews
 import { useNews } from '@hooks/news/useNews';
 import { useSearchsNews } from '@hooks/news/useSearchNews';
 import styles from '@styles/News.module.css';
