@@ -11,20 +11,16 @@ export function useDeleteResource({ setResources, setSearchResults = null }) {
             if (result.isConfirmed) {
                 setLoading(true);
 
-                // Llamar al servicio para eliminar el recurso
                 await deleteResource(id);
 
-                // Actualizar la lista de recursos
                 setResources((prevResources) => prevResources.filter((resource) => resource.id !== id));
 
-                // Actualizar los resultados de búsqueda (si aplica)
                 if (setSearchResults) {
                     setSearchResults((prevResults) =>
                         prevResults.filter((resource) => resource.id !== id)
                     );
                 }
 
-                // Mostrar alerta de éxito
                 showSuccessAlert("¡Recurso eliminado!", "El recurso ha sido eliminado correctamente.");
             }
         } catch (error) {

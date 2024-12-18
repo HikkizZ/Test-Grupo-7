@@ -2,7 +2,6 @@
 
 import Joi from "joi";
 
-// Validación para las consultas (query)
 export const roomQueryValidation = Joi.object({
     id: Joi.number()
         .positive()
@@ -25,12 +24,14 @@ export const roomQueryValidation = Joi.object({
             "string.min": "The name must be at least 3 characters long.",
             "string.max": "The name must be at most 70 characters long.",
         }),
-    size: Joi.number()
+        capacity: Joi.number()
         .positive()
+        .integer()
         .optional()
         .messages({
-            "number.base": "The size must be a number.",
-            "number.positive": "The size must be a positive number.",
+            "number.base": "The capacity must be a number.",
+            "number.positive": "The capacity must be a positive number.",
+            "number.integer": "The capacity must be an integer.",
         }),
     roomType: Joi.string()
         .valid("laboratorio", "computacion", "clases")
@@ -46,7 +47,6 @@ export const roomQueryValidation = Joi.object({
     "object.missing": "The query must have at least one field: id, name, size, or roomType.",
 });
 
-// Validación para el cuerpo de las peticiones (body)
 export const roomBodyValidation = Joi.object({
     name: Joi.string()
         .min(3)
@@ -58,12 +58,14 @@ export const roomBodyValidation = Joi.object({
             "string.min": "The name must be at least 3 characters long.",
             "string.max": "The name must be at most 70 characters long.",
         }),
-    size: Joi.number()
+        capacity: Joi.number()
         .positive()
+        .integer()
         .optional()
         .messages({
-            "number.base": "The size must be a number.",
-            "number.positive": "The size must be a positive number.",
+            "number.base": "The capacity must be a number.",
+            "number.positive": "The capacity must be a positive number.",
+            "number.integer": "The capacity must be an integer.",
         }),
     roomType: Joi.string()
         .valid("laboratorio", "computacion", "clases")

@@ -5,7 +5,9 @@ import {
     updateConfigCalificacionesService,
     getCalificacionesService,
     assignGradesStudentsService,
-    calificarAlumnoService
+    calificarAlumnoService,
+    editNameCalificacionesService,
+    getNotasAlumnoService
 } from "../services/calificacion.service.js";
 
 import {
@@ -47,9 +49,27 @@ export async function updateConfigCalificaciones(req, res) {
     }
 };
 
+export async function editNameCalificaciones(req, res) {
+    try {
+        const { idCalificacion } = req.query;
+        const { newName } = req.body;
+
+        if (!newName || !idCalificacion) return handleErrorClient(res, 400, "Faltan parámetros");
+
+        const [calificaciones, error] = await editNameCalificacionesService({ idCalificacion: idCalificacion}, { newName: newName });
+
+        if (error) return handleErrorClient(res, 400, error);
+
+        handleSuccess(res, 200, "Nombre de calificación actualizado", calificaciones);
+    } catch (error) {
+        handleErrorServer(res, 500, "Error interno del servidor", error.message);
+    }
+}
+
 export async function getCalificaciones(req, res) {
     try {
         const { codeSubject } = req.query;
+        console.log(codeSubject);
 
         if (!codeSubject) return handleErrorClient(res, 400, "Faltan parámetros");
 
@@ -81,16 +101,25 @@ export async function assignGradesStudents(req, res) {
 
 export async function calificarAlumno(req, res) {
     try {
-        const { rutUser, idCalificacion, nota } = req.body;
-        console.log(rutUser, idCalificacion, nota);
-
-        if (!rutUser || !idCalificacion || !nota) return handleErrorClient(res, 400, "Faltan parámetros");
+        const { rutUser, nota, idCalificacion } = req.body;
 
         const [userNotas, error] = await calificarAlumnoService({ studentRut: rutUser, idCalificacion: idCalificacion, nota: nota });
 
         if (error) return handleErrorClient(res, 400, error);
 
         handleSuccess(res, 201, "Nota asignada exitosamente", userNotas);
+    } catch (error) {
+        handleErrorServer(res, 500, "Error interno del servidor", error.message);
+    }
+}
+
+export async function getNotasAlumno(req, res) {
+    try {
+        const [userNotas, error] = await getNotasAlumnoService();
+
+        if (error) return handleErrorClient(res, 400, error);
+
+        handleSuccess(res, 200, "Notas obtenidas exitosamente", userNotas);
     } catch (error) {
         handleErrorServer(res, 500, "Error interno del servidor", error.message);
     }

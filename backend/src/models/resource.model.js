@@ -17,12 +17,12 @@ const ResourceSchema = new EntitySchema({
             nullable: false,
             unique: true,
         },
-        brand: { // Nueva columna para la marca o modelo del recurso
+        brand: {
             type: "varchar",
             length: 255,
             nullable: false,
         },
-        resourceType: { // Nueva columna como ENUM
+        resourceType: { 
             type: "enum",
             enum: ["Tecnologia", "Equipo de Sonido", "Material Didactico"],
             nullable: false,

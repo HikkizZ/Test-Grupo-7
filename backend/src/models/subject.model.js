@@ -43,10 +43,10 @@ const SubjectSchema = new EntitySchema({
             joinColumn: true,
             nullable: false
         },
-        schedules: { // Relación con Schedule
-            target: "Schedule", 
+       horarios: { // Relación con Horarios
+            target: "Horario", 
             type: "one-to-many", 
-            inverseSide: "room", 
+            inverseSide: "subject", 
             onDelete: "CASCADE", 
         },
         students: { //? Relation with the User entity. A subject has many students.
@@ -64,6 +64,7 @@ const SubjectSchema = new EntitySchema({
                     referencedColumnName: "rut"
                 },
             },
+            onDelete: "CASCADE",
         },
         calificaciones: { //? Relation with the Calificacion entity. A subject has many qualifications.
             target: "Calificacion",

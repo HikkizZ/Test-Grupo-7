@@ -9,12 +9,10 @@ export function useUpdateRoom(fetchRooms) {
         try {
             setLoading(true);
 
-            // Validar que al menos un campo sea enviado para actualizar
             if (!Object.keys(updatedData).length) {
                 throw new Error("Debe proporcionar al menos un campo para actualizar.");
             }
 
-            // Llamada al servicio con el ID correcto
             const updatedRoom = await updateRoom(id, updatedData);
 
             if (updatedRoom) {

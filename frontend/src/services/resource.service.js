@@ -1,6 +1,5 @@
 import axios from './root.service.js';
 
-// Obtener todos los recursos
 export async function getResources() {
     try {
         const { data } = await axios.get('/resource/all');
@@ -11,7 +10,6 @@ export async function getResources() {
     }
 }
 
-// Crear un recurso
 export async function createResource(resourceData) {
     try {
         const { data } = await axios.post('/resource/', resourceData);
@@ -22,7 +20,6 @@ export async function createResource(resourceData) {
     }
 }
 
-// Eliminar un recurso
 export async function deleteResource(id) {
     try {
         const { data } = await axios.delete(`/resource/delete/?id=${id}`);
@@ -33,7 +30,6 @@ export async function deleteResource(id) {
     }
 }
 
-// Buscar un recurso por parámetros
 export async function getResource(params) {
     try {
         const queryParams = { ...params };
@@ -45,7 +41,6 @@ export async function getResource(params) {
     }
 }
 
-// Actualizar un recurso
 export async function updateResource(id, data) {
     try {
         const response = await axios.patch(`/resource/update/?id=${id}`, data);

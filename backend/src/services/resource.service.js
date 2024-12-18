@@ -7,14 +7,12 @@ export async function createResourceService(req) {
     try {
         const resourceRepository = AppDataSource.getRepository(Resource);
 
-        // Verificar si ya existe un recurso con el mismo nombre
         const existingResource = await resourceRepository.findOne({ where: { name: req.body.name } });
 
         if (existingResource) {
             return [null, "El recurso ya existe."];
         }
 
-        // Crear un nuevo recurso
         const newResource = resourceRepository.create({
             name: req.body.name,
             brand: req.body.brand,
@@ -33,10 +31,9 @@ export async function getResourcesService() {
     try {
         const resourceRepository = AppDataSource.getRepository(Resource);
 
-        // Obtener todos los recursos y ordenarlos por ID (de menor a mayor)
         const resources = await resourceRepository.find({
             order: {
-                id: "ASC", // Ordenar por ID
+                id: "ASC", 
             },
         });
 
@@ -56,10 +53,8 @@ export async function getResourceService(query) {
 
         const resourceRepository = AppDataSource.getRepository(Resource);
 
-        // Crear un QueryBuilder para construir condiciones dinámicas
         const queryBuilder = resourceRepository.createQueryBuilder("resource");
 
-        // Agregar condiciones dinámicas
         if (id !== undefined) {
             queryBuilder.andWhere("resource.id = :id", { id });
         }
@@ -73,7 +68,6 @@ export async function getResourceService(query) {
             queryBuilder.andWhere("resource.resourceType = :resourceType", { resourceType });
         }
 
-        // Ejecutar la consulta
         const resourcesFound = await queryBuilder.getMany();
 
         if (!resourcesFound || resourcesFound.length === 0) {

@@ -1,6 +1,5 @@
 "use strict";
 
-import { ca } from "date-fns/locale";
 import { AppDataSource } from "../config/configDB.js";
 import Calificacion from "../models/calificacion.model.js";
 import Subject from "../models/subject.model.js";
@@ -117,6 +116,28 @@ export async function updateConfigCalificacionesService(query, body) {
     }
 };
 
+export async function editNameCalificacionesService(query, body) {
+    try {
+        const calificacionRepository = AppDataSource.getRepository(Calificacion);
+
+        const { idCalificacion } = query;
+        const { newName } = body;
+
+        const calificacionFound = await calificacionRepository.findOne({ where: { id: idCalificacion } });
+        if (!calificacionFound) return [null, "No se encontró la calificación"];
+
+        calificacionFound.name = newName;
+
+        await calificacionRepository.save(calificacionFound);
+
+        return [calificacionFound, null];
+    } catch (error) {
+        console.error("Ocurrió un error al editar el nombre de la calificación: ", error);
+        return [null, "Error interno del servidor"];
+    }
+};
+
+
 export async function getCalificacionesService(query) {
     try {
         const subjectRepository = AppDataSource.getRepository(Subject);
@@ -187,33 +208,45 @@ export async function assignGradesStudentsService(query){
 };
 
 export async function calificarAlumnoService(body){
+
     try {
         const userNotasRepository = AppDataSource.getRepository(UserNotasSchema);
 
-        const { studentRut, calificacionId, nota } = body;
+        const { studentRut, idCalificacion, nota } = body;
 
         const userFound = await AppDataSource.getRepository(User).findOne({ where: { rut: studentRut } });
 
+
         //? Verificar si el alumno ya tiene una nota asignada
         const userNotaFound = await userNotasRepository.findOne({
-            where: { student: userFound.id, calificacion: calificacionId },
-            relations: ["student", "calificacion", "subject"] });
-
+            where: { student: { id: userFound.id }, calificacion: { id: idCalificacion } },
+            relations: ["calificacion", "student", "subject"]
+        });
+        
         if (!userNotaFound) return [null, "No se encontró la nota del alumno"];
 
-        //? Actualizar la nota del alumno
         userNotaFound.nota = nota;
 
-        await userNotasRepository.save(userNotaFound);
+        const notaUpdated = await userNotasRepository.save(userNotaFound);
 
-        return [{
-            student: userNotaFound.student.rut,
-            calificacion: userNotaFound.calificacion.name,
-            subject: userNotaFound.subject.code,
-            nota: userNotaFound.nota
-        }, null];
+        return [notaUpdated, null];
     } catch (error) {
         console.error("Ocurrió un error al calificar al alumno: ", error);
+        return [null, "Error interno del servidor", error];
+    }
+}
+
+export async function getNotasAlumnoService(){
+    try {
+        const userNotasRepository = AppDataSource.getRepository(UserNotasSchema);
+
+        const userNotas = await userNotasRepository.find({
+            relations: ["calificacion", "subject", "student"]
+        });
+
+        return [userNotas, null];
+    } catch (error) {
+        console.error("Ocurrió un error al obtener las notas de los alumnos: ", error);
         return [null, "Error interno del servidor"];
     }
 }

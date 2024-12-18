@@ -1,4 +1,6 @@
 import { useState } from "react";
+import "../../styles/around.css"; 
+import "../../styles/around.css"; 
 
 export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, loading }) {
     const [query, setQuery] = useState("");
@@ -14,9 +16,8 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
         resourceType: false,
     });
 
-    const [filtersActive, setFiltersActive] = useState(false); // Mostrar botón de reset dinámicamente
+    const [filtersActive, setFiltersActive] = useState(false);
 
-    // Buscador General
     const handleSearch = (e) => {
         const value = e.target.value;
         setQuery(value);
@@ -24,7 +25,6 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
         setFiltersActive(value.trim().length > 0 || Object.values(filterEnabled).includes(true));
     };
 
-    // Checkbox Handling
     const handleCheckboxChange = (filter) => {
         setFilterEnabled((prev) => {
             const updated = { ...prev, [filter]: !prev[filter] };
@@ -37,7 +37,6 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
         }
     };
 
-    // Actualizar filtros individuales
     const handleFilterChange = (filter, value) => {
         setFilters((prev) => {
             const updated = { ...prev, [filter]: value };
@@ -47,7 +46,6 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
         onFilterUpdate(filter, value);
     };
 
-    // Resetear filtros y buscador
     const resetFilters = () => {
         setFilters({ name: "", brand: "", resourceType: "" });
         setFilterEnabled({ name: false, brand: false, resourceType: false });
@@ -57,35 +55,22 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
     };
 
     return (
-        <div>
+        <div className="search-container">
             {/* Buscador General */}
-            <div>
+            <div className="general-search">
                 <input
                     type="text"
                     value={query}
                     onChange={handleSearch}
                     placeholder="Buscar por Nombre, Marca o Tipo de Recurso"
-                    style={{
-                        width: "100%",
-                        padding: "10px",
-                        marginBottom: "15px",
-                        borderRadius: "5px",
-                        border: "1px solid #ccc",
-                    }}
+                    className="search-input"
                 />
             </div>
 
             {/* Filtros específicos */}
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    flexWrap: "wrap",
-                    gap: "10px",
-                }}
-            >
+            <div className="filter-container">
                 {/* Nombre */}
-                <div>
+                <div className="filter-item">
                     <input
                         type="checkbox"
                         checked={filterEnabled.name}
@@ -98,12 +83,12 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
                         onChange={(e) => handleFilterChange("name", e.target.value)}
                         disabled={!filterEnabled.name}
                         placeholder="Nombre"
-                        style={{ marginLeft: "5px", width: "150px" }}
+                        className="filter-input"
                     />
                 </div>
 
                 {/* Marca */}
-                <div>
+                <div className="filter-item">
                     <input
                         type="checkbox"
                         checked={filterEnabled.brand}
@@ -116,12 +101,12 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
                         onChange={(e) => handleFilterChange("brand", e.target.value)}
                         disabled={!filterEnabled.brand}
                         placeholder="Marca"
-                        style={{ marginLeft: "5px", width: "150px" }}
+                        className="filter-input"
                     />
                 </div>
 
-                {/* Tipo de Recurso */}
-                <div>
+                {/* Tipo */}
+                <div className="filter-item">
                     <input
                         type="checkbox"
                         checked={filterEnabled.resourceType}
@@ -132,7 +117,7 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
                         value={filters.resourceType}
                         onChange={(e) => handleFilterChange("resourceType", e.target.value)}
                         disabled={!filterEnabled.resourceType}
-                        style={{ marginLeft: "5px", width: "150px" }}
+                        className="filter-select"
                     >
                         <option value="">Seleccionar</option>
                         <option value="Tecnologia">Tecnología</option>
@@ -142,26 +127,16 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
                 </div>
             </div>
 
-            {/* Reset Filters */}
+            {/* Resetear Búsqueda */}
             {filtersActive && (
-                <div style={{ marginTop: "15px", textAlign: "center" }}>
-                    <button
-                        onClick={resetFilters}
-                        style={{
-                            padding: "5px 10px",
-                            borderRadius: "5px",
-                            backgroundColor: "#007bff",
-                            color: "#fff",
-                            border: "none",
-                            cursor: "pointer",
-                        }}
-                    >
+                <div className="reset-container">
+                    <button onClick={resetFilters} className="reset-button">
                         Resetear Búsqueda
                     </button>
                 </div>
             )}
 
-            {loading && <p>Cargando recursos...</p>}
+            {loading && <p className="loading-text">Cargando recursos...</p>}
         </div>
     );
 }

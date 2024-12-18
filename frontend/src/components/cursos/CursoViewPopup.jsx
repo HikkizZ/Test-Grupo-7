@@ -14,11 +14,10 @@ export default function CursoViewPopup({ active, setActive, data, fetchCursos })
             handleAssign(data.code, [{ rut: rutAlumno }]);
             setRutAlumno('');
         }
-        fetchCursos();
+        fetchCursos(data.code);
     };
 
     const handleAddSubjects = () => {
-        console.log('data.code:', data.code);
         handleAssignSubjects(data.code);
     };
 

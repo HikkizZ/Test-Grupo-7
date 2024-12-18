@@ -6,48 +6,49 @@ import { useCreateRoom } from "../hooks/rooms/useCreateRoom";
 import { useGetRooms } from "../hooks/rooms/useGetRooms";
 import { useUpdateRoom } from "../hooks/rooms/useUpdateRoom";
 import { useDeleteRoom } from "../hooks/rooms/useDeleteRoom";
+import { useAuth } from "../context/AuthContext";
+import "../styles/around.css";
 
 export default function Rooms() {
+    const { user } = useAuth();
     const { rooms, fetchRooms, loading: loadingRooms } = useGetRooms();
     const { handleCreate, loading: loadingCreate } = useCreateRoom(fetchRooms);
     const { handleUpdate, loading: loadingUpdate } = useUpdateRoom(fetchRooms);
-    const { handleDelete, loading: loadingDelete } = useDeleteRoom({
-        setRooms: fetchRooms,
-    });
+    const { handleDelete, loading: loadingDelete } = useDeleteRoom({ setRooms: fetchRooms });
 
     const [filteredRooms, setFilteredRooms] = useState([]);
-    const [filters, setFilters] = useState({});
+    const [filters, setFilters] = useState({}); 
     const [showCreateModal, setShowCreateModal] = useState(false);
 
     useEffect(() => {
-        fetchRooms();
+        fetchRooms(); 
     }, [fetchRooms]);
 
     useEffect(() => {
-        let results = rooms;
+        setFilteredRooms(rooms); 
+    }, [rooms]);
 
-        if (filters.name) {
+    const handleFilterUpdate = (filter, value) => {
+        const updatedFilters = { ...filters, [filter]: value.trim() };
+        setFilters(updatedFilters);
+
+        let results = rooms; 
+
+        if (updatedFilters.name) {
             results = results.filter((room) =>
-                room.name.toLowerCase().includes(filters.name.toLowerCase())
+                room.name.toLowerCase().includes(updatedFilters.name.toLowerCase())
             );
         }
-        if (filters.size) {
+        if (updatedFilters.capacity) {
             results = results.filter((room) =>
-                room.size.replace(" m²", "") === filters.size
+                room.capacity.replace(" alumnos", "") === updatedFilters.capacity
             );
         }
-        if (filters.roomType) {
-            results = results.filter((room) => room.roomType === filters.roomType);
+        if (updatedFilters.roomType) {
+            results = results.filter((room) => room.roomType === updatedFilters.roomType);
         }
 
         setFilteredRooms(results);
-    }, [filters, rooms]);
-
-    const handleFilterUpdate = (filter, value) => {
-        setFilters((prev) => ({
-            ...prev,
-            [filter]: value.trim(),
-        }));
     };
 
     const handleResetFilters = () => {
@@ -56,55 +57,55 @@ export default function Rooms() {
     };
 
     return (
-        <div>
-            <br />
-            <br />
-            <br />
-            <h1 style={{ textAlign: "center" }}>Salas</h1>
+            <div className="around-container">
+                {/* Título principal centrado */}
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+                    <h1 className="around-header">
+                        <br />
+                        <br />
+                        Salas</h1>
+                </div>
 
             {/* Buscar Sala */}
-            <h3>Buscar Sala</h3>
-            <RoomSearch
-                onSearch={(query) =>
-                    setFilteredRooms(
-                        rooms.filter((room) =>
-                            `${room.name.toLowerCase()} ${room.size} ${room.roomType.toLowerCase()}`.includes(
+            <div className="around-section">
+                <h3 className="around-subtitle">Buscar Sala</h3>
+                <RoomSearch
+                    onSearch={(query) => {
+                        const filtered = rooms.filter((room) =>
+                            `${room.name.toLowerCase()} ${room.capacity} ${room.roomType.toLowerCase()}`.includes(
                                 query.toLowerCase()
                             )
-                        )
-                    )
-                }
-                onFilterUpdate={handleFilterUpdate}
-                onReset={handleResetFilters}
-                loading={loadingRooms}
-            />
-
-            {/* Lista de Salas */}
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
-                <h3>Lista de Salas</h3>
-                <button
-                    onClick={() => setShowCreateModal(true)} // Mostrar el modal
-                    style={{
-                        height: "38px",
-                        backgroundColor: "#28a745", // Color verde
-                        color: "#fff", // Texto blanco
-                        border: "none",
-                        borderRadius: "5px",
-                        padding: "10px 15px",
-                        cursor: "pointer",
-                        fontSize: "14px",
+                        );
+                        setFilteredRooms(filtered);
                     }}
-                >
-                    Crear Sala
-                </button>
+                    onFilterUpdate={handleFilterUpdate}
+                    onReset={handleResetFilters}
+                    loading={loadingRooms}
+                />
             </div>
+
+        {/* Lista de Salas */}
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
+            <h3>Lista de Salas</h3>
+            {user?.role === "admin" && (
+                <div className="create-button-container">
+                    <button
+                        onClick={() => setShowCreateModal(true)}
+                        className="create-button"
+                    >
+                        Crear Sala
+                    </button>
+                </div>
+            )}
+        </div>
 
             <RoomTable
                 rooms={filteredRooms}
-                onUpdate={handleUpdate}
-                onDelete={handleDelete}
+                onUpdate={["admin", "Encargado"].includes(user?.role) ? handleUpdate : null}
+                onDelete={user?.role === "admin" ? handleDelete : null}
                 loadingUpdate={loadingUpdate}
                 loadingDelete={loadingDelete}
+                role={user?.role}
             />
 
             {/* Modal Crear Sala */}

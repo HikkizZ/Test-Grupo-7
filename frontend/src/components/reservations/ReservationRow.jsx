@@ -8,40 +8,40 @@ export default function ReservationRow({
     loadingDelete,
     user,
     hideDevuelto,
-    hideActions, // Nueva propiedad para ocultar Acciones
+    hideActions,
 }) {
     const [isEditing, setIsEditing] = useState(false);
     const [editState, setEditState] = useState(reservation.estado);
-    const [editDevuelto, setEditDevuelto] = useState(reservation.devuelto);
+    const [editDevuelto, setEditDevuelto] = useState(reservation.devuelto ? "Sí" : "No");
 
     useEffect(() => {
-        if (editState === "rechazada") {
-            setEditDevuelto(true);
-        } else if (editState === "pendiente") {
-            setEditDevuelto(false);
-        }
+      
+        if (editState === "pendiente") setEditDevuelto("No");
+        else if (editState === "rechazada") setEditDevuelto("Sí");
     }, [editState]);
 
     const handleEditClick = () => {
         setIsEditing(true);
         setEditState(reservation.estado);
-        setEditDevuelto(reservation.devuelto);
+        setEditDevuelto(reservation.devuelto ? "Sí" : "No");
     };
 
     const handleCancelEdit = () => {
         setIsEditing(false);
         setEditState(reservation.estado);
-        setEditDevuelto(reservation.devuelto);
+        setEditDevuelto(reservation.devuelto ? "Sí" : "No");
     };
 
     const handleSaveEdit = () => {
         if (onUpdate) {
-            onUpdate(reservation.id, { estado: editState, devuelto: editDevuelto });
+            onUpdate(reservation.id, {
+                estado: editState,
+                devuelto: editDevuelto === "Sí",
+            });
         }
         setIsEditing(false);
     };
 
-    // Mostrar el nombre del reservante
     let reservanteNombre = reservation.Reservante?.nombre || "No disponible";
     if ((user?.role === "Profesor" || user?.role === "Alumno") && reservanteNombre !== user?.name) {
         reservanteNombre = "-------";
@@ -52,44 +52,60 @@ export default function ReservationRow({
             <td>{reservation.fechaDesde}</td>
             <td>{reservation.fechaHasta}</td>
             <td>{reservation.tipoReserva}</td>
-            <td>{reservation.estado}</td>
-            {!hideDevuelto && <td>{reservation.devuelto ? "Sí" : "No"}</td>}
+            <td>
+                {isEditing ? (
+                    <select
+                        value={editState}
+                        onChange={(e) => setEditState(e.target.value)}
+                        disabled={loadingUpdate}
+                        style={selectStyle}
+                    >
+                        <option value="pendiente">Pendiente</option>
+                        <option value="aprobada">Aprobada</option>
+                        <option value="rechazada">Rechazada</option>
+                    </select>
+                ) : (
+                    reservation.estado
+                )}
+            </td>
+            {!hideDevuelto && (
+                <td>
+                    {isEditing ? (
+                        <select
+                            value={editDevuelto}
+                            onChange={(e) => setEditDevuelto(e.target.value)}
+                            disabled={loadingUpdate || editState === "pendiente" || editState === "rechazada"}
+                            style={selectStyle}
+                        >
+                            <option value="Sí">Sí</option>
+                            <option value="No">No</option>
+                        </select>
+                    ) : (
+                        reservation.devuelto ? "Sí" : "No"
+                    )}
+                </td>
+            )}
             <td>{reservanteNombre}</td>
             <td>
                 {reservation.tipoReserva === "sala"
                     ? reservation.Sala?.nombre || "No disponible"
                     : reservation.Recurso?.nombre || "No disponible"}
             </td>
-            {!hideActions && ( // Ocultar columna Acciones
+            {!hideActions && (
                 <td>
                     {isEditing ? (
                         <>
                             <button
                                 onClick={handleSaveEdit}
                                 disabled={loadingUpdate}
-                                style={{
-                                    backgroundColor: "#007bff",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    padding: "5px 10px",
-                                    marginRight: "5px",
-                                    cursor: "pointer",
-                                }}
+                                style={buttonStyleBlue}
                             >
                                 Guardar
                             </button>
                             <button
                                 onClick={handleCancelEdit}
                                 disabled={loadingUpdate}
-                                style={{
-                                    backgroundColor: "#d33",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    padding: "5px 10px",
-                                    cursor: "pointer",
-                                }}
+                                style={buttonStyleRed}
                             >
                                 Cancelar
                             </button>
@@ -100,15 +116,7 @@ export default function ReservationRow({
                                 <button
                                     onClick={handleEditClick}
                                     disabled={loadingUpdate}
-                                    style={{
-                                        backgroundColor: "#cc8400",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "5px",
-                                        padding: "5px 10px",
-                                        marginRight: "5px",
-                                        cursor: "pointer",
-                                    }}
+                                    style={buttonStyleOrange}
                                 >
                                     Modificar
                                 </button>
@@ -117,14 +125,7 @@ export default function ReservationRow({
                                 <button
                                     onClick={() => onDelete(reservation.id)}
                                     disabled={loadingDelete}
-                                    style={{
-                                        backgroundColor: "#d33",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "5px",
-                                        padding: "5px 10px",
-                                        cursor: "pointer",
-                                    }}
+                                    style={buttonStyleRed}
                                 >
                                     Eliminar
                                 </button>
@@ -136,3 +137,41 @@ export default function ReservationRow({
         </tr>
     );
 }
+
+const selectStyle = {
+    width: "100%",
+    padding: "5px",
+    border: "1px solid #ccc",
+    borderRadius: "5px",
+    backgroundColor: "#fff",
+    fontSize: "14px",
+};
+
+const buttonStyleBlue = {
+    backgroundColor: "#007bff",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    padding: "5px 10px",
+    cursor: "pointer",
+    marginRight: "5px",
+};
+
+const buttonStyleRed = {
+    backgroundColor: "#d33",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    padding: "5px 10px",
+    cursor: "pointer",
+};
+
+const buttonStyleOrange = {
+    backgroundColor: "#cc8400",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    padding: "5px 10px",
+    cursor: "pointer",
+    marginRight: "5px",
+};

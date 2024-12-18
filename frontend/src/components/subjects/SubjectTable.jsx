@@ -2,7 +2,7 @@ import { useState } from "react";
 import SubjectRow from "./SubjectRow";
 import PopupSubjects from "./SubjectPopup";
 
-export default function SubjectTable({ subjects, onDelete, onUpdate }) {
+export default function SubjectTable({ subjects, onDelete, onUpdate, fetchSubjects }) {
     const [showPopup, setShowPopup] = useState(false);
     const [selectedSubject, setSelectedSubject] = useState(null);
 
@@ -18,7 +18,7 @@ export default function SubjectTable({ subjects, onDelete, onUpdate }) {
 
     return (
         <div style={styles.container}>
-                <h2 style={styles.title}>Lista de Asignaturas</h2>
+            <h2 style={styles.title}>Lista de Asignaturas</h2>
             <div style={styles.tableResponsive}>
                 <table style={styles.table}>
                     <thead>
@@ -32,16 +32,23 @@ export default function SubjectTable({ subjects, onDelete, onUpdate }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {subjects.map((subject) => (
-                            <SubjectRow
-                                key={subject.id}
-                                subject={subject}
-                                onEdit={handleEditClick}
-                                onDelete={onDelete}
-                                loadingUpdate={false}
-                                loadingDelete={false}
-                            />
-                        ))}
+                        {subjects.length > 0 ? (
+                            subjects.map((subject) => (
+                                <SubjectRow
+                                    key={subject.id}
+                                    subject={subject}
+                                    onEdit={handleEditClick}
+                                    onDelete={onDelete}
+                                    loadingUpdate={false}
+                                    loadingDelete={false}
+                                    fetchSubjects={fetchSubjects}
+                                />
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan='6' style={styles.td}>No hay asignaturas registradas</td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>

@@ -1,41 +1,22 @@
-import { useState } from "react";
 import Modal from "react-modal";
+import { useState } from "react";
 import { showErrorAlert } from "../../utils/alerts";
-
-const modalStyles = {
-    content: {
-        top: "50%",
-        left: "50%",
-        right: "auto",
-        bottom: "auto",
-        marginRight: "-50%",
-        transform: "translate(-50%, -50%)",
-        padding: "30px",
-        borderRadius: "10px",
-        border: "none",
-        boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.3)",
-        maxWidth: "400px",
-        width: "100%",
-    },
-    overlay: {
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-    },
-};
+import "../../styles/around.css";
 
 export default function RoomForm({ onCreate, loading, onClose }) {
     const [roomName, setRoomName] = useState("");
-    const [roomSize, setRoomSize] = useState("");
+    const [roomCapacity, setRoomCapacity] = useState("");
     const [roomType, setRoomType] = useState("");
 
     const handleCancel = () => {
         setRoomName("");
-        setRoomSize("");
+        setRoomCapacity("");
         setRoomType("");
         onClose();
     };
 
     const handleSubmit = () => {
-        if (!roomName.trim() || !roomSize || !roomType) {
+        if (!roomName.trim() || !roomCapacity || !roomType) {
             showErrorAlert(
                 "Campos incompletos",
                 "Debes completar todos los campos para crear una sala."
@@ -51,15 +32,15 @@ export default function RoomForm({ onCreate, loading, onClose }) {
             return;
         }
 
-        if (parseFloat(roomSize) <= 0) {
+        if (parseInt(roomCapacity) <= 0) {
             showErrorAlert(
-                "Tamaño inválido",
-                "El tamaño de la sala debe ser un número positivo."
+                "Capacidad inválido",
+                "La Capacidad de alumnos en la sala debe ser un número positivo."
             );
             return;
         }
 
-        onCreate({ name: roomName, size: parseFloat(roomSize), roomType });
+        onCreate({ name: roomName, capacity: parseInt(roomCapacity), roomType });
         handleCancel();
     };
 
@@ -67,88 +48,50 @@ export default function RoomForm({ onCreate, loading, onClose }) {
         <Modal
             isOpen={true}
             onRequestClose={handleCancel}
-            style={modalStyles}
+            overlayClassName="modal-overlay"
+            className="modal-content"
             ariaHideApp={false}
         >
-            <h2 style={{ textAlign: "center", marginBottom: "20px", color: "#333" }}>Crear Sala</h2>
+            <h2 className="modal-header">Crear Sala</h2>
             <input
                 type="text"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
                 placeholder="Nombre de la sala"
                 disabled={loading}
-                style={{
-                    width: "100%",
-                    padding: "10px",
-                    marginBottom: "20px",
-                    border: "1px solid #ccc",
-                    borderRadius: "5px",
-                    fontSize: "14px",
-                }}
+                className="modal-input"
             />
             <input
                 type="number"
-                value={roomSize}
-                onChange={(e) => setRoomSize(e.target.value)}
-                placeholder="Tamaño de la sala (m²)"
+                value={roomCapacity}
+                onChange={(e) => setRoomCapacity(e.target.value)}
+                placeholder="Capacidad de alumnos en la sala"
                 disabled={loading}
-                style={{
-                    width: "100%",
-                    padding: "10px",
-                    marginBottom: "20px",
-                    border: "1px solid #ccc",
-                    borderRadius: "5px",
-                    fontSize: "14px",
-                }}
+                className="modal-input"
             />
             <select
                 value={roomType}
                 onChange={(e) => setRoomType(e.target.value)}
                 disabled={loading}
-                style={{
-                    width: "100%",
-                    padding: "10px",
-                    marginBottom: "20px",
-                    border: "1px solid #ccc",
-                    borderRadius: "5px",
-                    fontSize: "14px",
-                }}
+                className="modal-input"
             >
                 <option value="">Seleccionar tipo de sala</option>
                 <option value="laboratorio">Laboratorio</option>
                 <option value="computacion">Computación</option>
                 <option value="clases">Clases</option>
             </select>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
+            <div className="modal-buttons">
                 <button
                     onClick={handleSubmit}
                     disabled={loading}
-                    style={{
-                        flex: 1,
-                        backgroundColor: "#007bff",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: "5px",
-                        padding: "10px",
-                        cursor: "pointer",
-                        fontSize: "14px",
-                    }}
+                    className="modal-button-save"
                 >
                     Guardar
                 </button>
                 <button
                     onClick={handleCancel}
                     disabled={loading}
-                    style={{
-                        flex: 1,
-                        backgroundColor: "#d33",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: "5px",
-                        padding: "10px",
-                        cursor: "pointer",
-                        fontSize: "14px",
-                    }}
+                    className="modal-button-cancel"
                 >
                     Cancelar
                 </button>

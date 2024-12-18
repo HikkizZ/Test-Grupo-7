@@ -6,8 +6,11 @@ import { useCreateResource } from "../hooks/resources/useCreateResource";
 import { useGetResources } from "../hooks/resources/useGetResources";
 import { useUpdateResource } from "../hooks/resources/useUpdateResource";
 import { useDeleteResource } from "../hooks/resources/useDeleteResource";
+import { useAuth } from "../context/AuthContext";
+import "../styles/around.css"; 
 
 export default function Resources() {
+    const { user } = useAuth(); 
     const { resources, fetchResources, loading: loadingResources } = useGetResources();
     const { handleCreate, loading: loadingCreate } = useCreateResource(fetchResources);
     const { handleUpdate, loading: loadingUpdate } = useUpdateResource(fetchResources);
@@ -15,7 +18,7 @@ export default function Resources() {
         setResources: fetchResources,
     });
 
-    const [filteredResources, setFilteredResources] = useState([]);
+    const [filteredResources, setFilteredResources] = useState([]); 
     const [filters, setFilters] = useState({});
     const [showCreateModal, setShowCreateModal] = useState(false);
 
@@ -40,8 +43,17 @@ export default function Resources() {
             results = results.filter((resource) => resource.resourceType === filters.resourceType);
         }
 
-        setFilteredResources(results);
+        setFilteredResources(results); 
     }, [filters, resources]);
+
+    const handleSearch = (query) => {
+        setFilteredResources(
+            resources.filter((resource) =>
+                `${resource.name.toLowerCase()} ${resource.brand.toLowerCase()} ${resource.resourceType.toLowerCase()}`
+                    .includes(query.toLowerCase())
+            )
+        );
+    };
 
     const handleFilterUpdate = (filter, value) => {
         setFilters((prev) => ({
@@ -56,55 +68,48 @@ export default function Resources() {
     };
 
     return (
-        <div>
-            <br />
-            <br />
-            <br />
-            <h1 style={{ textAlign: "center" }}>Recursos</h1>
+        <div className="around-container">
+        {/* Título principal centrado */}
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+            <h1 className="around-header">
+                <br />
+                <br />
+                Recursos</h1>
+        </div>
 
             {/* Buscar Recurso */}
-            <h3>Buscar Recurso</h3>
-            <ResourceSearch
-                onSearch={(query) =>
-                    setFilteredResources(
-                        resources.filter((resource) =>
-                            `${resource.name.toLowerCase()} ${resource.brand.toLowerCase()} ${resource.resourceType.toLowerCase()}`.includes(
-                                query.toLowerCase()
-                            )
-                        )
-                    )
-                }
-                onFilterUpdate={handleFilterUpdate}
-                onReset={handleResetFilters}
-                loading={loadingResources}
-            />
+            <div className="around-section">
+                <h3 className="around-subtitle">Buscar Recurso</h3>
+                <ResourceSearch
+                    onSearch={handleSearch}
+                    onFilterUpdate={handleFilterUpdate} 
+                    onReset={handleResetFilters} 
+                    loading={loadingResources}
+                />
+            </div>
 
             {/* Lista de Recursos */}
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
                 <h3>Lista de Recursos</h3>
-                <button
-                    onClick={() => setShowCreateModal(true)} // Mostrar el modal
-                    style={{
-                        height: "38px",
-                        backgroundColor: "#28a745", // Color verde
-                        color: "#fff", // Texto blanco
-                        border: "none",
-                        borderRadius: "5px",
-                        padding: "10px 15px",
-                        cursor: "pointer",
-                        fontSize: "14px",
-                    }}
-                >
-                    Crear Recurso
-                </button>
+                {["admin", "Encargado"].includes(user?.role) && (
+                    <div className="create-button-container">
+                        <button
+                            onClick={() => setShowCreateModal(true)}
+                            className="create-button"
+                        >
+                            Crear Recurso
+                        </button>
+                    </div>
+                )}
             </div>
 
             <ResourceTable
-                resources={filteredResources}
-                onUpdate={handleUpdate}
-                onDelete={handleDelete}
+                resources={filteredResources.length ? filteredResources : resources} 
+                onUpdate={["admin", "Encargado"].includes(user?.role) ? handleUpdate : null}
+                onDelete={user?.role === "admin" ? handleDelete : null}
                 loadingUpdate={loadingUpdate}
                 loadingDelete={loadingDelete}
+                role={user?.role}
             />
 
             {/* Modal Crear Recurso */}
