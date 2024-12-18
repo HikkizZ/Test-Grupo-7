@@ -74,15 +74,21 @@ export const reservationQueryValidation = Joi.object({
 // Validaciones para el cuerpo de las reservas
 export const reservationBodyValidation = Joi.object({
     fechaDesde: Joi.string()
-        .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/)
+    .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/)
         .required()
         .custom((value, helpers) => {
-            const fechaDesde = parseDate(value, helpers);
-            const now = truncateDateToMinutes(new Date()); // Fecha actual truncada a minutos
+            const fechaDesde = parseDate(value);
+            const now = truncateDateToMinutes(new Date());
 
-            if (fechaDesde < now) {
-                return helpers.message("La fecha desde no puede ser anterior al momento actual.");
+            if (!fechaDesde) {
+                return helpers.message("La fechaDesde no es válida. Use el formato 'DD-MM-YYYY HH:mm'.");
             }
+
+            // Validar que fechaDesde no sea anterior al momento actual (con tolerancia de 1 minuto)
+            if (fechaDesde < now) {
+                return helpers.message("La fechaDesde no puede ser anterior al momento actual.");
+            }
+
             return value;
         })
         .messages({
@@ -91,21 +97,27 @@ export const reservationBodyValidation = Joi.object({
         }),
 
     fechaHasta: Joi.string()
-        .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/)
-        .required()
-        .custom((value, helpers) => {
-            const fechaHasta = parseDate(value, helpers);
-            const now = truncateDateToMinutes(new Date()); // Fecha actual truncada a minutos
+    .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/)
+    .required()
+    .custom((value, helpers) => {
+        const fechaHasta = parseDate(value);
+        const now = truncateDateToMinutes(new Date());
 
-            if (fechaHasta < now) {
-                return helpers.message("La fecha hasta no puede ser anterior al momento actual.");
-            }
-            return value;
-        })
-        .messages({
-            "string.pattern.base": "El campo 'fechaHasta' debe seguir el formato 'DD-MM-YYYY HH:mm'.",
-            "any.required": "El campo 'fechaHasta' es obligatorio.",
-        }),
+        if (!fechaHasta) {
+            return helpers.message("La fechaHasta no es válida. Use el formato 'DD-MM-YYYY HH:mm'.");
+        }
+
+        // Validar que fechaHasta no sea anterior al momento actual (con tolerancia de 1 minuto)
+        if (fechaHasta < now) {
+            return helpers.message("La fechaHasta no puede ser anterior al momento actual.");
+        }
+
+        return value;
+    })
+    .messages({
+        "string.pattern.base": "El campo 'fechaHasta' debe seguir el formato 'DD-MM-YYYY HH:mm'.",
+        "any.required": "El campo 'fechaHasta' es obligatorio.",
+    }),
 
     tipoReserva: Joi.string().valid("recurso", "sala").required().messages({
         "any.required": "El tipo de reserva es obligatorio.",
