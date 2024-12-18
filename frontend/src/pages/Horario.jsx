@@ -61,37 +61,44 @@ export default function Horarios() {
             
             {/* Buscar horario */}
             <h3>Buscar Horario</h3>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
-                <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={
-                        searchFilter === "id"
-                            ? "Buscar por ID"
-                            : searchFilter === "curso"
-                            ? "Buscar por Curso"
-                            : "Buscar horario"
-                    }
-                    style={{ flex: "1" }}
-                />
-                <select
-                    value={searchFilter}
-                    onChange={(e) => setSearchFilter(e.target.value)}
-                    style={{
-                        maxWidth: "200px",
-                        minWidth: "150px",
-                        height: "38px",
-                        borderRadius: "5px",
-                        border: "1px solid #ccc",
-                        padding: "5px",
-                    }}
-                >
-                    <option value="">--Seleccionar filtro--</option>
-                    <option value="id">Buscar horario por ID</option>
-                    <option value="curso">Buscar horario por Curso</option>
-                </select>
-            </div>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
+                    <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder={
+                                searchFilter === "teacherRut"
+                                ? "Buscar RUT del Profesor"
+                                : searchFilter === "teacherName"
+                                ? "Buscar Nombre del Profesor"
+                                : searchFilter === "cursoName"
+                                ? "Buscar Nombre del Curso"
+                                : searchFilter === "cursoCode"
+                                ? "Buscar Código del Curso"
+                                : "Buscar horario"
+                            }
+                            style={{ flex: "1" }}
+                    />
+                    <select
+                        value={searchFilter}
+                        onChange={(e) => setSearchFilter(e.target.value)}
+                        style={{
+                            maxWidth: "200px",
+                            minWidth: "150px",
+                            height: "38px",
+                            borderRadius: "5px",
+                            border: "1px solid #ccc",
+                            padding: "5px",
+                        }}
+                    >
+                        <option value="">--Seleccionar filtro--</option>
+                        <option value="teacherRut">Buscar RUT del Profesor</option>
+                        <option value="teacherName">Buscar Nombre del Profesor</option>
+                        <option value="cursoName">Buscar Nombre del Curso</option>
+                        <option value="cursoCode">Buscar Código del Curso</option>
+                    </select>
+                </div>
+
 
             {/* Lista de horarios */}
             <h3>Lista de Horarios</h3>
