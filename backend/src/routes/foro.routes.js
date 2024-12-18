@@ -1,21 +1,26 @@
-import express from "express";
-import { createForo, getForos, getForo, updateForo, deleteForo } from "../controllers/foro.controller.js";
+import { Router } from "express";
+import {
+    createForo,
+    getForos,
+    getForo,
+    updateForo,
+    deleteForo
+} from "../controllers/foro.controller.js";
+import { authenticateJWT } from "../middlewares/authentication.middleware.js";
+import { verifyRole } from "../middlewares/authorization.middleware.js";
+import { upload, handleFileSizeLimit } from "../middlewares/uploadArchive.middleware.js";
 
-const router = express.Router();
+const router = Router();
 
-// Ruta para crear un nuevo anuncio
-router.post("/", createForo);
+// Aplicar autenticación JWT a todas las rutas
+router.use(authenticateJWT);
 
-// Ruta para obtener todos los anuncios
-router.get("/all", getForos);
-
-// Ruta para obtener un anuncio por su ID
-router.get("/:id", getForo);
-
-// Ruta para actualizar un anuncio por su ID
-router.put("/:id", updateForo);
-
-// Ruta para eliminar un anuncio por su ID
-router.delete("/:id", deleteForo);
+// Definición de rutas para foros
+router
+    .post("/", verifyRole(["profesor","admin"]), upload.array('archivos'), handleFileSizeLimit, createForo)
+    .get("/all", verifyRole(["profesor", "Alumno","admin","administrador"]), getForos)
+    .get("/:id", verifyRole(["profesor", "Alumno","admin"]), getForo)
+    .patch("/:id", verifyRole(["profesor","admin","Encargado"]), upload.array('archivos'), handleFileSizeLimit, updateForo)
+    .delete("/:id", verifyRole(["profesor","admin"]), deleteForo)
 
 export default router;

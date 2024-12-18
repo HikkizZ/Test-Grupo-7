@@ -20,7 +20,7 @@ export const showErrorAlert = (title, text) => {
     });
 };
 
-// Alertas de confirmación
+// Alertas de confirmación (ejemplo para eliminar)
 export const deleteDataAlert = () => {
     return Swal.fire({
         title: "¿Estás seguro?",
@@ -33,3 +33,4 @@ export const deleteDataAlert = () => {
         cancelButtonText: "Cancelar",
     });
 };
+

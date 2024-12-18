@@ -1,62 +1,108 @@
 import { handleSuccess, handleErrorClient, handleErrorServer } from "../handlers/responseHandlers.js";
 import { foroValidation } from "../validations/foro.validation.js";
 import { createForoService, getForosService, getForoService, updateForoService, deleteForoService } from "../services/foro.service.js";
+import path from 'path';
+import fs from 'fs';
 
-// Crear un nuevo anuncio
+// Función para crear un nuevo foro
 export async function createForo(req, res) {
     try {
-        const { titulo, nombreProfesor, categoria, fecha } = req.body;
+        // Extrae datos del cuerpo de la solicitud y del usuario autenticado
+        const { titulo, categoria, contenido, level, section } = req.body;
+        const archivos = req.files;
+        const profesorId = req.user.id;
+        const profesorNombre = req.user.name;
+        const profesorRut = req.user.rut;
 
-        // Validamos los datos entrantes con foroValidation
-        const { error } = foroValidation.validate({ titulo, nombreProfesor, categoria, fecha });
+        // Registra los datos recibidos para depuración
+        console.log('Datos recibidos:', { titulo, categoria, contenido, level, section, archivos, profesorNombre, profesorRut });
+
+        // Valida los datos recibidos
+        const { error } = foroValidation.validate({ titulo, categoria, contenido, level, section });
         if (error) {
-            return handleErrorClient(res, 400, error.message); // Error en la validación
+            return handleErrorClient(res, 400, error.details[0].message);
         }
 
-        // Formateamos la fecha desde el formato DD/MM/YYYY a un objeto Date
-        const [dia, mes, anio] = fecha.split("/");
-        const fechaFormateada = new Date(anio, mes - 1, dia);
-
-        if (isNaN(fechaFormateada)) {
-            return handleErrorClient(res, 400, "La fecha proporcionada no es válida.");
-        }
-
+        // Llama al servicio para crear el foro
         const [foro, errorService] = await createForoService({
             titulo,
-            nombreProfesor,
+            level,
+            section,
             categoria,
-            fecha: fechaFormateada,
+            contenido,
+            archivos,
+            profesorId,
+            profesorNombre,
+            profesorRut,
         });
 
+        // Maneja errores del servicio
         if (errorService) {
-            console.error("Error al crear el anuncio:", errorService);
-            return handleErrorServer(res, 500, "Error al crear el anuncio.");
+            console.error("Error al crear el foro:", errorService);
+            return handleErrorServer(res, 500, errorService);
         }
 
-        handleSuccess(res, 201, "Anuncio creado con éxito", foro); // Respuesta exitosa
+        // Envia respuesta exitosa
+        handleSuccess(res, 201, "Foro creado con éxito", foro);
     } catch (error) {
-        console.error("Error en el controlador al crear el anuncio:", error);
+        console.error("Error en el controlador al crear el foro:", error);
         handleErrorServer(res, 500, "Error interno del servidor.", error.message);
     }
 }
+// Función para actualizar un foro
+export async function updateForo(req, res) {
+    try {
+        // Extrae datos de los parámetros y del cuerpo de la solicitud
+        const { id } = req.params;
+        const { titulo, categoria, contenido, level, section } = req.body;
+        const nuevosArchivosAdjuntos = req.files;
+        const userId = req.user.id;
 
-// Obtener todos los anuncios
+        // Valida los datos recibidos
+        const { error } = foroValidation.validate({ titulo, categoria, contenido, level, section });
+        if (error) {
+            return handleErrorClient(res, 400, error.details[0].message);
+        }
+
+        // Llama al servicio para actualizar el foro
+        const [foroActualizado, errorService] = await updateForoService(id, {
+            titulo,
+            level,
+            section,
+            categoria,
+            contenido,
+            nuevosArchivosAdjuntos,
+        }, userId);
+
+        // Maneja errores del servicio
+        if (errorService) {
+            return handleErrorClient(res, 400, errorService);
+        }
+
+        // Envia respuesta exitosa
+        handleSuccess(res, 200, "Foro actualizado correctamente", foroActualizado);
+    } catch (error) {
+        console.error("Error al actualizar el foro:", error);
+        handleErrorServer(res, 500, "Error interno del servidor.", error.message);
+    }
+}
+// Función para obtener todos los foros
 export async function getForos(req, res) {
     try {
         const [foros, error] = await getForosService();
         if (error) return handleErrorServer(res, 400, error);
 
         if (foros.length === 0) {
-            return handleSuccess(res, 200, "No se encontraron anuncios.", []);
+            return handleSuccess(res, 200, "No se encontraron foros.", []);
         }
 
-        handleSuccess(res, 200, "Anuncios encontrados", foros);
+        handleSuccess(res, 200, "Foros encontrados", foros);
     } catch (error) {
         handleErrorServer(res, 500, "Error interno del servidor.", error.message);
     }
 }
 
-// Obtener un anuncio por ID
+// Función para obtener un foro por ID
 export async function getForo(req, res) {
     try {
         const { id } = req.params;
@@ -64,60 +110,22 @@ export async function getForo(req, res) {
         const [foro, error] = await getForoService(id);
         if (error) return handleErrorClient(res, 404, error);
 
-        handleSuccess(res, 200, "Anuncio encontrado", foro);
+        handleSuccess(res, 200, "Foro encontrado", foro);
     } catch (error) {
         handleErrorServer(res, 500, "Error interno del servidor.", error.message);
     }
 }
 
-// Actualizar un anuncio
-export async function updateForo(req, res) {
-    try {
-        const { id } = req.params;
-        const { titulo, nombreProfesor, categoria, fecha } = req.body;
-
-        // Validar datos entrantes con Joi
-        const { error } = foroValidation.validate({ titulo, nombreProfesor, categoria, fecha });
-        if (error) {
-            return handleErrorClient(res, 400, error.message); // Error de validación
-        }
-
-        // Formatear la fecha al formato esperado
-        const [dia, mes, anio] = fecha.split("/");
-        const fechaFormateada = new Date(anio, mes - 1, dia);
-
-        if (isNaN(fechaFormateada)) {
-            return handleErrorClient(res, 400, "La fecha proporcionada no es válida.");
-        }
-
-        // Llamar al servicio de actualización
-        const [foroActualizado, errorService] = await updateForoService(id, {
-            titulo,
-            nombreProfesor,
-            categoria,
-            fecha: fechaFormateada,
-        });
-
-        if (errorService) {
-            return handleErrorServer(res, 400, errorService);
-        }
-
-        handleSuccess(res, 200, "Anuncio actualizado correctamente", foroActualizado);
-    } catch (error) {
-        console.error("Error al actualizar el anuncio:", error);
-        handleErrorServer(res, 500, "Error interno del servidor.", error.message);
-    }
-}
-
-// Eliminar un anuncio
+// Función para eliminar un foro
 export async function deleteForo(req, res) {
     try {
         const { id } = req.params;
+        const userId = req.user.id;
 
-        const [foro, error] = await deleteForoService(id);
+        const [foro, error] = await deleteForoService(id, userId);
         if (error) return handleErrorClient(res, 404, error);
 
-        handleSuccess(res, 200, "Anuncio eliminado", foro);
+        handleSuccess(res, 200, "Foro eliminado", foro);
     } catch (error) {
         handleErrorServer(res, 500, "Error interno del servidor.", error.message);
     }
