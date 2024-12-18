@@ -73,7 +73,7 @@ export default function SubjectViewPopup({ active, setActive, data, subject }) {
 
     const handleGoToNotas = () => {
         console.log("Go to notas");
-        navigate('/cursos');
+        navigate('/calificar');
     }
 
     if (!active) return null;
