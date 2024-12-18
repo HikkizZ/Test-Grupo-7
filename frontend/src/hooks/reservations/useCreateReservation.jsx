@@ -12,11 +12,10 @@ export function useCreateReservation(fetchReservations) {
             showSuccessAlert("Reservación creada", "La reservación ha sido creada correctamente");
             fetchReservations();
         } catch (error) {
-            console.error("Detalles del error:", error.response || error.message);
-            showErrorAlert(
-                "Error al crear la reservación",
-                error.response?.data?.message || "Hubo un problema al crear la reservación."
-            );
+            const errorMessage = error.message || error?.message || "Hubo un problema al crear la reservación.";
+            console.error("Detalles del error:", errorMessage);
+
+            showErrorAlert("Error al crear la reservación", errorMessage);
         } finally {
             setLoading(false);
         }

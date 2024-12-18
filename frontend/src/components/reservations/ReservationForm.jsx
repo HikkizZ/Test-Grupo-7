@@ -139,21 +139,21 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
     const handleSubmit = () => {
         const fechaDesde = formatDateTime(formData.fechaDesde, formData.horaDesde);
         const fechaHasta = formatDateTime(formData.fechaHasta, formData.horaHasta);
-
+    
         if (!fechaDesde || !fechaHasta) {
             showErrorAlert("Datos incompletos", "Debes ingresar ambas fechas y horas.");
             return;
         }
-
+    
         const finalData = {
             ...formData,
             fechaDesde,
             fechaHasta,
         };
-
+    
         delete finalData.horaDesde;
         delete finalData.horaHasta;
-
+    
         onCreate(finalData);
         handleCancel();
     };
