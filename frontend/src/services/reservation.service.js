@@ -16,9 +16,10 @@ export async function createReservation(reservationData) {
         return data;
     } catch (error) {
         console.error('Error creating reservation:', error.response?.data?.message || error.message);
-        throw error.response?.data?.message || 'Error desconocido al crear la reservación.';
+        throw error.response?.data || { message: "Error desconocido al crear la reservación." };
     }
 }
+
 
 export async function getReservation(queryParams) {
     try {
