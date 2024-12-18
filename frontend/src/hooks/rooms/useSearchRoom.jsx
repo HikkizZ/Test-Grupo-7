@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 export function useSearchRoom(rooms) {
     const [searchQuery, setSearchQuery] = useState("");
-    const [searchFilter, setSearchFilter] = useState(""); // Filtro activo
+    const [searchFilter, setSearchFilter] = useState(""); 
     const [searchResults, setSearchResults] = useState(rooms || []);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -22,9 +22,9 @@ export function useSearchRoom(rooms) {
                                 room.name.toLowerCase().includes(searchQuery.toLowerCase())
                             );
                             break;
-                        case "size":
+                        case "capacity":
                             filteredResults = rooms.filter((room) =>
-                                room.size.replace(" m²", "").includes(searchQuery)
+                                room.capacity.replace(" alumnos", "").includes(searchQuery)
                             );
                             break;
                         case "roomType":
@@ -33,7 +33,6 @@ export function useSearchRoom(rooms) {
                             );
                             break;
                         default:
-                            // Búsqueda general si no se selecciona un filtro específico
                             filteredResults = rooms.filter((room) =>
                                 `${room.name.toLowerCase()} ${room.size} ${room.roomType.toLowerCase()}`
                                     .includes(searchQuery.toLowerCase())
@@ -54,17 +53,14 @@ export function useSearchRoom(rooms) {
         performSearch();
     }, [searchQuery, searchFilter, rooms]);
 
-    // Actualizar la consulta de búsqueda
     const handleQueryChange = (query) => {
         setSearchQuery(query);
     };
 
-    // Actualizar el filtro activo
     const handleFilterChange = (filter) => {
         setSearchFilter(filter);
     };
 
-    // Reiniciar la búsqueda
     const resetSearch = () => {
         setSearchQuery("");
         setSearchResults(rooms);

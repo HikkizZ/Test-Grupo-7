@@ -5,18 +5,18 @@ import "../../styles/around.css";
 
 export default function RoomForm({ onCreate, loading, onClose }) {
     const [roomName, setRoomName] = useState("");
-    const [roomSize, setRoomSize] = useState("");
+    const [roomCapacity, setRoomCapacity] = useState("");
     const [roomType, setRoomType] = useState("");
 
     const handleCancel = () => {
         setRoomName("");
-        setRoomSize("");
+        setRoomCapacity("");
         setRoomType("");
         onClose();
     };
 
     const handleSubmit = () => {
-        if (!roomName.trim() || !roomSize || !roomType) {
+        if (!roomName.trim() || !roomCapacity || !roomType) {
             showErrorAlert(
                 "Campos incompletos",
                 "Debes completar todos los campos para crear una sala."
@@ -32,15 +32,15 @@ export default function RoomForm({ onCreate, loading, onClose }) {
             return;
         }
 
-        if (parseFloat(roomSize) <= 0) {
+        if (parseInt(roomCapacity) <= 0) {
             showErrorAlert(
-                "Tamaño inválido",
-                "El tamaño de la sala debe ser un número positivo."
+                "Capacidad inválido",
+                "La Capacidad de alumnos en la sala debe ser un número positivo."
             );
             return;
         }
 
-        onCreate({ name: roomName, size: parseFloat(roomSize), roomType });
+        onCreate({ name: roomName, capacity: parseInt(roomCapacity), roomType });
         handleCancel();
     };
 
@@ -63,9 +63,9 @@ export default function RoomForm({ onCreate, loading, onClose }) {
             />
             <input
                 type="number"
-                value={roomSize}
-                onChange={(e) => setRoomSize(e.target.value)}
-                placeholder="Tamaño de la sala (m²)"
+                value={roomCapacity}
+                onChange={(e) => setRoomCapacity(e.target.value)}
+                placeholder="Capacidad de alumnos en la sala"
                 disabled={loading}
                 className="modal-input"
             />

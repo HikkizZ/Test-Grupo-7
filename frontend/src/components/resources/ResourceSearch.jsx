@@ -1,5 +1,6 @@
 import { useState } from "react";
-import "../../styles/around.css"; // Importa los estilos globales
+import "../../styles/around.css"; 
+import "../../styles/around.css"; 
 
 export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, loading }) {
     const [query, setQuery] = useState("");
@@ -17,7 +18,6 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
 
     const [filtersActive, setFiltersActive] = useState(false);
 
-    // Buscador General
     const handleSearch = (e) => {
         const value = e.target.value;
         setQuery(value);
@@ -25,7 +25,6 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
         setFiltersActive(value.trim().length > 0 || Object.values(filterEnabled).includes(true));
     };
 
-    // Checkbox Handling
     const handleCheckboxChange = (filter) => {
         setFilterEnabled((prev) => {
             const updated = { ...prev, [filter]: !prev[filter] };
@@ -38,7 +37,6 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
         }
     };
 
-    // Actualizar filtros individuales
     const handleFilterChange = (filter, value) => {
         setFilters((prev) => {
             const updated = { ...prev, [filter]: value };
@@ -48,7 +46,6 @@ export default function ResourceSearch({ onSearch, onFilterUpdate, onReset, load
         onFilterUpdate(filter, value);
     };
 
-    // Resetear filtros y buscador
     const resetFilters = () => {
         setFilters({ name: "", brand: "", resourceType: "" });
         setFilterEnabled({ name: false, brand: false, resourceType: false });

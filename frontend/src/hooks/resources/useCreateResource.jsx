@@ -9,7 +9,6 @@ export function useCreateResource(fetchResources) {
         try {
             setLoading(true);
 
-            // Validar que los datos necesarios están presentes
             if (!data.name || !data.brand || !data.resourceType) {
                 throw new Error("Todos los campos son obligatorios (Nombre, Marca, Tipo de Recurso).");
             }
@@ -17,7 +16,7 @@ export function useCreateResource(fetchResources) {
             await createResource(data);
 
             showSuccessAlert("Recurso creado", "El recurso ha sido creado correctamente.");
-            fetchResources(); // Actualizar la lista después de crear
+            fetchResources(); 
         } catch (error) {
             showErrorAlert(
                 "Error al crear el recurso",

@@ -33,7 +33,6 @@ export function useSearchResource(resources) {
                             );
                             break;
                         default:
-                            // Búsqueda general si no se selecciona un filtro específico
                             filteredResults = resources.filter((resource) =>
                                 `${resource.name.toLowerCase()} ${resource.brand.toLowerCase()} ${resource.resourceType.toLowerCase()}`.includes(
                                     searchQuery.toLowerCase()
@@ -55,17 +54,14 @@ export function useSearchResource(resources) {
         performSearch();
     }, [searchQuery, searchFilter, resources]);
 
-    // Actualizar la consulta de búsqueda
     const handleQueryChange = (query) => {
         setSearchQuery(query);
     };
 
-    // Actualizar el filtro activo
     const handleFilterChange = (filter) => {
         setSearchFilter(filter);
     };
 
-    // Reiniciar la búsqueda
     const resetSearch = () => {
         setSearchQuery("");
         setSearchResults(resources);

@@ -7,10 +7,11 @@ import { useGetResources } from "../hooks/resources/useGetResources";
 import { useUpdateResource } from "../hooks/resources/useUpdateResource";
 import { useDeleteResource } from "../hooks/resources/useDeleteResource";
 import { useAuth } from "../context/AuthContext";
-import "../styles/around.css"; // Importar los estilos actualizados
+import "../styles/around.css"; 
+import "../styles/around.css"; 
 
 export default function Resources() {
-    const { user } = useAuth(); // Accede al rol del usuario autenticado
+    const { user } = useAuth(); 
     const { resources, fetchResources, loading: loadingResources } = useGetResources();
     const { handleCreate, loading: loadingCreate } = useCreateResource(fetchResources);
     const { handleUpdate, loading: loadingUpdate } = useUpdateResource(fetchResources);
@@ -18,7 +19,7 @@ export default function Resources() {
         setResources: fetchResources,
     });
 
-    const [filteredResources, setFilteredResources] = useState([]); // Estado para recursos filtrados
+    const [filteredResources, setFilteredResources] = useState([]); 
     const [filters, setFilters] = useState({});
     const [showCreateModal, setShowCreateModal] = useState(false);
 
@@ -27,7 +28,6 @@ export default function Resources() {
     }, [fetchResources]);
 
     useEffect(() => {
-        // Aplicar filtros a los recursos globales
         let results = resources;
 
         if (filters.name) {
@@ -44,11 +44,10 @@ export default function Resources() {
             results = results.filter((resource) => resource.resourceType === filters.resourceType);
         }
 
-        setFilteredResources(results); // Actualizar el estado de recursos filtrados
+        setFilteredResources(results); 
     }, [filters, resources]);
 
     const handleSearch = (query) => {
-        // Aplicar búsqueda general sobre todos los recursos
         setFilteredResources(
             resources.filter((resource) =>
                 `${resource.name.toLowerCase()} ${resource.brand.toLowerCase()} ${resource.resourceType.toLowerCase()}`
@@ -58,7 +57,6 @@ export default function Resources() {
     };
 
     const handleFilterUpdate = (filter, value) => {
-        // Actualizar los filtros
         setFilters((prev) => ({
             ...prev,
             [filter]: value.trim(),
@@ -66,7 +64,6 @@ export default function Resources() {
     };
 
     const handleResetFilters = () => {
-        // Resetear filtros
         setFilters({});
         setFilteredResources(resources);
     };
@@ -85,9 +82,12 @@ export default function Resources() {
             <div className="around-section">
                 <h3 className="around-subtitle">Buscar Recurso</h3>
                 <ResourceSearch
-                    onSearch={handleSearch} // Búsqueda general
-                    onFilterUpdate={handleFilterUpdate} // Filtros específicos
-                    onReset={handleResetFilters} // Resetear filtros
+                    onSearch={handleSearch}
+                    onFilterUpdate={handleFilterUpdate} 
+                    onReset={handleResetFilters} 
+                    onSearch={handleSearch} 
+                    onFilterUpdate={handleFilterUpdate} 
+                    onReset={handleResetFilters} 
                     loading={loadingResources}
                 />
             </div>
@@ -108,7 +108,7 @@ export default function Resources() {
             </div>
 
             <ResourceTable
-                resources={filteredResources.length ? filteredResources : resources} // Mostrar recursos filtrados o todos
+                resources={filteredResources.length ? filteredResources : resources} 
                 onUpdate={["admin", "Encargado"].includes(user?.role) ? handleUpdate : null}
                 onDelete={user?.role === "admin" ? handleDelete : null}
                 loadingUpdate={loadingUpdate}

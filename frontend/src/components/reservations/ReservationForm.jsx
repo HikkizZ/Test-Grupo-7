@@ -55,7 +55,6 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
         const [year, month, day] = date.split("-").map(Number);
         const selectedDate = new Date(year, month - 1, day);
     
-        // Validar si la fecha seleccionada es anterior a hoy
         if (selectedDate < today) {
             showErrorAlert("Fecha inválida", "No puedes seleccionar una fecha anterior a hoy.");
             setFormData((prev) => ({ ...prev, [field]: "" }));
@@ -64,7 +63,6 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
     
         setFormData((prev) => ({ ...prev, [field]: date }));
     
-        // Si la hora ya está seleccionada, validar fecha y hora combinadas
         if (field === "fechaDesde" && formData.horaDesde) {
             validateDateTime(date, formData.horaDesde, field);
         } else if (field === "fechaHasta" && formData.horaHasta) {
@@ -73,9 +71,8 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
     };
     
     const handleTimeChange = (time, field) => {
-        setFormData((prev) => ({ ...prev, [field]: time })); // Actualiza la hora
+        setFormData((prev) => ({ ...prev, [field]: time })); 
     
-        // Validar fecha y hora solo si la fecha ya existe
         if (field === "horaDesde" && formData.fechaDesde) {
             validateDateTime(formData.fechaDesde, time, "fechaDesde");
         } else if (field === "horaHasta" && formData.fechaHasta) {
@@ -90,10 +87,8 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
         const selectedDateTime = new Date(year, month - 1, day, hour || 0, minute || 0);
         const currentDateTime = new Date();
     
-        // Truncar segundos y milisegundos del tiempo actual para precisión
         currentDateTime.setSeconds(0, 0);
     
-        // Comparación estricta
         if (selectedDateTime < currentDateTime) {
             showErrorAlert(
                 "Fecha y hora inválida",

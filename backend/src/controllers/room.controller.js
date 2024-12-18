@@ -19,7 +19,6 @@ import {
     roomQueryValidation,
 } from "../validations/room.validation.js";
 
-// Crear una nueva sala
 export async function createRoom(req, res) {
     try {
         const { error } = roomBodyValidation.validate(req.body);
@@ -36,7 +35,6 @@ export async function createRoom(req, res) {
     }
 }
 
-// Listar todas las salas
 export async function getRooms(req, res) {
     try {
         const [rooms, roomsError] = await getRoomsService(req);
@@ -51,16 +49,15 @@ export async function getRooms(req, res) {
     }
 }
 
-// Mostrar información de una sala en particular
 export async function getRoom(req, res) {
     try {
-        const { id, name, size, roomType } = req.query;
+        const { id, name, capacity, roomType } = req.query;
 
-        const { error } = roomQueryValidation.validate({ id, name, size, roomType });
+        const { error } = roomQueryValidation.validate({ id, name, capacity, roomType });
 
         if (error) return handleErrorClient(res, 400, "Validation Error", error.message);
 
-        const [room, roomError] = await getRoomService({ id, name, size, roomType });
+        const [room, roomError] = await getRoomService({ id, name, capacity, roomType });
 
         if (roomError) return handleErrorClient(res, 404, roomError);
 
@@ -70,7 +67,6 @@ export async function getRoom(req, res) {
     }
 }
 
-// Actualizar información de una sala
 export async function updateRoom(req, res) {
     try {
         const { id, name } = req.query;
@@ -95,7 +91,6 @@ export async function updateRoom(req, res) {
     }
 }
 
-// Eliminar una sala
 export async function deleteRoom(req, res) {
     try {
         const { id, name } = req.query;

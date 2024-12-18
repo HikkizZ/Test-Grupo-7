@@ -1,6 +1,5 @@
 import axios from './root.service.js';
 
-// Obtener todas las salas
 export async function getRooms() {
     try {
         const { data } = await axios.get('/room/all');
@@ -11,7 +10,6 @@ export async function getRooms() {
     }
 }
 
-// Crear una sala
 export async function createRoom(roomData) {
     try {
         const { data } = await axios.post('/room/', roomData);
@@ -22,7 +20,6 @@ export async function createRoom(roomData) {
     }
 }
 
-// Eliminar una sala
 export async function deleteRoom(id) {
     try {
         const { data } = await axios.delete(`/room/delete/?id=${id}`);
@@ -33,7 +30,6 @@ export async function deleteRoom(id) {
     }
 }
 
-// Buscar una sala por parámetros
 export async function getRoom(params) {
     try {
         const queryParams = { ...params };
@@ -46,7 +42,6 @@ export async function getRoom(params) {
 }
 
 
-// Actualizar una sala
 export async function updateRoom(id, data) {
     try {
         const response = await axios.patch(`/room/update/?id=${id}`, data);

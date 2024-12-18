@@ -13,11 +13,10 @@ export default function RoomRow({
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState({
         name: room.name,
-        size: room.size.replace(" m²", ""), // Remover "m²" para edición
+        capacity: room.capacity.replace(" alumnos", ""), 
         roomType: room.roomType,
     });
 
-    // Función para manejar cambios en los inputs
     const handleChange = (field, value) => {
         setEditData((prev) => ({
             ...prev,
@@ -25,31 +24,28 @@ export default function RoomRow({
         }));
     };
 
-    // Habilitar edición
     const handleEditClick = () => {
         setIsEditing(true);
     };
 
-    // Cancelar edición
     const handleCancelEdit = () => {
         setIsEditing(false);
         setEditData({
             name: room.name,
-            size: room.size.replace(" m²", ""),
+            capacity: room.capacity.replace(" alumnos", ""),
             roomType: room.roomType,
         });
     };
 
-    // Guardar cambios
     const handleSaveEdit = () => {
-        if (!editData.size || parseFloat(editData.size) <= 0) {
-            showErrorAlert("Tamaño inválido", "El tamaño debe ser un número válido mayor que 0.");
+        if (!editData.capacity || parseInt(editData.capacity) <= 0) {
+            showErrorAlert("Capacidad inválida", "La Capacidad de alumnos debe ser un número mayor que 0.");
             return;
         }
 
         onUpdate(room.id, {
             ...editData,
-            size: parseFloat(editData.size),
+            capacity: parseInt(editData.capacity),
         });
         setIsEditing(false);
     };
@@ -72,19 +68,19 @@ export default function RoomRow({
                 )}
             </td>
 
-            {/* Columna Tamaño */}
+            {/* Columna Capacidad */}
             <td>
                 {isEditing ? (
                     <input
                         type="number"
-                        value={editData.size}
-                        onChange={(e) => handleChange("size", e.target.value)}
+                        value={editData.capacity}
+                        onChange={(e) => handleChange("capacity", e.target.value)}
                         disabled={loadingUpdate}
-                        placeholder="Tamaño en m²"
+                        placeholder="Capacidad de Alumnos"
                         style={{ width: "100%", padding: "5px" }}
                     />
                 ) : (
-                    room.size
+                    room.capacity
                 )}
             </td>
 

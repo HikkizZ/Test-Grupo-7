@@ -7,7 +7,8 @@ import { useGetRooms } from "../hooks/rooms/useGetRooms";
 import { useUpdateRoom } from "../hooks/rooms/useUpdateRoom";
 import { useDeleteRoom } from "../hooks/rooms/useDeleteRoom";
 import { useAuth } from "../context/AuthContext";
-import "../styles/around.css"; // Importar los estilos de around.css
+import "../styles/around.css";
+import "../styles/around.css"; 
 
 export default function Rooms() {
     const { user } = useAuth();
@@ -16,33 +17,32 @@ export default function Rooms() {
     const { handleUpdate, loading: loadingUpdate } = useUpdateRoom(fetchRooms);
     const { handleDelete, loading: loadingDelete } = useDeleteRoom({ setRooms: fetchRooms });
 
-    const [filteredRooms, setFilteredRooms] = useState([]); // Estado de filtrado
-    const [filters, setFilters] = useState({}); // Filtros aplicados
+    const [filteredRooms, setFilteredRooms] = useState([]);
+    const [filters, setFilters] = useState({}); 
     const [showCreateModal, setShowCreateModal] = useState(false);
 
     useEffect(() => {
-        fetchRooms(); // Cargar las salas al montar el componente
+        fetchRooms(); 
     }, [fetchRooms]);
 
     useEffect(() => {
-        setFilteredRooms(rooms); // Inicializa las salas al cargarlas
+        setFilteredRooms(rooms); 
     }, [rooms]);
 
     const handleFilterUpdate = (filter, value) => {
         const updatedFilters = { ...filters, [filter]: value.trim() };
         setFilters(updatedFilters);
 
-        let results = rooms; // Filtrar a partir del estado original de las salas
+        let results = rooms; 
 
-        // Aplicar filtros individuales
         if (updatedFilters.name) {
             results = results.filter((room) =>
                 room.name.toLowerCase().includes(updatedFilters.name.toLowerCase())
             );
         }
-        if (updatedFilters.size) {
+        if (updatedFilters.capacity) {
             results = results.filter((room) =>
-                room.size.replace(" m²", "") === updatedFilters.size
+                room.capacity.replace(" alumnos", "") === updatedFilters.capacity
             );
         }
         if (updatedFilters.roomType) {
@@ -54,7 +54,7 @@ export default function Rooms() {
 
     const handleResetFilters = () => {
         setFilters({});
-        setFilteredRooms(rooms); // Reinicia las salas al estado original
+        setFilteredRooms(rooms);
     };
 
     return (
@@ -73,6 +73,7 @@ export default function Rooms() {
                 <RoomSearch
                     onSearch={(query) => {
                         const filtered = rooms.filter((room) =>
+                            `${room.name.toLowerCase()} ${room.capacity} ${room.roomType.toLowerCase()}`.includes(
                             `${room.name.toLowerCase()} ${room.size} ${room.roomType.toLowerCase()}`.includes(
                                 query.toLowerCase()
                             )
@@ -101,7 +102,7 @@ export default function Rooms() {
         </div>
 
             <RoomTable
-                rooms={filteredRooms} // Renderiza el estado filtrado
+                rooms={filteredRooms}
                 onUpdate={["admin", "Encargado"].includes(user?.role) ? handleUpdate : null}
                 onDelete={user?.role === "admin" ? handleDelete : null}
                 loadingUpdate={loadingUpdate}
