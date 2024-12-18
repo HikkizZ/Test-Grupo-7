@@ -189,6 +189,29 @@
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.3s, opacity 0.3s;
+    background-color: #d1d5db;
+}
+
+.edit-name-input {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.save-edit-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.save-edit-button:hover {
+    background-color: #218838;
 }
 
 @media (max-width: 768px) {
