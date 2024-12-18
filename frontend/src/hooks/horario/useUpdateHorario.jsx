@@ -13,7 +13,7 @@ export function useUpdateHorario(fetchHorarios) {
             if (updatedHorario) {
                 showSuccessAlert(
                     "¡Horario actualizado!",
-                    `El horario con ID ${id} ha sido actualizado correctamente.`
+                    `El horario se ha sido actualizado correctamente.`
                 );
                 fetchHorarios(); // Vuelve a cargar los horarios
             }
