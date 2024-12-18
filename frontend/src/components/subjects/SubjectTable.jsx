@@ -18,7 +18,7 @@ export default function SubjectTable({ subjects, onDelete, onUpdate, fetchSubjec
 
     return (
         <div style={styles.container}>
-                <h2 style={styles.title}>Lista de Asignaturas</h2>
+            <h2 style={styles.title}>Lista de Asignaturas</h2>
             <div style={styles.tableResponsive}>
                 <table style={styles.table}>
                     <thead>
@@ -32,17 +32,23 @@ export default function SubjectTable({ subjects, onDelete, onUpdate, fetchSubjec
                         </tr>
                     </thead>
                     <tbody>
-                        {subjects.map((subject) => (
-                            <SubjectRow
-                                key={subject.id}
-                                subject={subject}
-                                onEdit={handleEditClick}
-                                onDelete={onDelete}
-                                loadingUpdate={false}
-                                loadingDelete={false}
-                                fetchSubjects={fetchSubjects}
-                            />
-                        ))}
+                        {subjects.length > 0 ? (
+                            subjects.map((subject) => (
+                                <SubjectRow
+                                    key={subject.id}
+                                    subject={subject}
+                                    onEdit={handleEditClick}
+                                    onDelete={onDelete}
+                                    loadingUpdate={false}
+                                    loadingDelete={false}
+                                    fetchSubjects={fetchSubjects}
+                                />
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan='6' style={styles.td}>No hay asignaturas registradas</td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
