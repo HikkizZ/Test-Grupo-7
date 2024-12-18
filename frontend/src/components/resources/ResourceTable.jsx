@@ -1,6 +1,14 @@
 import ResourceRow from "./ResourceRow";
 
-export default function ResourceTable({ resources, onSelect, onUpdate, onDelete, loadingUpdate, loadingDelete }) {
+export default function ResourceTable({
+    resources,
+    onSelect,
+    onUpdate,
+    onDelete,
+    loadingUpdate,
+    loadingDelete,
+    role, // Agregar rol del usuario
+}) {
     const sortedResources = [...resources].sort((a, b) => a.name.localeCompare(b.name));
 
     return (
@@ -10,7 +18,7 @@ export default function ResourceTable({ resources, onSelect, onUpdate, onDelete,
                     <th>Nombre</th>
                     <th>Marca/Modelo</th>
                     <th>Tipo</th>
-                    <th>Acciones</th>
+                    {role !== "Profesor" && role !== "Alumno" && <th>Acciones</th>}
                 </tr>
             </thead>
             <tbody>
@@ -23,6 +31,7 @@ export default function ResourceTable({ resources, onSelect, onUpdate, onDelete,
                         onDelete={onDelete}
                         loadingUpdate={loadingUpdate}
                         loadingDelete={loadingDelete}
+                        role={role} // Pasar rol del usuario
                     />
                 ))}
             </tbody>
