@@ -50,6 +50,7 @@ export async function updateConfigCalificaciones(req, res) {
 export async function getCalificaciones(req, res) {
     try {
         const { codeSubject } = req.query;
+        console.log(codeSubject);
 
         if (!codeSubject) return handleErrorClient(res, 400, "Faltan parámetros");
 
