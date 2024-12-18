@@ -32,7 +32,7 @@ function parseDate(value, helpers) {
             "Fecha inválida. El formato debe ser 'DD-MM-YYYY HH:mm', por ejemplo: '25-12-2024 10:00'."
         );
     }
-    return trimmedValue; // Devuelve la fecha como string para no alterarla
+    return parsedDate;
 }
 
 // Función para truncar la fecha actual a nivel de minutos
@@ -74,27 +74,44 @@ export const reservationQueryValidation = Joi.object({
 // Validaciones para el cuerpo de las reservas
 export const reservationBodyValidation = Joi.object({
     fechaDesde: Joi.string()
-    .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/)
-    .required()
-    .custom(parseDate)
-    .messages({
-        "string.pattern.base": "El campo 'fechaDesde' debe seguir el formato 'DD-MM-YYYY HH:mm'.",
-        "any.required": "El campo 'fechaDesde' es obligatorio.",
-    }),
+        .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/)
+        .required()
+        .custom((value, helpers) => {
+            const fechaDesde = parseDate(value, helpers);
+            const now = truncateDateToMinutes(new Date()); // Fecha actual truncada a minutos
 
-fechaHasta: Joi.string()
-    .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/)
-    .required()
-    .custom(parseDate)
-    .messages({
-        "string.pattern.base": "El campo 'fechaHasta' debe seguir el formato 'DD-MM-YYYY HH:mm'.",
-        "any.required": "El campo 'fechaHasta' es obligatorio.",
-    }),
+            if (fechaDesde < now) {
+                return helpers.message("La fecha desde no puede ser anterior al momento actual.");
+            }
+            return value;
+        })
+        .messages({
+            "string.pattern.base": "El campo 'fechaDesde' debe seguir el formato 'DD-MM-YYYY HH:mm'.",
+            "any.required": "El campo 'fechaDesde' es obligatorio.",
+        }),
+
+    fechaHasta: Joi.string()
+        .pattern(/^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/)
+        .required()
+        .custom((value, helpers) => {
+            const fechaHasta = parseDate(value, helpers);
+            const now = truncateDateToMinutes(new Date()); // Fecha actual truncada a minutos
+
+            if (fechaHasta < now) {
+                return helpers.message("La fecha hasta no puede ser anterior al momento actual.");
+            }
+            return value;
+        })
+        .messages({
+            "string.pattern.base": "El campo 'fechaHasta' debe seguir el formato 'DD-MM-YYYY HH:mm'.",
+            "any.required": "El campo 'fechaHasta' es obligatorio.",
+        }),
 
     tipoReserva: Joi.string().valid("recurso", "sala").required().messages({
         "any.required": "El tipo de reserva es obligatorio.",
         "any.only": "El tipo de reserva debe ser 'recurso' o 'sala'.",
     }),
+
     recurso_id: Joi.number()
         .integer()
         .when("tipoReserva", {
@@ -105,6 +122,7 @@ fechaHasta: Joi.string()
         .messages({
             "any.required": "El ID del recurso es obligatorio cuando el tipo de reserva es 'recurso'.",
         }),
+
     sala_id: Joi.number()
         .integer()
         .when("tipoReserva", {
@@ -115,11 +133,13 @@ fechaHasta: Joi.string()
         .messages({
             "any.required": "El ID de la sala es obligatorio cuando el tipo de reserva es 'sala'.",
         }),
+
     devuelto: Joi.boolean()
         .default(false)
         .messages({
             "boolean.base": "El campo 'devuelto' debe ser un valor booleano.",
         }),
+
     estado: Joi.string()
         .valid("pendiente", "aprobada", "rechazada")
         .default("pendiente")
@@ -127,8 +147,8 @@ fechaHasta: Joi.string()
             "any.only": "El estado debe ser 'pendiente', 'aprobada' o 'rechazada'.",
         }),
 }).custom((value, helpers) => {
-    const fechaDesde = parseDate(value.fechaDesde, helpers);
-    const fechaHasta = parseDate(value.fechaHasta, helpers);
+    const fechaDesde = parse(value.fechaDesde, "dd-MM-yyyy HH:mm", new Date());
+    const fechaHasta = parse(value.fechaHasta, "dd-MM-yyyy HH:mm", new Date());
 
     if (fechaHasta <= fechaDesde) {
         return helpers.message("La fecha hasta debe ser posterior a la fecha desde.");
