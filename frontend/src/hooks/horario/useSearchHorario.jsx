@@ -18,19 +18,42 @@ export function useSearchHorario(horarios) {
                 if (!searchQuery) {
                     filteredResults = horarios; // Mostrar todos los horarios si no hay query
                 } else {
-                    if (searchFilter === "id") {
-                        filteredResults = horarios.filter((horario) =>
-                            horario.id.toString().includes(searchQuery)
-                        );
-                    } else if (searchFilter === "curso") {
-                        filteredResults = horarios.filter((horario) =>
-                            horario.curso.toLowerCase().includes(searchQuery.toLowerCase())
-                        );
-                    } else {
-                        // Buscar por ambos (ID y curso)
-                        filteredResults = horarios.filter((horario) =>
-                            `${horario.id} ${horario.curso.toLowerCase()}`.includes(searchQuery.toLowerCase())
-                        );
+                    switch (searchFilter) {
+                        case "teacherRut":
+                            filteredResults = horarios.filter((horario) =>
+                                horario.teacher?.rut
+                                    ?.toLowerCase()
+                                    .includes(searchQuery.toLowerCase())
+                            );
+                            break;
+                        case "teacherName":
+                            filteredResults = horarios.filter((horario) =>
+                                horario.teacher?.name
+                                    ?.toLowerCase()
+                                    .includes(searchQuery.toLowerCase())
+                            );
+                            break;
+                        case "cursoName":
+                            filteredResults = horarios.filter((horario) =>
+                                horario.curso?.name
+                                    ?.toLowerCase()
+                                    .includes(searchQuery.toLowerCase())
+                            );
+                            break;
+                        case "cursoCode":
+                            filteredResults = horarios.filter((horario) =>
+                                horario.curso?.code
+                                    ?.toLowerCase()
+                                    .includes(searchQuery.toLowerCase())
+                            );
+                            break;
+                        case "id":
+                            filteredResults = horarios.filter((horario) =>
+                                horario.id.toString().includes(searchQuery)
+                            );
+                            break;
+                        default:
+                            break;
                     }
                 }
 
