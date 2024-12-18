@@ -3,6 +3,9 @@ import { X } from 'lucide-react';
 import { useGetCalificaciones } from '../../hooks/calificacion/useGetCalificaciones';
 import { useAssignCalificaciones } from '../../hooks/calificacion/useAssignCalificaciones';
 import { useConfigCalificacion } from '../../hooks/calificacion/useConfigCalificacion';
+import { useUpdateConfigCalificacion } from '../../hooks/calificacion/useUpdateConfigCalificacion';
+import { useEditNameCalificacion } from '../../hooks/calificacion/useEditNameCalificacion';
+
 import '@styles/SubjectViewPopup.css';
 
 export default function SubjectViewPopup({ active, setActive, data }) {
@@ -11,6 +14,10 @@ export default function SubjectViewPopup({ active, setActive, data }) {
     const { handleAssign, loading: loadingAssign } = useAssignCalificaciones(fetchCalificaciones);
     const [hasFetched, setHasFetched] = useState(false);
     const { handleConfigCalificacion, loading: loadingConfig } = useConfigCalificacion();
+    const { handleUpdateConfigCalificacion } = useUpdateConfigCalificacion();
+    const { handleEditNameCalificacion } = useEditNameCalificacion();
+    const [editingCalificacion, setEditingCalificacion] = useState(false);
+    const [newName, setNewName] = useState('');
 
     useEffect(() => {
         if (active && data?.code && !hasFetched) {
@@ -29,23 +36,39 @@ export default function SubjectViewPopup({ active, setActive, data }) {
         handleAssign({ codeSubject: data.code });
     };
 
-    const handleConfigClick = async () => {
+    const handleConfigOrUpdateClick = async () => {
         const configData = {
             codeSubject: data.code,
             cantidad: parseInt(cantidadCalificaciones, 10)
         };
-        console.log(configData);
-        await handleConfigCalificacion(configData);
+
+        if (calificaciones?.data?.length > 0) {
+            await handleUpdateConfigCalificacion(data.code, cantidadCalificaciones);
+        } else {
+            await handleConfigCalificacion(configData);
+        }
+
         fetchCalificaciones(data.code);
     };
 
+
     const handleEditCalificacion = (calificacion) => {
-        console.log(calificacion);
+        setEditingCalificacion(calificacion.id);
+        setNewName(calificacion.name);
     };
 
-    if (!active) return null;
+    const handleSaveEdit = async () => {
+        const dataConfig = {
+            idCalificacion: editingCalificacion,
+            newName: newName
+        }
+        await handleEditNameCalificacion(dataConfig);
+        setEditingCalificacion(null);
 
-    console.log("Calificaciones:", calificaciones);
+        fetchCalificaciones(data.code);
+    }
+
+    if (!active) return null;
 
     return (
         <div className="subject-view-popup-bg">
@@ -81,10 +104,35 @@ export default function SubjectViewPopup({ active, setActive, data }) {
                                         {calificaciones.data.map((calificacion) => (
                                             <tr key={calificacion.id}>
                                                 <td align='center'>{calificacion.id}</td>
-                                                <td align='center'>{calificacion.name}</td>
+                                                <td align='center'>
+                                                    {editingCalificacion === calificacion.id ? (
+                                                        <input
+                                                            type='text'
+                                                            value={newName}
+                                                            onChange={(e) => setNewName(e.target.value)}
+                                                            className='edit-name-input'
+                                                        />
+                                                    ) : (
+                                                        calificacion.name
+                                                    )}
+                                                </td>
                                                 <td align='center'>{calificacion.porcentaje}%</td>
                                                 <td align='center'>
-                                                    <button onClick={() => handleEditCalificacion(calificacion)} className='edit-button-config'>Editar</button>
+                                                    {editingCalificacion === calificacion.id ? (
+                                                        <button
+                                                            onClick={handleSaveEdit}
+                                                            className='save-edit-button'
+                                                        >
+                                                            Guardar
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => handleEditCalificacion(calificacion)}
+                                                            className='edit-button-config'
+                                                        >
+                                                            Editar
+                                                        </button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))}
@@ -114,7 +162,7 @@ export default function SubjectViewPopup({ active, setActive, data }) {
                             </select>
 
                             <button
-                                onClick={handleConfigClick}
+                                onClick={handleConfigOrUpdateClick}
                                 className={`assign-button ${calificaciones?.data?.length > 0 ? 'edit-mode' : ''}`}
                                 disabled={loadingConfig}
                             >

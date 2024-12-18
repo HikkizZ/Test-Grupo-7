@@ -121,7 +121,7 @@ const styles = {
         fontSize: '14px',
         border: '1px solid #ddd',
         borderRadius: '4px',
-        width: '100%',
+        width: '90%',
     },
     select: {
         padding: '12px',
