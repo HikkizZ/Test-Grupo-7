@@ -55,6 +55,7 @@ export default function SubjectRow({ subject, onEdit, onDelete, loadingUpdate, l
                 setActive={setShowPopup}
                 data={selectedSubject}
                 fetchSubjects={fetchSubjects}
+                subject={subject}
             />
         </>
     );
