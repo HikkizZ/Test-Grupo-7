@@ -7,6 +7,7 @@ import { useGetRooms } from "../hooks/rooms/useGetRooms";
 import { useUpdateRoom } from "../hooks/rooms/useUpdateRoom";
 import { useDeleteRoom } from "../hooks/rooms/useDeleteRoom";
 import { useAuth } from "../context/AuthContext";
+import "../styles/around.css"; // Importar los estilos de around.css
 
 export default function Rooms() {
     const { user } = useAuth();
@@ -57,49 +58,47 @@ export default function Rooms() {
     };
 
     return (
-        <div>
-            <br />
-            <br />
-            <br />
-            <h1 style={{ textAlign: "center" }}>Salas</h1>
+            <div className="around-container">
+                {/* Título principal centrado */}
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+                    <h1 className="around-header">
+                        <br />
+                        <br />
+                        Salas</h1>
+                </div>
 
             {/* Buscar Sala */}
-            <h3>Buscar Sala</h3>
-            <RoomSearch
-                onSearch={(query) => {
-                    const filtered = rooms.filter((room) =>
-                        `${room.name.toLowerCase()} ${room.size} ${room.roomType.toLowerCase()}`.includes(
-                            query.toLowerCase()
-                        )
-                    );
-                    setFilteredRooms(filtered);
-                }}
-                onFilterUpdate={handleFilterUpdate}
-                onReset={handleResetFilters}
-                loading={loadingRooms}
-            />
+            <div className="around-section">
+                <h3 className="around-subtitle">Buscar Sala</h3>
+                <RoomSearch
+                    onSearch={(query) => {
+                        const filtered = rooms.filter((room) =>
+                            `${room.name.toLowerCase()} ${room.size} ${room.roomType.toLowerCase()}`.includes(
+                                query.toLowerCase()
+                            )
+                        );
+                        setFilteredRooms(filtered);
+                    }}
+                    onFilterUpdate={handleFilterUpdate}
+                    onReset={handleResetFilters}
+                    loading={loadingRooms}
+                />
+            </div>
 
-            {/* Lista de Salas */}
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
-                <h3>Lista de Salas</h3>
-                {user?.role === "admin" && (
+        {/* Lista de Salas */}
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
+            <h3>Lista de Salas</h3>
+            {user?.role === "admin" && (
+                <div className="create-button-container">
                     <button
                         onClick={() => setShowCreateModal(true)}
-                        style={{
-                            height: "38px",
-                            backgroundColor: "#28a745",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: "5px",
-                            padding: "10px 15px",
-                            cursor: "pointer",
-                            fontSize: "14px",
-                        }}
+                        className="create-button"
                     >
                         Crear Sala
                     </button>
-                )}
-            </div>
+                </div>
+            )}
+        </div>
 
             <RoomTable
                 rooms={filteredRooms} // Renderiza el estado filtrado

@@ -16,11 +16,8 @@ export default function ReservationRow({
 
     useEffect(() => {
         // Actualizar "Devuelto" automáticamente cuando "Estado" cambia
-        if (editState === "pendiente") {
-            setEditDevuelto("No");
-        } else if (editState === "rechazada") {
-            setEditDevuelto("Sí");
-        }
+        if (editState === "pendiente") setEditDevuelto("No");
+        else if (editState === "rechazada") setEditDevuelto("Sí");
     }, [editState]);
 
     const handleEditClick = () => {
@@ -45,7 +42,7 @@ export default function ReservationRow({
         setIsEditing(false);
     };
 
-    // Mostrar el nombre del reservante
+    // Mostrar nombre del reservante con restricciones para "Profesor" o "Alumno"
     let reservanteNombre = reservation.Reservante?.nombre || "No disponible";
     if ((user?.role === "Profesor" || user?.role === "Alumno") && reservanteNombre !== user?.name) {
         reservanteNombre = "-------";
@@ -62,7 +59,7 @@ export default function ReservationRow({
                         value={editState}
                         onChange={(e) => setEditState(e.target.value)}
                         disabled={loadingUpdate}
-                        style={{ width: "100%" }}
+                        style={selectStyle}
                     >
                         <option value="pendiente">Pendiente</option>
                         <option value="aprobada">Aprobada</option>
@@ -78,10 +75,8 @@ export default function ReservationRow({
                         <select
                             value={editDevuelto}
                             onChange={(e) => setEditDevuelto(e.target.value)}
-                            disabled={
-                                editState === "pendiente" || editState === "rechazada" || loadingUpdate
-                            }
-                            style={{ width: "100%" }}
+                            disabled={loadingUpdate || editState === "pendiente" || editState === "rechazada"}
+                            style={selectStyle}
                         >
                             <option value="Sí">Sí</option>
                             <option value="No">No</option>
@@ -104,11 +99,15 @@ export default function ReservationRow({
                             <button
                                 onClick={handleSaveEdit}
                                 disabled={loadingUpdate}
-                                style={{ marginRight: "5px" }}
+                                style={buttonStyleBlue}
                             >
                                 Guardar
                             </button>
-                            <button onClick={handleCancelEdit} disabled={loadingUpdate}>
+                            <button
+                                onClick={handleCancelEdit}
+                                disabled={loadingUpdate}
+                                style={buttonStyleRed}
+                            >
                                 Cancelar
                             </button>
                         </>
@@ -118,30 +117,16 @@ export default function ReservationRow({
                                 <button
                                     onClick={handleEditClick}
                                     disabled={loadingUpdate}
-                                    style={{
-                                        backgroundColor: "#cc8400",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "5px",
-                                        padding: "5px 10px",
-                                        marginRight: "5px",
-                                        cursor: "pointer",
-                                    }}
+                                    style={buttonStyleOrange}
                                 >
                                     Modificar
                                 </button>
                             )}
                             {onDelete && (
-                                <button onClick={() => onDelete(reservation.id)} 
-                                disabled={loadingDelete}
-                                style={{
-                                    backgroundColor: "#d33",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    padding: "5px 10px",
-                                    cursor: "pointer",
-                                }}
+                                <button
+                                    onClick={() => onDelete(reservation.id)}
+                                    disabled={loadingDelete}
+                                    style={buttonStyleRed}
                                 >
                                     Eliminar
                                 </button>
@@ -153,3 +138,41 @@ export default function ReservationRow({
         </tr>
     );
 }
+
+const selectStyle = {
+    width: "100%",
+    padding: "5px",
+    border: "1px solid #ccc",
+    borderRadius: "5px",
+    backgroundColor: "#fff",
+    fontSize: "14px",
+};
+
+const buttonStyleBlue = {
+    backgroundColor: "#007bff",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    padding: "5px 10px",
+    cursor: "pointer",
+    marginRight: "5px",
+};
+
+const buttonStyleRed = {
+    backgroundColor: "#d33",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    padding: "5px 10px",
+    cursor: "pointer",
+};
+
+const buttonStyleOrange = {
+    backgroundColor: "#cc8400",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    padding: "5px 10px",
+    cursor: "pointer",
+    marginRight: "5px",
+};

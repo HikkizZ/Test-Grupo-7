@@ -27,7 +27,7 @@ const modalStyles = {
 };
 
 export default function ReservationForm({ onCreate, loading, onClose }) {
-    const [step, setStep] = useState(1); // Controla el paso del formulario
+    const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
         fechaDesde: "",
         horaDesde: "",
@@ -44,7 +44,6 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
     const { rooms, fetchRooms, loading: loadingRooms } = useGetRooms();
     const { resources, fetchResources, loading: loadingResources } = useGetResources();
 
-    // Fetch de salas o recursos según el tipo de reserva
     useEffect(() => {
         if (formData.tipoReserva === "sala") fetchRooms();
         if (formData.tipoReserva === "recurso") fetchResources();
@@ -108,7 +107,6 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
         }
     };
 
-    // Cancelar y resetear el formulario
     const handleCancel = () => {
         setFormData({
             fechaDesde: "",
@@ -125,7 +123,6 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
         onClose();
     };
 
-    // Seleccionar sala o recurso
     const handleSelect = (type, item) => {
         if (type === "sala") {
             setSelectedRoom(item);
@@ -134,10 +131,9 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
             setSelectedResource(item);
             setFormData({ ...formData, recurso_id: item.id });
         }
-        setStep(2); // Avanzar al paso 2
+        setStep(2);
     };
 
-    // Formatear fecha y hora
     const formatDateTime = (date, time) => {
         if (!date || !time) return "";
         const [year, month, day] = date.split("-");
@@ -145,7 +141,6 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
         return `${day}-${month}-${year} ${hour}:${minute}`;
     };
 
-    // Enviar el formulario
     const handleSubmit = () => {
         const fechaDesde = formatDateTime(formData.fechaDesde, formData.horaDesde);
         const fechaHasta = formatDateTime(formData.fechaHasta, formData.horaHasta);
@@ -172,7 +167,6 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
         <Modal isOpen={true} onRequestClose={handleCancel} style={modalStyles} ariaHideApp={false}>
             <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Crear Reservación</h2>
 
-            {/* Paso 1: Selección de tipo de reserva y recursos/salas */}
             {step === 1 && (
                 <>
                     <select
@@ -185,7 +179,6 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
                         <option value="sala">Sala</option>
                     </select>
 
-                    {/* Tabla de Salas */}
                     {formData.tipoReserva === "sala" && (
                         <>
                             <h3>Seleccionar Sala</h3>
@@ -194,13 +187,12 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
                             ) : (
                                 <RoomTable
                                     rooms={rooms}
-                                    onSelect={(room) => handleSelect("sala", room)} // Asegura onSelect aquí
+                                    onSelect={(room) => handleSelect("sala", room)}
                                 />
                             )}
                         </>
                     )}
 
-                    {/* Tabla de Recursos */}
                     {formData.tipoReserva === "recurso" && (
                         <>
                             <h3>Seleccionar Recurso</h3>
@@ -209,7 +201,7 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
                             ) : (
                                 <ResourceTable
                                     resources={resources}
-                                    onSelect={(resource) => handleSelect("recurso", resource)} // Asegura onSelect aquí
+                                    onSelect={(resource) => handleSelect("recurso", resource)}
                                 />
                             )}
                         </>
@@ -217,7 +209,6 @@ export default function ReservationForm({ onCreate, loading, onClose }) {
                 </>
             )}
 
-            {/* Paso 2: Selección de fecha y hora */}
             {step === 2 && (
                 <>
                     <p style={{ textAlign: "center", fontWeight: "bold", marginBottom: "20px" }}>
@@ -263,13 +254,13 @@ function DateTimeInput({ label, date, time, onDateChange, onTimeChange }) {
                 <input
                     type="date"
                     value={date}
-                    onChange={(e) => onDateChange(e.target.value)} // Validar fecha
+                    onChange={(e) => onDateChange(e.target.value)}
                     style={inputStyle}
                 />
                 <input
                     type="time"
                     value={time}
-                    onChange={(e) => onTimeChange(e.target.value)} // Validar hora
+                    onChange={(e) => onTimeChange(e.target.value)}
                     style={inputStyle}
                 />
             </div>

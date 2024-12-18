@@ -7,6 +7,7 @@ import { useGetResources } from "../hooks/resources/useGetResources";
 import { useUpdateResource } from "../hooks/resources/useUpdateResource";
 import { useDeleteResource } from "../hooks/resources/useDeleteResource";
 import { useAuth } from "../context/AuthContext";
+import "../styles/around.css"; // Importar los estilos actualizados
 
 export default function Resources() {
     const { user } = useAuth(); // Accede al rol del usuario autenticado
@@ -71,40 +72,38 @@ export default function Resources() {
     };
 
     return (
-        <div>
-            <br />
-            <br />
-            <br />
-            <h1 style={{ textAlign: "center" }}>Recursos</h1>
+        <div className="around-container">
+        {/* Título principal centrado */}
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+            <h1 className="around-header">
+                <br />
+                <br />
+                Recursos</h1>
+        </div>
 
             {/* Buscar Recurso */}
-            <h3>Buscar Recurso</h3>
-            <ResourceSearch
-                onSearch={handleSearch} // Búsqueda general
-                onFilterUpdate={handleFilterUpdate} // Filtros específicos
-                onReset={handleResetFilters} // Resetear filtros
-                loading={loadingResources}
-            />
+            <div className="around-section">
+                <h3 className="around-subtitle">Buscar Recurso</h3>
+                <ResourceSearch
+                    onSearch={handleSearch} // Búsqueda general
+                    onFilterUpdate={handleFilterUpdate} // Filtros específicos
+                    onReset={handleResetFilters} // Resetear filtros
+                    loading={loadingResources}
+                />
+            </div>
 
             {/* Lista de Recursos */}
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
                 <h3>Lista de Recursos</h3>
-                {["admin", "Encargado"].includes(user?.role) && ( // Solo el admin puede ver el botón de crear
-                    <button
-                        onClick={() => setShowCreateModal(true)}
-                        style={{
-                            height: "38px",
-                            backgroundColor: "#28a745",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: "5px",
-                            padding: "10px 15px",
-                            cursor: "pointer",
-                            fontSize: "14px",
-                        }}
-                    >
-                        Crear Recurso
-                    </button>
+                {["admin", "Encargado"].includes(user?.role) && (
+                    <div className="create-button-container">
+                        <button
+                            onClick={() => setShowCreateModal(true)}
+                            className="create-button"
+                        >
+                            Crear Recurso
+                        </button>
+                    </div>
                 )}
             </div>
 

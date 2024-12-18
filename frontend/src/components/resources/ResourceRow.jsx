@@ -17,12 +17,15 @@ export default function ResourceRow({
         resourceType: resource.resourceType,
     });
 
-    // Manejar cambios en inputs
+    // Manejar cambios en los inputs
     const handleChange = (field, value) => {
-        setEditData((prev) => ({ ...prev, [field]: value }));
+        setEditData((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
     };
 
-    // Activar modo edición
+    // Habilitar modo edición
     const handleEditClick = () => {
         setIsEditing(true);
     };
@@ -43,13 +46,14 @@ export default function ResourceRow({
             showErrorAlert("Campos incompletos", "Debes completar todos los campos.");
             return;
         }
+
         onUpdate(resource.id, editData);
         setIsEditing(false);
     };
 
     return (
         <tr>
-            {/* Nombre */}
+            {/* Columna Nombre */}
             <td>
                 {isEditing ? (
                     <input
@@ -57,13 +61,15 @@ export default function ResourceRow({
                         value={editData.name}
                         onChange={(e) => handleChange("name", e.target.value)}
                         disabled={loadingUpdate}
+                        placeholder="Nombre"
+                        className="modal-input"
                     />
                 ) : (
                     resource.name
                 )}
             </td>
 
-            {/* Marca */}
+            {/* Columna Marca */}
             <td>
                 {isEditing ? (
                     <input
@@ -71,19 +77,22 @@ export default function ResourceRow({
                         value={editData.brand}
                         onChange={(e) => handleChange("brand", e.target.value)}
                         disabled={loadingUpdate}
+                        placeholder="Marca"
+                        className="modal-input"
                     />
                 ) : (
                     resource.brand
                 )}
             </td>
 
-            {/* Tipo */}
+            {/* Columna Tipo */}
             <td>
                 {isEditing ? (
                     <select
                         value={editData.resourceType}
                         onChange={(e) => handleChange("resourceType", e.target.value)}
                         disabled={loadingUpdate}
+                        className="modal-input"
                     >
                         <option value="Tecnologia">Tecnología</option>
                         <option value="Equipo de Sonido">Equipo de Sonido</option>
@@ -94,19 +103,12 @@ export default function ResourceRow({
                 )}
             </td>
 
-            {/* Acciones */}
+            {/* Columna Acciones */}
             <td>
                 {onSelect ? (
                     <button
                         onClick={() => onSelect(resource)}
-                        style={{
-                            backgroundColor: "#28a745",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: "5px",
-                            padding: "5px 10px",
-                            cursor: "pointer",
-                        }}
+                        className="btn btn-success"
                     >
                         Seleccionar
                     </button>
@@ -115,29 +117,14 @@ export default function ResourceRow({
                         <button
                             onClick={handleSaveEdit}
                             disabled={loadingUpdate}
-                            style={{
-                                backgroundColor: "#007bff",
-                                color: "#fff",
-                                border: "none",
-                                borderRadius: "5px",
-                                padding: "5px 10px",
-                                marginRight: "5px",
-                                cursor: "pointer",
-                            }}
+                            className="btn btn-primary"
                         >
                             Guardar
                         </button>
                         <button
                             onClick={handleCancelEdit}
                             disabled={loadingUpdate}
-                            style={{
-                                backgroundColor: "#d33",
-                                color: "#fff",
-                                border: "none",
-                                borderRadius: "5px",
-                                padding: "5px 10px",
-                                cursor: "pointer",
-                            }}
+                            className="btn btn-danger"
                         >
                             Cancelar
                         </button>
@@ -148,15 +135,7 @@ export default function ResourceRow({
                             <button
                                 onClick={handleEditClick}
                                 disabled={loadingUpdate}
-                                style={{
-                                    backgroundColor: "#cc8400",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    padding: "5px 10px",
-                                    marginRight: "5px",
-                                    cursor: "pointer",
-                                }}
+                                className="btn btn-warning"
                             >
                                 Modificar
                             </button>
@@ -165,14 +144,7 @@ export default function ResourceRow({
                             <button
                                 onClick={() => onDelete(resource.id)}
                                 disabled={loadingDelete}
-                                style={{
-                                    backgroundColor: "#d33",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    padding: "5px 10px",
-                                    cursor: "pointer",
-                                }}
+                                className="btn btn-danger"
                             >
                                 Eliminar
                             </button>

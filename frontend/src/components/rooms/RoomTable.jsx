@@ -1,32 +1,43 @@
 import RoomRow from "./RoomRow";
+import "../../styles/around.css"; // Importar el archivo de estilos
 
-export default function RoomTable({ rooms, onUpdate, onDelete, loadingUpdate, loadingDelete, role, onSelect }) {
+export default function RoomTable({
+    rooms,
+    onUpdate,
+    onDelete,
+    loadingUpdate,
+    loadingDelete,
+    role,
+    onSelect,
+}) {
     const sortedRooms = [...rooms].sort((a, b) => a.name.localeCompare(b.name));
 
     return (
-        <table>
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Tamaño (m²)</th>
-                    <th>Tipo de Sala</th>
-                    {role !== "Profesor" && role !== "Alumno" && <th>Acciones</th>}
-                </tr>
-            </thead>
-            <tbody>
-                {sortedRooms.map((room) => (
-                    <RoomRow
-                        key={room.id}
-                        room={room}
-                        onUpdate={onUpdate}
-                        onDelete={onDelete}
-                        loadingUpdate={loadingUpdate}
-                        loadingDelete={loadingDelete}
-                        role={role} // Pasar el rol
-                        onSelect={onSelect}
-                    />
-                ))}
-            </tbody>
-        </table>
+        <div className="around-table-container">
+            <table className="around-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Tamaño (m²)</th>
+                        <th>Tipo de Sala</th>
+                        {role !== "Profesor" && role !== "Alumno" && <th>Acciones</th>}
+                    </tr>
+                </thead>
+                <tbody>
+                    {sortedRooms.map((room) => (
+                        <RoomRow
+                            key={room.id}
+                            room={room}
+                            onUpdate={onUpdate}
+                            onDelete={onDelete}
+                            loadingUpdate={loadingUpdate}
+                            loadingDelete={loadingDelete}
+                            role={role}
+                            onSelect={onSelect}
+                        />
+                    ))}
+                </tbody>
+            </table>
+        </div>
     );
 }
