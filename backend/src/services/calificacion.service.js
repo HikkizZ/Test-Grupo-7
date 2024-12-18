@@ -116,6 +116,28 @@ export async function updateConfigCalificacionesService(query, body) {
     }
 };
 
+export async function editNameCalificacionesService(query, body) {
+    try {
+        const calificacionRepository = AppDataSource.getRepository(Calificacion);
+
+        const { idCalificacion } = query;
+        const { newName } = body;
+
+        const calificacionFound = await calificacionRepository.findOne({ where: { id: idCalificacion } });
+        if (!calificacionFound) return [null, "No se encontró la calificación"];
+
+        calificacionFound.name = newName;
+
+        await calificacionRepository.save(calificacionFound);
+
+        return [calificacionFound, null];
+    } catch (error) {
+        console.error("Ocurrió un error al editar el nombre de la calificación: ", error);
+        return [null, "Error interno del servidor"];
+    }
+};
+
+
 export async function getCalificacionesService(query) {
     try {
         const subjectRepository = AppDataSource.getRepository(Subject);

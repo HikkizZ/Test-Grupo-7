@@ -5,7 +5,8 @@ import {
     updateConfigCalificacionesService,
     getCalificacionesService,
     assignGradesStudentsService,
-    calificarAlumnoService
+    calificarAlumnoService,
+    editNameCalificacionesService,
 } from "../services/calificacion.service.js";
 
 import {
@@ -46,6 +47,25 @@ export async function updateConfigCalificaciones(req, res) {
         handleErrorServer(res, 500, "Error interno del servidor", error.message);
     }
 };
+
+export async function editNameCalificaciones(req, res) {
+    console.log("req.query", req.query);
+    console.log("req.body", req.body);
+    try {
+        const { idCalificacion } = req.query;
+        const { newName } = req.body;
+
+        if (!newName || !idCalificacion) return handleErrorClient(res, 400, "Faltan parámetros");
+
+        const [calificaciones, error] = await editNameCalificacionesService({ idCalificacion: idCalificacion}, { newName: newName });
+
+        if (error) return handleErrorClient(res, 400, error);
+
+        handleSuccess(res, 200, "Nombre de calificación actualizado", calificaciones);
+    } catch (error) {
+        handleErrorServer(res, 500, "Error interno del servidor", error.message);
+    }
+}
 
 export async function getCalificaciones(req, res) {
     try {
