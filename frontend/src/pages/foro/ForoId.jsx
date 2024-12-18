@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getForo } from "@services/foro.service";
 import styles from '@styles/foro.module.css';
-import PDFViewer from '@components/Foro/PDFViewer';
+import PDFViewer from '@components/Foro/PDFviewer';
 
 export default function ForoDetail() {
   const [foro, setForo] = useState(null);
