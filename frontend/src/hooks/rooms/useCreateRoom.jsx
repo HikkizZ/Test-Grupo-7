@@ -9,9 +9,8 @@ export function useCreateRoom(fetchRooms) {
         try {
             setLoading(true);
 
-            // Validar que los datos necesarios están presentes
-            if (!data.name || !data.size || !data.roomType) {
-                throw new Error("Todos los campos son obligatorios (Nombre, Tamaño, Tipo de Sala).");
+            if (!data.name || !data.capacity || !data.roomType) {
+                throw new Error("Todos los campos son obligatorios (Nombre, Capacidad, Tipo de Sala).");
             }
 
             await createRoom(data);

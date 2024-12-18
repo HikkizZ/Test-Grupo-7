@@ -1,24 +1,22 @@
 import { useState } from "react";
-import "../../styles/around.css"; // Importar el archivo de estilos
+import "../../styles/around.css"; 
 
 export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading }) {
     const [query, setQuery] = useState("");
     const [filters, setFilters] = useState({
         name: "",
-        size: "",
+        capacity: "",
         roomType: "",
     });
 
     const [filterEnabled, setFilterEnabled] = useState({
         name: false,
-        size: false,
+        capacity: false,
         roomType: false,
     });
 
-    // Mostrar botón de reset dinámicamente
     const [filtersActive, setFiltersActive] = useState(false);
 
-    // Buscador General
     const handleSearch = (e) => {
         const value = e.target.value;
         setQuery(value);
@@ -26,7 +24,6 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
         setFiltersActive(value.trim().length > 0 || Object.values(filterEnabled).includes(true));
     };
 
-    // Checkbox Handling
     const handleCheckboxChange = (filter) => {
         setFilterEnabled((prev) => {
             const updated = { ...prev, [filter]: !prev[filter] };
@@ -39,7 +36,6 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
         }
     };
 
-    // Actualizar filtros individuales
     const handleFilterChange = (filter, value) => {
         setFilters((prev) => {
             const updated = { ...prev, [filter]: value };
@@ -49,10 +45,9 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
         onFilterUpdate(filter, value);
     };
 
-    // Resetear filtros y buscador
     const resetFilters = () => {
-        setFilters({ name: "", size: "", roomType: "" });
-        setFilterEnabled({ name: false, size: false, roomType: false });
+        setFilters({ name: "", capacity: "", roomType: "" });
+        setFilterEnabled({ name: false, capacity: false, roomType: false });
         setQuery("");
         setFiltersActive(false);
         onReset();
@@ -66,7 +61,7 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
                     type="text"
                     value={query}
                     onChange={handleSearch}
-                    placeholder="Buscar por Nombre, Tamaño o Tipo de Sala"
+                    placeholder="Buscar por Nombre, Capacidad o Tipo de Sala"
                     className="search-input"
                 />
             </div>
@@ -91,20 +86,20 @@ export default function RoomSearch({ onSearch, onFilterUpdate, onReset, loading 
                     />
                 </div>
 
-                {/* Tamaño */}
+                {/* Capacidad */}
                 <div className="filter-item">
                     <input
                         type="checkbox"
-                        checked={filterEnabled.size}
-                        onChange={() => handleCheckboxChange("size")}
+                        checked={filterEnabled.capacity}
+                        onChange={() => handleCheckboxChange("capacity")}
                     />
-                    <label>Tamaño</label>
+                    <label>Capacidad</label>
                     <input
                         type="number"
-                        value={filters.size}
-                        onChange={(e) => handleFilterChange("size", e.target.value)}
-                        disabled={!filterEnabled.size}
-                        placeholder="Tamaño (m²)"
+                        value={filters.capacity}
+                        onChange={(e) => handleFilterChange("capacity", e.target.value)}
+                        disabled={!filterEnabled.capacity}
+                        placeholder="Capacidad de Alumnos"
                         className="filter-input"
                     />
                 </div>

@@ -10,11 +10,11 @@ export function useGetRooms() {
         try {
             setLoading(true);
             const response = await getRooms();
-            console.log("Salas obtenidas:", response); // <-- Verifica la respuesta
+            console.log("Salas obtenidas:", response);
     
             const formattedRooms = response.map((room) => ({
                 ...room,
-                size: room.size.endsWith("m²") ? room.size : `${room.size} m²`,
+                capacity: room.capacity.endsWith("alumnos") ? room.capacity : `${room.capacity} alumnos`,
             }));
     
             setRooms(formattedRooms);
@@ -22,7 +22,7 @@ export function useGetRooms() {
         } catch (err) {
             setLoading(false);
             setError(err.message || "Error al obtener las salas");
-            console.error("Error al obtener salas:", err); // <-- Log para depuración
+            console.error("Error al obtener salas:", err); 
         }
     }, []);    
 

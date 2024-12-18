@@ -1,6 +1,5 @@
 import axios from './root.service.js';
 
-// Obtener todas las reservaciones
 export async function getReservations() {
     try {
         const { data } = await axios.get('/reservation/all');
@@ -11,7 +10,6 @@ export async function getReservations() {
     }
 }
 
-// Crear una nueva reservación
 export async function createReservation(reservationData) {
     try {
         const { data } = await axios.post('/reservation/solicitar', reservationData);
@@ -22,7 +20,6 @@ export async function createReservation(reservationData) {
     }
 }
 
-// Obtener una reservación específica
 export async function getReservation(queryParams) {
     try {
         const { data } = await axios.get('/reservation/get', { params: queryParams });
@@ -33,7 +30,6 @@ export async function getReservation(queryParams) {
     }
 }
 
-// Actualizar una reservación
 export async function updateReservation(id, updateData) {
     try {
         const { data } = await axios.patch(`/reservation/update?id=${id}`, updateData);
@@ -44,7 +40,6 @@ export async function updateReservation(id, updateData) {
     }
 }
 
-// Eliminar una reservación
 export async function deleteReservation(id) {
     try {
         const { data } = await axios.delete(`/reservation/delete?id=${id}`);

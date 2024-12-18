@@ -17,7 +17,6 @@ export default function ResourceRow({
         resourceType: resource.resourceType,
     });
 
-    // Manejar cambios en los inputs
     const handleChange = (field, value) => {
         setEditData((prev) => ({
             ...prev,
@@ -25,12 +24,10 @@ export default function ResourceRow({
         }));
     };
 
-    // Habilitar modo edición
     const handleEditClick = () => {
         setIsEditing(true);
     };
 
-    // Cancelar edición
     const handleCancelEdit = () => {
         setIsEditing(false);
         setEditData({
@@ -40,7 +37,6 @@ export default function ResourceRow({
         });
     };
 
-    // Guardar cambios
     const handleSaveEdit = () => {
         if (!editData.name.trim() || !editData.brand.trim() || !editData.resourceType) {
             showErrorAlert("Campos incompletos", "Debes completar todos los campos.");

@@ -11,20 +11,16 @@ export function useDeleteRoom({ setRooms, setSearchResults = null }) {
             if (result.isConfirmed) {
                 setLoading(true);
 
-                // Llamar al servicio para eliminar la sala
                 await deleteRoom(id);
 
-                // Actualizar la lista de salas
                 setRooms((prevRooms) => prevRooms.filter((room) => room.id !== id));
 
-                // Actualizar los resultados de búsqueda (si existe)
                 if (setSearchResults) {
                     setSearchResults((prevResults) =>
                         prevResults.filter((room) => room.id !== id)
                     );
                 }
 
-                // Mostrar alerta de éxito
                 showSuccessAlert(
                     "¡Sala eliminada!",
                     "La sala ha sido eliminada correctamente"

@@ -2,7 +2,6 @@
 
 import Joi from "joi";
 
-// Validación para las consultas (query)
 export const resourceQueryValidation = Joi.object({
     id: Joi.number()
         .positive()
@@ -49,7 +48,6 @@ export const resourceQueryValidation = Joi.object({
     "object.missing": "The query must have at least one field: id, name, brand, or resourceType.",
 });
 
-// Validación para el cuerpo de las peticiones (body)
 export const resourceBodyValidation = Joi.object({
     name: Joi.string()
         .min(3)

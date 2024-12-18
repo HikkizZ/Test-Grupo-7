@@ -11,26 +11,22 @@ export default function ReservationTable({
     hideDevuelto,
     filters,
 }) {
-    // Función para convertir fechaDesde en objeto Date
+    
     const parseFechaDesde = (fecha) => {
         return parse(fecha, "dd-MM-yyyy HH:mm", new Date());
     };
 
-    // Filtrado de reservaciones basado en filtros aplicados
     const filteredReservations = reservations.filter((reservation) => {
         const reservanteNombre = reservation.Reservante?.nombre || "-------";
 
-        // Filtrar por Fecha Desde
         if (filters?.fechaDesde && !reservation.fechaDesde.startsWith(filters.fechaDesde)) {
             return false;
         }
 
-        // Filtrar por Fecha Hasta
         if (filters?.fechaHasta && !reservation.fechaHasta.startsWith(filters.fechaHasta)) {
             return false;
         }
 
-        // Filtrar por otros campos
         if (filters?.devuelto && reservation.devuelto.toString() !== filters.devuelto) {
             return false;
         }
@@ -50,7 +46,6 @@ export default function ReservationTable({
         return true;
     });
 
-    // Ordenar reservaciones por fechaDesde de forma ascendente
     const sortedReservations = [...filteredReservations].sort((a, b) => {
         const dateA = parseFechaDesde(a.fechaDesde);
         const dateB = parseFechaDesde(b.fechaDesde);

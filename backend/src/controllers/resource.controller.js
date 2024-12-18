@@ -19,7 +19,6 @@ import {
     resourceQueryValidation,
 } from "../validations/resource.validation.js";
 
-// Crear un nuevo recurso
 export async function createResource(req, res) {
     try {
         const { error } = resourceBodyValidation.validate(req.body);
@@ -36,7 +35,6 @@ export async function createResource(req, res) {
     }
 }
 
-// Listar todos los recursos
 export async function getResources(req, res) {
     try {
         const [resources, resourcesError] = await getResourcesService(req);
@@ -51,7 +49,6 @@ export async function getResources(req, res) {
     }
 }
 
-// Mostrar información de un recurso en particular
 export async function getResource(req, res) {
     try {
         const { id, name, brand, resourceType } = req.query;
@@ -70,7 +67,6 @@ export async function getResource(req, res) {
     }
 }
 
-// Actualizar información de un recurso
 export async function updateResource(req, res) {
     try {
         const { id, name } = req.query;
@@ -95,7 +91,6 @@ export async function updateResource(req, res) {
     }
 }
 
-// Eliminar un recurso
 export async function deleteResource(req, res) {
     try {
         const { id, name } = req.query;

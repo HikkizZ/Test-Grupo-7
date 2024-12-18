@@ -10,7 +10,7 @@ import ReservationForm from "../components/reservations/ReservationForm";
 import ReservationSearch from "../components/reservations/ReservationSearch";
 
 export default function Reservations() {
-    const { user } = useAuth(); // Obtén el usuario autenticado
+    const { user } = useAuth(); 
     const { reservations, fetchReservations, loading: loadingReservations } = useGetReservations();
     const { handleCreate, loading: loadingCreate } = useCreateReservation(fetchReservations);
     const { handleUpdate, loading: loadingUpdate } = useUpdateReservation(fetchReservations);
@@ -24,7 +24,6 @@ export default function Reservations() {
 
     const [showCreateModal, setShowCreateModal] = useState(false);
 
-    // Estado adicional para manejar los filtros
     const [filters, setFilters] = useState({});
 
     useEffect(() => {
@@ -37,13 +36,12 @@ export default function Reservations() {
 
     const handleResetFilters = () => {
         setFilters({});
-        resetFilters(); // Resetea los filtros generales
+        resetFilters(); 
     };
 
     const noReservations = reservations.length === 0;
     const noSearchResults = filteredResults.length === 0 && !noReservations;
 
-    // Verificar si el usuario es Profesor o Alumno
     const isProfesorOrAlumno = user?.role === "Profesor" || user?.role === "Alumno";
 
     return (
@@ -108,7 +106,7 @@ export default function Reservations() {
                     loadingUpdate={loadingUpdate}
                     hideDevuelto={isProfesorOrAlumno}
                     user={user}
-                    filters={filters} // Pasamos los filtros al componente ReservationTable
+                    filters={filters} 
                 />
             )}
 

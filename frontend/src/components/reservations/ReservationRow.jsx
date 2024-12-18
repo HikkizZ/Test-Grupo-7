@@ -15,7 +15,6 @@ export default function ReservationRow({
     const [editDevuelto, setEditDevuelto] = useState(reservation.devuelto ? "Sí" : "No");
 
     useEffect(() => {
-        // Actualizar "Devuelto" automáticamente cuando "Estado" cambia
         if (editState === "pendiente") setEditDevuelto("No");
         else if (editState === "rechazada") setEditDevuelto("Sí");
     }, [editState]);
@@ -42,7 +41,6 @@ export default function ReservationRow({
         setIsEditing(false);
     };
 
-    // Mostrar nombre del reservante con restricciones para "Profesor" o "Alumno"
     let reservanteNombre = reservation.Reservante?.nombre || "No disponible";
     if ((user?.role === "Profesor" || user?.role === "Alumno") && reservanteNombre !== user?.name) {
         reservanteNombre = "-------";

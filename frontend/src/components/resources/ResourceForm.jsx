@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Modal from "react-modal";
 import { showErrorAlert } from "../../utils/alerts";
-import "../../styles/around.css"; // Importa el CSS actualizado
+import "../../styles/around.css"; 
 
 export default function ResourceForm({ onCreate, loading, onClose }) {
     const [resourceName, setResourceName] = useState("");

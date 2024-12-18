@@ -1,4 +1,3 @@
-/* Estilos generales de la página */
 .around-body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f9;
@@ -6,7 +5,6 @@
     padding: 0;
 }
 
-/* Contenedor principal */
 .around-container {
     max-width: 90%;
     margin: 0 auto;
@@ -16,7 +14,6 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Encabezado */
 .around-header {
     font-size: 2rem;
     color: #333;
@@ -24,7 +21,6 @@
     margin-bottom: 30px;
 }
 
-/* Campos del formulario */
 .around-input {
     padding: 10px;
     border-radius: 5px;
@@ -34,7 +30,6 @@
     margin-bottom: 20px;
 }
 
-/* Select del formulario */
 .around-select {
     padding: 10px;
     border-radius: 5px;
@@ -44,7 +39,6 @@
     margin-bottom: 20px;
 }
 
-/* Botones */
 .around-button {
     flex: 1;
     padding: 10px;
@@ -73,14 +67,12 @@
     background-color: #a52a2a;
 }
 
-/* Mensaje de carga */
 .around-message {
     text-align: center;
     font-size: 1.2rem;
     color: #555;
 }
 
-/* Tabla */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -103,7 +95,6 @@ tr:hover {
     background-color: #f9f9f9;
 }
 
-/* Inputs y Select */
 .around-input,
 .around-select {
     width: 100%;
@@ -114,7 +105,6 @@ tr:hover {
     box-sizing: border-box;
 }
 
-/* Botones */
 .btn {
     padding: 6px 12px;
     margin-right: 5px;
@@ -162,13 +152,11 @@ tr:hover {
     cursor: not-allowed;
 }
 
-/* Acciones */
 .around-actions {
     display: flex;
     gap: 5px;
 }
 
-/* Estilos contenedor general */
 .search-container {
     max-width: 90%;
     margin: 0 auto;
@@ -178,7 +166,6 @@ tr:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Buscador General */
 .general-search .search-input {
     width: 100%;
     padding: 10px;
@@ -188,7 +175,6 @@ tr:hover {
     font-size: 1rem;
 }
 
-/* Contenedor de filtros */
 .filter-container {
     display: flex;
     justify-content: space-between;
@@ -237,7 +223,6 @@ tr:hover {
     margin-top: 20px;
 }
 
-/* Estilos generales de la tabla */
 .around-table-container {
     margin: 0 auto;
     padding: 20px;
@@ -270,7 +255,6 @@ tr:hover {
     background-color: #f9f9f9;
 }
 
-/* Botones de acciones */
 .around-table button {
     padding: 6px 12px;
     border-radius: 5px;
@@ -298,10 +282,9 @@ tr:hover {
     background-color: #b30000;
 }
 
-/* Botón Crear Sala */
 .create-button {
     height: 38px;
-    background-color: #28a745; /* Color verde */
+    background-color: #28a745; 
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -312,31 +295,28 @@ tr:hover {
 }
 
 .create-button:hover {
-    background-color: #218838; /* Verde más oscuro al pasar el mouse */
+    background-color: #218838; 
 }
 
-/* Contenedor del botón Crear Sala */
 .create-button-container {
     display: flex;
     justify-content: flex-end;
     margin-top: 10px;
 }
 
-/* Modal - Overlay */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscurecido */
+    background-color: rgba(0, 0, 0, 0.5); 
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
 }
 
-/* Modal - Contenido */
 .modal-content {
     background-color: #fff;
     border-radius: 10px;
@@ -348,14 +328,12 @@ tr:hover {
     z-index: 1001;
 }
 
-/* Encabezado del modal */
 .modal-header {
     font-size: 1.8rem;
     font-weight: bold;
     margin-bottom: 20px;
 }
 
-/* Campos del modal */
 .modal-input {
     width: 100%;
     padding: 10px;
@@ -365,7 +343,6 @@ tr:hover {
     font-size: 1rem;
 }
 
-/* Botones del modal */
 .modal-buttons {
     display: flex;
     justify-content: space-between;

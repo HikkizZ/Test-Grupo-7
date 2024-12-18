@@ -9,12 +9,10 @@ export function useUpdateResource(fetchResources) {
         try {
             setLoading(true);
 
-            // Validar que al menos un campo sea enviado para actualizar
             if (!Object.keys(updatedData).length) {
                 throw new Error("Debe proporcionar al menos un campo para actualizar.");
             }
 
-            // Llamada al servicio para actualizar el recurso
             const updatedResource = await updateResource(id, updatedData);
 
             if (updatedResource) {
@@ -23,7 +21,6 @@ export function useUpdateResource(fetchResources) {
                     "El recurso ha sido modificado correctamente."
                 );
 
-                // Actualizar la lista de recursos
                 fetchResources((prevResources) =>
                     prevResources.map((resource) =>
                         resource.id === id ? { ...resource, ...updatedData } : resource
