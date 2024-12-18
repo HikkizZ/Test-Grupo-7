@@ -13,7 +13,7 @@ import Rooms from '@pages/Rooms';
 import Reservations from '@pages/Reservations';
 
 //import ProtectedRoute from '@components/ProtectedRoute';
-import '@styles/styles.css';
+//import '@styles/styles.css';
 //import Hallam
 import Foro from '@pages/Foro';
 //? Import services Felipe
