@@ -7,11 +7,18 @@ import Register from '@pages/Register';
 import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import Resources from './pages/Resources';
+import Horario from '@pages/horario';
+import Period from '@pages/period';
 import Rooms from '@pages/Rooms';
 import Reservations from '@pages/Reservations';
-import Schedule from '@pages/Schedule';
+
+
+//import ProtectedRoute from '@components/ProtectedRoute';
+//import '@styles/styles.css';
+//import Hallam
 import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
+
 import Foro from '@pages/Foro';
 
 import Cursos from '@pages/Cursos';
@@ -37,14 +44,23 @@ const router = createBrowserRouter([
             <Users />
           </ProtectedRoute>
         ),
+
+    },
+    {
+      path: '/horario',
+      element: <Horario /> 
+    },
+    {
+      path: '/period',
+      element: <Period /> 
+    },
+    {
+
       },
-      // Ruta de Schedule: acceso libre
-      {
-        path: '/schedule',
-        element: <Schedule />
-      },
+      
       // Recursos: Encargados y admin pueden ver, crear y modificar (sólo admin puede eliminar sala)
       {
+
         path: '/resources',
         element: (
           <ProtectedRoute allowedRoles={['Encargado', 'admin']}>

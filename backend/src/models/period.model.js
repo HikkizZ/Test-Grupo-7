@@ -24,8 +24,8 @@ const PeriodSchema = new EntitySchema({
             nullable: true,
         },
     },relations:{
-        schedules: { // Relación con Schedule
-            target: "Schedule", 
+        horarios: { // Relación con horario
+            target: "Horario", 
             type: "one-to-many", 
             inverseSide: "period", 
             onDelete: "CASCADE", 

@@ -49,6 +49,14 @@ const UserSchema = new EntitySchema({
             onUpdate: 'CURRENT_TIMESTAMP',
             nullable: false,
         },
+    }, 
+    relations: {
+        horarios: { // Relación con Horarios 
+            target: "Horario",
+            type: "one-to-many", 
+            inverseSide: "teacher", 
+            onDelete: "CASCADE",
+        },
     },
     relations:{
         curso: { //? Relation with the Curso entity. A user belongs to a course.

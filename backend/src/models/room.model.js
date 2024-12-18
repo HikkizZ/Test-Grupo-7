@@ -27,9 +27,10 @@ const RoomSchema = new EntitySchema({
             nullable: false,
         },
     },
-    relations: {
-        schedules: { // Relación con Schedule
-            target: "Schedule", 
+
+    relations:{
+        horarios: { // Relación con Horario
+            target: "Horario", 
             type: "one-to-many", 
             inverseSide: "room", 
             onDelete: "CASCADE", 
