@@ -1,0 +1,81 @@
+/* Estilos generales de la página */
+.around-body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+/* Contenedor principal */
+.around-container {
+    max-width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Encabezado */
+.around-header {
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Campos del formulario */
+.around-input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Select del formulario */
+.around-select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Botones */
+.around-button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.around-button-save {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.around-button-save:hover {
+    background-color: #0056b3;
+}
+
+.around-button-cancel {
+    background-color: #d33;
+    color: #fff;
+}
+
+.around-button-cancel:hover {
+    background-color: #a52a2a;
+}
+
+/* Mensaje de carga */
+.around-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #555;
+}
