@@ -1,6 +1,6 @@
 import axios from '@services/root.service.js';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL || '146.83.198.35:1347';
 
 export const createNews = async (newsData) => {
   try {
