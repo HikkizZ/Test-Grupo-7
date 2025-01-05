@@ -1,18 +1,15 @@
-import axios from '@services/root.service.js';
+import axios from './root.service.js';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://146.83.198.35:1348';
+const BASE_URL = '/news';
 
 export const createNews = async (newsData) => {
   try {
-    // Creamos un objeto FormData para manejar la carga de archivos
-    const formData = new FormData();
-    for (const key in newsData) {
-      formData.append(key, newsData[key]);
-    }
-    const response = await axios.post(`${API_URL}/news`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+    const response = await axios.post(BASE_URL, newsData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     });
-    return response.data.data;
+    return response.data;
   } catch (error) {
     console.error('Error al crear la noticia:', error);
     throw error;
@@ -21,7 +18,7 @@ export const createNews = async (newsData) => {
 
 export const getNews = async () => {
   try {
-    const response = await axios.get(`${API_URL}/news/all`);
+    const response = await axios.get(`${BASE_URL}/all`);
     return response.data.data;
   } catch (error) {
     console.error('Error al obtener las noticias:', error);
@@ -31,7 +28,7 @@ export const getNews = async () => {
 
 export const getNewsById = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/news/${id}`);
+    const response = await axios.get(`${BASE_URL}/${id}`);
     return response.data.data;
   } catch (error) {
     console.error('Error al obtener la noticia:', error);
@@ -41,17 +38,12 @@ export const getNewsById = async (id) => {
 
 export const updateNews = async (id, newsData) => {
   try {
-    // Asegurarse de que estamos enviando el FormData con el Content-Type correcto
-    const formData = new FormData();
-    for (const key in newsData) {
-      formData.append(key, newsData[key]);
-    }
-    const response = await axios.patch(`${API_URL}/news/${id}`, formData, {
+    const response = await axios.patch(`${BASE_URL}/${id}`, newsData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-      }
+      },
     });
-    return response.data.data;
+    return response.data;
   } catch (error) {
     console.error('Error al actualizar la noticia:', error);
     throw error;
@@ -60,7 +52,7 @@ export const updateNews = async (id, newsData) => {
 
 export const deleteNews = async (id) => {
   try {
-    const response = await axios.delete(`${API_URL}/news/${id}`);
+    const response = await axios.delete(`${BASE_URL}/${id}`);
     return response.data.data;
   } catch (error) {
     console.error('Error al eliminar la noticia:', error);
@@ -68,8 +60,44 @@ export const deleteNews = async (id) => {
   }
 };
 
+export const downloadImage = async (newsId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/download/${newsId}`, {
+      responseType: 'blob',
+    });
+    const contentDisposition = response.headers['content-disposition'];
+    const fileName = contentDisposition
+      ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+      : 'imagen.jpg';
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error al descargar la imagen:', error);
+    throw error;
+  }
+};
+
+export const getImageContent = async (newsId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/download/${newsId}`, {
+      responseType: 'blob'
+    });
+    return URL.createObjectURL(new Blob([response.data], { type: 'image/jpeg' }));
+  } catch (error) {
+    console.error('Error al obtener el contenido de la imagen:', error);
+    throw error;
+  }
+};
+
 export const ensureFullImageUrl = (imagePath) => {
   if (!imagePath) return null;
   if (imagePath.startsWith('http')) return imagePath;
-  return `${API_URL}${imagePath}`;
+  return `${BASE_URL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
 };
