@@ -4,7 +4,8 @@ import {
     getForos,
     getForo,
     updateForo,
-    deleteForo
+    deleteForo,
+    downloadForo
 } from "../controllers/foro.controller.js";
 import { authenticateJWT } from "../middlewares/authentication.middleware.js";
 import { verifyRole } from "../middlewares/authorization.middleware.js";
@@ -22,5 +23,6 @@ router
     .get("/:id", verifyRole(["profesor", "Alumno","admin"]), getForo)
     .patch("/:id", verifyRole(["profesor","admin","Encargado"]), upload.array('archivos'), handleFileSizeLimit, updateForo)
     .delete("/:id", verifyRole(["profesor","admin"]), deleteForo)
+    .get("/download/:id", verifyRole(["profesor", "Alumno", "admin", "administrador"]), downloadForo);
 
 export default router;

@@ -1,29 +1,45 @@
-import React from 'react';
-import { getPDFContent } from '@services/foro.service';
+import React, { useState } from 'react';
+import { getPDFContent, downloadFile } from '@services/foro.service';
+import styles from '@styles/foro.module.css';
 
-const PDFViewer = ({ archivosAdjuntos, foroId }) => {
-  const handleViewPDF = async (fileName) => {
+const PDFViewer = ({ foroId }) => {
+  const [selectedPDF, setSelectedPDF] = useState(null);
+
+  const handleViewPDF = async () => {
     try {
-      const pdfUrl = await getPDFContent(foroId, fileName);
-      window.open(pdfUrl, '_blank');
+      const pdfUrl = await getPDFContent(foroId);
+      setSelectedPDF(pdfUrl);
     } catch (error) {
-      console.error('Error al abrir el PDF:', error);
-      alert('Error al abrir el PDF. Por favor, intente de nuevo.');
+      console.error('Error al cargar el PDF:', error);
+      alert('Error al cargar el PDF. Por favor, inténtelo de nuevo.');
+    }
+  };
+
+  const handleDownloadPDF = async () => {
+    try {
+      await downloadFile(foroId);
+    } catch (error) {
+      console.error('Error al descargar el PDF:', error);
+      alert('Error al descargar el PDF. Por favor, inténtelo de nuevo.');
     }
   };
 
   return (
-    <div className="mt-4">
-      <h3 className="text-lg font-semibold mb-2">Archivos adjuntos:</h3>
-      {archivosAdjuntos.map((archivo) => (
-        <button
-          key={archivo.id}
-          className="mr-2 mb-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-          onClick={() => handleViewPDF(archivo.nombre)}
-        >
-          {archivo.nombre}
+    <div className={styles.pdfViewerContainer}>
+      <h3>Archivo PDF adjunto:</h3>
+      <div className={styles.pdfActions}>
+        <button onClick={handleViewPDF} className={styles.viewButton}>
+          Ver PDF
         </button>
-      ))}
+        <button onClick={handleDownloadPDF} className={styles.downloadButton}>
+          Descargar PDF
+        </button>
+      </div>
+      {selectedPDF && (
+        <div className={styles.pdfContainer}>
+          <iframe src={selectedPDF} width="100%" height="500px" title="PDF Viewer" />
+        </div>
+      )}
     </div>
   );
 };

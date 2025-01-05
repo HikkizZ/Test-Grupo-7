@@ -130,3 +130,45 @@ export async function deleteForo(req, res) {
         handleErrorServer(res, 500, "Error interno del servidor.", error.message);
     }
 }
+export async function downloadForo(req, res) {
+    try {
+        const { id } = req.params;
+
+        // Obtener el foro por su ID
+        const [foro, error] = await getForoService(id);
+        if (error) {
+            return handleErrorClient(res, 404, error);
+        }
+
+        // Verificar si el foro tiene archivos adjuntos
+        if (!foro.archivosAdjuntos || foro.archivosAdjuntos.length === 0) {
+            return handleErrorClient(res, 404, "Este foro no tiene archivos adjuntos.");
+        }
+
+        // Obtener el primer archivo adjunto
+        const archivo = foro.archivosAdjuntos[0];
+
+        // Verificar si la ruta del archivo está disponible
+        if (!archivo.archivo) {
+            return handleErrorClient(res, 404, "La ruta del archivo no está disponible.");
+        }
+
+        // Construir la ruta completa del archivo
+        const filePath = path.join(process.cwd(), archivo.archivo);
+
+        // Verificar si el archivo existe en el servidor
+        if (!fs.existsSync(filePath)) {
+            return handleErrorClient(res, 404, "El archivo no se encuentra en el servidor.");
+        }
+
+        // Configurar los headers para la descarga
+        res.setHeader('Content-Disposition', `attachment; filename="${archivo.nombre}"`);
+        res.setHeader('Content-Type', 'application/pdf');
+
+        // Enviar el archivo como respuesta
+        const fileStream = fs.createReadStream(filePath);
+        fileStream.pipe(res);
+    } catch (error) {
+        handleErrorServer(res, 500, "Error interno del servidor.", error.message);
+    }
+}

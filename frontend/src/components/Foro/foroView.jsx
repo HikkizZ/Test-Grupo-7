@@ -3,12 +3,16 @@ import { downloadFile } from '@services/foro.service';
 import styles from '@styles/foro.module.css';
 
 const ForoView = ({ foro, onClose }) => {
-  const handleDownload = async (fileName) => {
+  const handleDownload = async () => {
     try {
-      await downloadFile(foro.id, fileName);
+      if (foro.archivosAdjuntos && foro.archivosAdjuntos.length > 0) {
+        await downloadFile(foro.id);
+      } else {
+        alert('Este foro no tiene archivos adjuntos para descargar.');
+      }
     } catch (error) {
       console.error('Error al descargar el archivo:', error);
-      // Aquí puedes manejar el error, por ejemplo, mostrando un mensaje al usuario
+      alert('Error al descargar el archivo. Por favor, inténtelo de nuevo.');
     }
   };
 
@@ -32,18 +36,9 @@ const ForoView = ({ foro, onClose }) => {
         {foro.archivosAdjuntos && foro.archivosAdjuntos.length > 0 && (
           <div className={styles.foroViewAttachments}>
             <h3>Archivos adjuntos:</h3>
-            <ul>
-              {foro.archivosAdjuntos.map((archivo, index) => (
-                <li key={index}>
-                  <button 
-                    onClick={() => handleDownload(archivo.nombre)}
-                    className={styles.downloadButton}
-                  >
-                    {archivo.nombre}
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <button onClick={handleDownload} className={styles.downloadButton}>
+              Descargar archivo adjunto
+            </button>
           </div>
         )}
       </div>

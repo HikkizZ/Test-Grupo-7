@@ -59,26 +59,39 @@ export async function deleteForo(id) {
     }
 }
 
-export const downloadFile = async (foroId, fileName) => {
+export const downloadFile = async (foroId) => {
     try {
-      const response = await axios.get(`${BASE_URL}/${foroId}/download/${fileName}`, {
+      const response = await axios.get(`${BASE_URL}/download/${foroId}`, {
         responseType: 'blob',
       });
-      return response;
+      const contentDisposition = response.headers['content-disposition'];
+      const fileName = contentDisposition
+        ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+        : 'archivo.pdf';
+  
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error al descargar el archivo:', error);
       throw error;
     }
   };
-  
-export const getPDFContent = async (foroId, fileName) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/${foroId}/view/${fileName}`, {
-      responseType: 'blob'
-    });
-    return URL.createObjectURL(response.data);
-  } catch (error) {
-    console.error('Error al obtener el contenido del PDF:', error);
-    throw error;
-  }
-};
+   
+export const getPDFContent = async (foroId) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/download/${foroId}`, {
+        responseType: 'blob'
+      });
+      return URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+    } catch (error) {
+      console.error('Error al obtener el contenido del PDF:', error);
+      throw error;
+    }
+  };
+  ;

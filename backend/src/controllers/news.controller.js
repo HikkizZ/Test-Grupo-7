@@ -120,9 +120,10 @@ export async function updateNews(req, res) {
 // Controlador para eliminar una noticia
 export async function deleteNews(req, res) {
     try {
-        const { id } = req.params;
+        const id = req.params.id; // Accedemos a la id del parametro asignado en la URL
+        const userId = req.user.id; // Obtenems el id del usuario autenticado
 
-        const [news, error] = await deleteNewService(id);
+        const [news, error] = await deleteNewService(id, userId);
         if (error) return handleErrorClient(res, 404, error);
 
         handleSuccess(res, 200, "Noticia eliminada", news);
