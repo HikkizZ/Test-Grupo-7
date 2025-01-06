@@ -17,6 +17,17 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Función para obtener la URL base
+function getBaseUrl() {
+    if (process.env.NODE_ENV === 'production') {
+        return process.env.PRODUCTION_URL || `https://${HOST}`;
+    } else {
+        return `http://${HOST}:${PORT}`;
+    }
+}
+
+const baseUrl = getBaseUrl();
+
 async function setupServer() { //* Función para configurar el servidor.
     try {
         const app = express(); //* Crear una instancia de la aplicación express.
@@ -56,7 +67,11 @@ async function setupServer() { //* Función para configurar el servidor.
         fs.mkdirSync(uploadDir, { recursive: true }); 
 
         // Configurar la ruta estática para servir archivos subidos.
-        app.use('/src/upload', express.static(uploadDir));
+        app.use('/src/upload', (req, res, next) => {
+            // Añadir la URL base a la ruta de la imagen
+            res.locals.baseUrl = baseUrl;
+            express.static(uploadDir)(req, res, next);
+        });
 
         app.use( //* Usar session. Configurar las sesiones.
             session({
@@ -82,10 +97,15 @@ async function setupServer() { //* Función para configurar el servidor.
         passportJWTSetup(); //* Configurar la autenticación de usuarios.
 
         app.use('/api/', indexRoutes); //* Usar las rutas de la API.
-        app.use('/src/upload', express.static(uploadDir));
+
+        // Middleware para agregar baseUrl a todas las respuestas
+        app.use((req, res, next) => {
+            res.locals.baseUrl = baseUrl;
+            next();
+        });
 
         app.listen(PORT, () => { //* Escuchar en el puerto especificado.
-            console.log(`Server running on: http://${HOST}:${PORT}/api`);
+            console.log(`Server running on: ${baseUrl}/api`);
         });
     } catch (error) {
         console.log("Error starting the server -> setupServer(). Error: ", error);        
