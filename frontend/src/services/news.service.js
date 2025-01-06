@@ -1,6 +1,6 @@
 import axios from '@services/root.service.js';
 
-const API_URL = import.meta.env.VITE_API_URL || '146.83.198.35:1348';
+const API_URL = '146.83.198.35:1348';
 
 export const createNews = async (newsData) => {
   try {
