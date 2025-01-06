@@ -1,15 +1,10 @@
 import axios from '@services/root.service.js';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://146.83.198.35:1348';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export const createNews = async (newsData) => {
   try {
-    // Creamos un objeto FormData para manejar la carga de archivos
-    const formData = new FormData();
-    for (const key in newsData) {
-      formData.append(key, newsData[key]);
-    }
-    const response = await axios.post(`${API_URL}/news`, formData, {
+    const response = await axios.post('/news', newsData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data.data;
@@ -21,7 +16,7 @@ export const createNews = async (newsData) => {
 
 export const getNews = async () => {
   try {
-    const response = await axios.get(`${API_URL}/news/all`);
+    const response = await axios.get('/news/all');
     return response.data.data;
   } catch (error) {
     console.error('Error al obtener las noticias:', error);
@@ -31,22 +26,17 @@ export const getNews = async () => {
 
 export const getNewsById = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/news/${id}`);
+    const response = await axios.get(`/news/${id}`);
     return response.data.data;
   } catch (error) {
     console.error('Error al obtener la noticia:', error);
     throw error;
   }
 };
-
 export const updateNews = async (id, newsData) => {
   try {
     // Asegurarse de que estamos enviando el FormData con el Content-Type correcto
-    const formData = new FormData();
-    for (const key in newsData) {
-      formData.append(key, newsData[key]);
-    }
-    const response = await axios.patch(`${API_URL}/news/${id}`, formData, {
+    const response = await axios.patch(`/news/${id}`, newsData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       }
@@ -58,9 +48,11 @@ export const updateNews = async (id, newsData) => {
   }
 };
 
+
+
 export const deleteNews = async (id) => {
   try {
-    const response = await axios.delete(`${API_URL}/news/${id}`);
+    const response = await axios.delete(`/news/${id}`);
     return response.data.data;
   } catch (error) {
     console.error('Error al eliminar la noticia:', error);
@@ -71,5 +63,5 @@ export const deleteNews = async (id) => {
 export const ensureFullImageUrl = (imagePath) => {
   if (!imagePath) return null;
   if (imagePath.startsWith('http')) return imagePath;
-  return `${API_URL}${imagePath}`;
+  return `${API_URL}/${imagePath}`;
 };

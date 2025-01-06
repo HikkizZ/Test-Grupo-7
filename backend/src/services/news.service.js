@@ -2,11 +2,6 @@ import { AppDataSource } from "../config/configDB.js";
 import News from "../models/news.models.js";
 import User from "../models/user.model.js";
 import { sendEmail } from "../services/email.service.js";
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 
 //obtiene todos los correos electronicos registrados en la bd
 async function getRecipientEmails() {
@@ -75,7 +70,6 @@ export async function createNewsService({tituloNews, autorId, contenido, imagenP
         return [null, "Error al crear la noticia"];
     }
 }
-
 // Servicio para obtener todas las noticias
 export async function getNewsService() {
     try {
@@ -84,14 +78,6 @@ export async function getNewsService() {
         const news = await newsRepository.find({
             relations: ["autor"]
         });
-        
-        // Ajusta la ruta de la imagen para cada noticia
-        news.forEach(item => {
-            if (item.imagenPortada) {
-                item.imagenPortada = `${BASE_URL}${item.imagenPortada}`;
-            }
-        });
-        
         return [news, null];
     } catch (error) {
         console.error("Error al obtener las noticias:", error);
@@ -109,12 +95,6 @@ export async function getNewService(id) {
             relations: ["autor"]
         });
         if (!news) return [null, "Noticia no encontrada."];
-        
-        // Ajusta la ruta de la imagen si es necesario
-        if (news.imagenPortada) {
-            news.imagenPortada = `${BASE_URL}${news.imagenPortada}`;
-        }
-        
         return [news, null];
     } catch (error) {
         console.error("Error al obtener la noticia:", error);
@@ -151,12 +131,6 @@ export async function updateNewService(id, { tituloNews, contenido, imagenPortad
   
       // Guarda los cambios en la base de datos
       const newsActualizada = await newsRepository.save(news);
-      
-      // Ajusta la ruta de la imagen si es necesario
-      if (newsActualizada.imagenPortada) {
-        newsActualizada.imagenPortada = `${BASE_URL}${newsActualizada.imagenPortada}`;
-      }
-      
       return [newsActualizada, null];
     } catch (error) {
       console.error("Error al actualizar la noticia:", error);
